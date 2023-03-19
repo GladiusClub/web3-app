@@ -1,7 +1,7 @@
 import Web3 from "web3";
 
 const web3 = new Web3(
-  "https://goerli.infura.io/v3/18e3bacb660043aa8be867144c627467"
+  `https://goerli.infura.io/v3/${process.env.REACT_APP_MEASUREMENTID}`
 );
 
 export function createNewWallet() {
