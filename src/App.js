@@ -9,21 +9,11 @@ import Button from "@mui/material/Button";
 import { useFirebase } from "./components/firebaseContext";
 import { useUser } from "./components/UserContext";
 import { H1, MediumText } from "./components/styles/TextStyles";
-
-const words = ["Win", "Succeed", "Triumph", "Excel"];
+import { TypeAnimation } from "react-type-animation";
 
 function App() {
   const { user, address, setAddress } = useUser();
   const { auth } = useFirebase();
-  const [currentWordIndex, setCurrentWordIndex] = React.useState(0); // Keep track of current word index
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
-    }, 2000); // Change the word every 2 seconds
-
-    return () => clearInterval(timer);
-  }, []);
 
   const handleSignOut = () => {
     signOut(auth);
@@ -44,7 +34,22 @@ function App() {
           <Title>
             Gladius <br />
             Earn <br />
-            <span>{words[currentWordIndex]}</span>
+            <TypeAnimation
+              sequence={[
+                // Same String at the start will only be typed once, initially
+                "Win",
+                1000,
+                "Succeed",
+                1000,
+                "Triumph",
+                1000,
+                "Excel",
+                1000,
+              ]}
+              speed={50}
+              style={{ fontWeight: "bold", fontSize: "60px" }}
+              repeat={Infinity}
+            />
           </Title>
           <Description>
             Unlock your athletic potential with our student-focused platform!
@@ -78,12 +83,6 @@ const animation = keyframes`
   0% { opacity: 0; transform: translateY(-10px); filter: blur(10px); }
   100% { opacity: 1; transform: translateY(0px); filter: blur(0px); }
 `;
-
-const typing = keyframes`
-  0% { width: 0; }
-  100% { width: 100%; }
-`;
-
 
 const ContentWrapper = styled.div`
   max-width: 1234px;
@@ -128,10 +127,8 @@ const Title = styled(H1)`
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
-
-    /* Apply typing animation */
-    animation: ${typing} 2s steps(100, end) infinite;
   }
 `;
+
 
 
