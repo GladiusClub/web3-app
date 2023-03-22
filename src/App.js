@@ -2,7 +2,7 @@ import "./App.css";
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import { signOut } from "firebase/auth";
-import SignUp from "./components/SignUp";
+//import SignUp from "./components/SignUp";
 import { themes } from "./components/styles/ColorStyles";
 import LogIn from "./components/LogIn";
 import Button from "@mui/material/Button";
@@ -84,20 +84,6 @@ const typing = keyframes`
   100% { width: 100%; }
 `;
 
-const wordTypingAnimation = () => {
-  let styles = "";
-
-  words.forEach((word, index) => {
-    styles += `
-      &:nth-child(${index + 1}) {
-        animation: ${typing} 2s steps(${word.length}, end) infinite;
-        animation-delay: ${index * 2}s;
-      }
-    `;
-  });
-
-  return styles;
-};
 
 const ContentWrapper = styled.div`
   max-width: 1234px;
