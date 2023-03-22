@@ -9,13 +9,18 @@ import { useFirebase } from "./firebaseContext";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
-  right: 0,
   top: "50%",
   transform: "translateY(-50%)",
   padding: theme.spacing(2),
   width: "30%",
   minWidth: "300px",
   borderRadius: theme.spacing(1),
+}));
+
+const LogInFields = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  marginBottom: theme.spacing(2),
 }));
 
 function LogIn() {
@@ -41,18 +46,20 @@ function LogIn() {
     <LogInCard>
       <CardContent>
         <form>
-          <TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <LogInFields>
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </LogInFields>
           <Button variant="contained" color="secondary" onClick={handleSignIn}>
             Log In
           </Button>
