@@ -10,6 +10,7 @@ import { useFirebase } from "./components/firebaseContext";
 import { useUser } from "./components/UserContext";
 import { H1, MediumText } from "./components/styles/TextStyles";
 import { TypeAnimation } from "react-type-animation";
+import NFTs from "./components/NFT";
 
 function App() {
   const { user, address, setAddress } = useUser();
@@ -73,6 +74,7 @@ function App() {
           {address ? <p>Your wallet address is {address}!</p> : null}
         </LoginWrapper>
       </ContentWrapper>
+      <NFTs></NFTs>
     </>
   );
 }
