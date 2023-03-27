@@ -6,6 +6,8 @@ import CardContent from "@mui/material/CardContent";
 import { styled } from "@mui/system";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useFirebase } from "./firebaseContext";
+import { Link } from "react-router-dom";
+import Typography from "@mui/material/Typography";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
@@ -20,7 +22,7 @@ const LogInCard = styled(Card)(({ theme }) => ({
 const LogInFields = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  marginBottom: theme.spacing(2),
+  marginBottom: "10px",
 }));
 
 function LogIn() {
@@ -52,14 +54,29 @@ function LogIn() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
             />
             <TextField
               label="Password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              color="secondary"
             />
           </LogInFields>
+          <Typography variant="body2" sx={{ marginBottom: "10px" }}>
+            Not a member,{" "}
+            <Link
+              to="/signup"
+              style={{ textDecoration: "none", color: "#8A2BE2" }}
+            >
+              sign up
+            </Link>{" "}
+            today
+          </Typography>
           <Button variant="contained" color="secondary" onClick={handleSignIn}>
             Log In
           </Button>
