@@ -6,11 +6,28 @@ import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { Link, useLocation } from "react-router-dom";
+import { useUser } from "./UserContext";
+import { signOut } from "firebase/auth";
+import { useFirebase } from "./firebaseContext";
 
 const pages = ["Products", "Pricing", "Blog"];
 
 export default function TopBar() {
+  const { user, setAddress } = useUser();
   const location = useLocation();
+  const { auth } = useFirebase();
+
+  const handleLogout = () => {
+    signOut(auth);
+
+    setAddress(null)
+      .then(() => {
+        console.log("User signed out");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -37,7 +54,19 @@ export default function TopBar() {
               flexGrow: 1,
             }}
           >
-            {location.pathname === "/signup" ? (
+            {user ? (
+              <>
+                <p>{user.email}</p>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ marginLeft: "10px" }}
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </Button>
+              </>
+            ) : location.pathname === "/signup" ? (
               <Link
                 to="/login"
                 style={{ textDecoration: "none", color: "#8A2BE2" }}

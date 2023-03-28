@@ -1,32 +1,13 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { signOut } from "firebase/auth";
 //import SignUp from "../SignUp";
 import { themes } from "../styles/ColorStyles";
 import LogIn from "../LogIn";
-import Button from "@mui/material/Button";
-import { useFirebase } from "../firebaseContext";
-import { useUser } from "../UserContext";
 import { H1, MediumText } from "../styles/TextStyles";
 import { TypeAnimation } from "react-type-animation";
 import NFTs from "../NFT";
 
 function LandingPage() {
-  const { user, address, setAddress } = useUser();
-  const { auth } = useFirebase();
-
-  const handleSignOut = () => {
-    signOut(auth);
-
-    setAddress(null)
-      .then(() => {
-        console.log("User signed out");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   return (
     <>
       <ContentWrapper>
@@ -59,18 +40,10 @@ function LandingPage() {
           </Description>
         </TextWrapper>
         <LoginWrapper>
-          {user ? (
-            <>
-              <p>User is logged in</p>
-              <Button onClick={handleSignOut}>Log Out</Button>
-            </>
-          ) : (
-            <>
-              <p>Email: bob@123.com Password: 123456</p>
-              <LogIn />
-            </>
-          )}
-          {address ? <p>Your wallet address is {address}!</p> : null}
+          <>
+            <p>Email: bob@123.com Password: 123456</p>
+            <LogIn />
+          </>
         </LoginWrapper>
       </ContentWrapper>
       <NFTs></NFTs>

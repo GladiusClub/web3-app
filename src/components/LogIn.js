@@ -8,6 +8,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useFirebase } from "./firebaseContext";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
@@ -29,13 +30,14 @@ function LogIn() {
   const { auth } = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         //const user = userCredential.user;
-        console.log("user logged in");
+        navigate("/createproject");
       })
       .catch((error) => {
         const errorCode = error.code;

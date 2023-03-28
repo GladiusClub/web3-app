@@ -34,6 +34,39 @@ function SignUp() {
       });
   };
 
+  const fakeNames = ["Tõnu", "Piret", "Mart", "Anu", "Toomas"];
+  const estonianSportsClubs = [
+    "Kalev FC",
+    "Tartu Ülikooli Korvpalliklubi",
+    "Tallinna Jalgpalliklubi",
+    "Pärnu Spordiselts",
+    "Narva Võrkpalliklubi",
+  ];
+
+  const handleFakeUsers = () => {
+    for (let i = 0; i < fakeNames.length; i++) {
+      const name = fakeNames[i];
+      const email = `fake${i}@example.com`;
+      const wallet = createNewWallet();
+      console.log(wallet);
+
+      // Loop through each sports club and add the user to their members collection
+      for (let j = 0; j < estonianSportsClubs.length; j++) {
+        const club = estonianSportsClubs[j];
+        setDoc(doc(db, "club", club, "members", name), {
+          name: name,
+          email: email,
+          address: wallet.address,
+          privateKey: wallet.privateKey,
+          club: club,
+        }).catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+      }
+    }
+  };
+  
+
   return (
     <form>
       <TextField
@@ -49,7 +82,10 @@ function SignUp() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <Button variant="contained" color="primary" onClick={handleSignUp}>
-        Sign Up
+        Create A New User
+      </Button>
+      <Button variant="contained" color="primary" onClick={handleFakeUsers}>
+        Create Fake Users
       </Button>
     </form>
   );
