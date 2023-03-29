@@ -9,11 +9,12 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useFirebase } from "../firebaseContext";
 import { getDocs, collection } from "firebase/firestore";
+import { H1 } from "../styles/TextStyles";
 
 function CreateProject() {
   const { db } = useFirebase();
 
-  const { address } = useUser();
+  const { userData } = useUser();
   const club = "Tallinna Jalgpalliklubi";
 
   const [members, setMembers] = useState([]);
@@ -31,7 +32,8 @@ function CreateProject() {
 
   return (
     <>
-      {address ? <p>Your club wallet address is {address}!</p> : null}
+      {userData ? <H1>{userData.club}!</H1> : null}
+      {userData ? <p>Your club wallet address is {userData.address}!</p> : null}
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

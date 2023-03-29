@@ -12,18 +12,19 @@ export const useUser = () => {
 export const UserProvider = ({ children }) => {
   const { auth, db } = useFirebase();
   const [user, setUser] = useState(null);
-  const [address, setAddress] = useState("");
+  const [userData, setUserData] = useState({});
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        console.log(user.uid);
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setAddress(docSnap.data().address);
+          setUserData(docSnap.data());
         }
+      } else {
+        setUserData({}); // Reset userData when the user logs out
       }
     });
     return unsubscribe;
@@ -32,8 +33,8 @@ export const UserProvider = ({ children }) => {
   const contextValue = {
     user,
     setUser,
-    address,
-    setAddress,
+    userData,
+    setUserData,
   };
 
   return (
