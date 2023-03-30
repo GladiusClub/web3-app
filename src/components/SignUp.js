@@ -48,7 +48,6 @@ function SignUp() {
       const name = fakeNames[i];
       const email = `fake${i}@example.com`;
       const wallet = createNewWallet();
-      console.log(wallet);
 
       // Loop through each sports club and add the user to their members collection
       for (let j = 0; j < estonianSportsClubs.length; j++) {

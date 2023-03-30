@@ -10,30 +10,41 @@ import Paper from "@mui/material/Paper";
 import { useFirebase } from "../firebaseContext";
 import { getDocs, collection } from "firebase/firestore";
 import { H1 } from "../styles/TextStyles";
+import AccountBalance from "../Balance";
+import SendNFTButton from "../SendNft";
 
 function CreateProject() {
   const { db } = useFirebase();
-
   const { userData } = useUser();
-  const club = "Tallinna Jalgpalliklubi";
-
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
     const fetchClubMembers = async () => {
-      const membersCollection = collection(db, "club", club, "members");
+      if (!userData || !userData.club) {
+        return;
+      }
+
+      const membersCollection = collection(
+        db,
+        "club",
+        userData.club,
+        "members"
+      );
       const membersSnapshot = await getDocs(membersCollection);
       const membersData = membersSnapshot.docs.map((doc) => doc.data());
       setMembers(membersData);
     };
 
     fetchClubMembers();
-  }, [club, db]);
+  }, [userData, db]);
 
   return (
     <>
       {userData ? <H1>{userData.club}!</H1> : null}
       {userData ? <p>Your club wallet address is {userData.address}!</p> : null}
+      {userData.address ? (
+        <AccountBalance myAddress={userData.address}></AccountBalance>
+      ) : null}
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -52,6 +63,9 @@ function CreateProject() {
                 </TableCell>
                 <TableCell>{member.email}</TableCell>
                 <TableCell>{member.address}</TableCell>
+                <TableCell>
+                  <SendNFTButton member={member}></SendNFTButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

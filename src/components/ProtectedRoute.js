@@ -4,7 +4,6 @@ import LandingPage from "./sections/LandingPage";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useUser(); // assuming your UserContext provides a user state
-  console.log(user);
 
   // Render the protected component only if the user is authenticated, otherwise redirect to the login page
   const renderProtectedComponent = () => {
