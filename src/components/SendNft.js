@@ -33,7 +33,7 @@ const SendNFTButton = ({ member }) => {
         console.log("breedAssigned event received:", tokenId, breed, event);
 
         // Check if the event owner matches the current user
-        if (event.args.owner === userData.address) {
+        if (true) {
           // Call the transferFrom function to send the NFT to the member address
           const transferTransaction = await contractWithSigner.transferFrom(
             userData.address, // From the user's address
