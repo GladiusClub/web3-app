@@ -15,23 +15,27 @@ import {
 import pugImg from "../img/pug.png";
 import shibaInuImg from "../img/shiba-inu.png";
 import stBernardImg from "../img/st-bernard.png";
+import SendNFTButton from "./SendNft";
 
 const imageData = [
   {
     src: pugImg,
     description: "Pug - A small, friendly, and lovable companion.",
+    nftIndex: 2,
   },
   {
     src: shibaInuImg,
     description: "Shiba Inu - A spirited, agile, and bold breed.",
+    nftIndex: 0,
   },
   {
     src: stBernardImg,
     description: "St. Bernard - A strong, gentle, and devoted giant.",
+    nftIndex: 1,
   },
 ];
 
-const NftCard = () => {
+const NftCard = ({ member }) => {
   return (
     <Card>
       <CardContent>
@@ -56,10 +60,12 @@ const NftCard = () => {
           ))}
         </Box>
         <Box display="flex" justifyContent="space-around" mt={1}>
-          {imageData.map((_, index) => (
-            <Button key={index} variant="contained" color="primary">
-              Send!
-            </Button>
+          {imageData.map((dog, index) => (
+            <SendNFTButton
+              key={index}
+              member={member}
+              dog={dog}
+            ></SendNFTButton>
           ))}
         </Box>
       </CardContent>
@@ -67,7 +73,7 @@ const NftCard = () => {
   );
 };
 
-const ShowNftCardButton = () => {
+const ShowNftCardButton = ({ member }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -92,7 +98,7 @@ const ShowNftCardButton = () => {
       >
         <DialogTitle id="nft-card-dialog-title">Send a doggy NFT!</DialogTitle>
         <DialogContent>
-          <NftCard />
+          <NftCard member={member} />
         </DialogContent>
       </Dialog>
     </div>

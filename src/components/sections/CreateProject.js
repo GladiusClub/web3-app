@@ -11,7 +11,7 @@ import { useFirebase } from "../firebaseContext";
 import { getDocs, collection } from "firebase/firestore";
 import { H1 } from "../styles/TextStyles";
 import AccountBalance from "../Balance";
-import NftCard from "../NftCard";
+import ShowNftCardButton from "../NftCard";
 
 function CreateProject() {
   const { db } = useFirebase();
@@ -64,7 +64,7 @@ function CreateProject() {
                 <TableCell>{member.email}</TableCell>
                 <TableCell>{member.address}</TableCell>
                 <TableCell>
-                  <NftCard member={member}></NftCard>
+                  <ShowNftCardButton member={member}></ShowNftCardButton>
                 </TableCell>
               </TableRow>
             ))}
