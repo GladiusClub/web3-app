@@ -34,12 +34,14 @@ const SendNFTButton = ({ member }) => {
 
         // Check if the event owner matches the current user
         if (true) {
-          // Call the transferFrom function to send the NFT to the member address
-          const transferTransaction = await contractWithSigner.transferFrom(
-            userData.address, // From the user's address
-            member.address, // To the member's address
-            tokenId // The tokenId of the NFT to transfer
-          );
+            console.log(`Transfer NFT to ${member.name} (${member.address})`);
+            // Call the transferFrom function to send the NFT to the member address
+            const transferTransaction =
+              await contractWithSigner.safeTransferFrom(
+                userData.address, // From the user's address
+                member.address, // To the member's address
+                tokenId // The tokenId of the NFT to transfer
+              );
 
           // Wait for the transaction to be mined
           const transferReceipt = await transferTransaction.wait();
