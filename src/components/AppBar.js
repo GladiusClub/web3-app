@@ -10,7 +10,7 @@ import { useUser } from "./UserContext";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "./firebaseContext";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["For Users", "For Clubs"];
 
 export default function TopBar() {
   const { user, setAddress } = useUser();
@@ -32,7 +32,7 @@ export default function TopBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        position="static"
+        position="fixed"
         sx={{ background: "linear-gradient(to right, #1c2b4b, #9b1aff)" }}
       >
         <Toolbar>

@@ -5,11 +5,12 @@ import { themes } from "../styles/ColorStyles";
 import LogIn from "../LogIn";
 import { H1, MediumText } from "../styles/TextStyles";
 import { TypeAnimation } from "react-type-animation";
-import NFTs from "../NFT";
+import backgroundSvg from "../../img/quantum-gradient.svg";
 
 function LandingPage() {
   return (
     <>
+      <WaveBackground />
       <ContentWrapper>
         <TextWrapper>
           <Title>
@@ -46,7 +47,6 @@ function LandingPage() {
           </>
         </LoginWrapper>
       </ContentWrapper>
-      <NFTs></NFTs>
     </>
   );
 }
@@ -82,6 +82,26 @@ const TextWrapper = styled.div`
     }
   }
 `;
+
+const WaveBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.6),
+      rgba(255, 255, 255, 0.6)
+    ),
+    url(${backgroundSvg}) no-repeat center center fixed;
+  /* background by SVGBackgrounds.com */
+
+  background-size: cover;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  z-index: -1;
+`;
+
 
 const Description = styled(MediumText)``;
 
