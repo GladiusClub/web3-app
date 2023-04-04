@@ -2,11 +2,12 @@ import "./App.css";
 import React from "react";
 import LandingPage from "./components/sections/LandingPage";
 import { Routes, Route } from "react-router-dom";
-import CreateProject from "./components/sections/CreateProject";
+import ClubDashboard from "./components/sections/ClubDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TopBar from "./components/AppBar";
-import SignUp from "./components/SignUp";
+//import SignUp from "./components/SignUp";
 import styled from "styled-components";
+import SignUp from "./components/sections/SignUpPage";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route
             path="/createproject"
-            element={<ProtectedRoute element={<CreateProject />} />}
+            element={<ProtectedRoute element={<ClubDashboard />} />}
           />
         </Routes>
       </MainContent>

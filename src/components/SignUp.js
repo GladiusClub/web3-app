@@ -17,6 +17,7 @@ import SportsIcon from "@mui/icons-material/Sports";
 import SportsHandballIcon from "@mui/icons-material/SportsHandball";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import { fakeNames, estonianSportsClubs } from "../fakeData";
 
 function SignUp() {
   const { auth, db } = useFirebase();
@@ -48,15 +49,6 @@ function SignUp() {
         console.log(errorCode + errorMessage);
       });
   };
-
-  const fakeNames = ["Tõnu", "Piret", "Mart", "Anu", "Toomas"];
-  const estonianSportsClubs = [
-    "Kalev FC",
-    "Tartu Ülikooli Korvpalliklubi",
-    "Tallinna Jalgpalliklubi",
-    "Pärnu Spordiselts",
-    "Narva Võrkpalliklubi",
-  ];
 
   const handleFakeUsers = () => {
     for (let i = 0; i < fakeNames.length; i++) {

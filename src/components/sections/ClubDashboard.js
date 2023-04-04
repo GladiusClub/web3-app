@@ -13,7 +13,7 @@ import { H1 } from "../styles/TextStyles";
 import AccountBalance from "../Balance";
 import ShowNftCardButton from "../NftCard";
 
-function CreateProject() {
+function ClubDashboard() {
   const { db } = useFirebase();
   const { userData } = useUser();
   const [members, setMembers] = useState([]);
@@ -75,4 +75,4 @@ function CreateProject() {
   );
 }
 
-export default CreateProject;
+export default ClubDashboard;
