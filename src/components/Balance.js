@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import Balance from "./BalanceCard";
 
 const AccountBalance = ({ myAddress }) => {
   const [balance, setBalance] = useState("");
@@ -22,11 +23,7 @@ const AccountBalance = ({ myAddress }) => {
     fetchBalance();
   }, [myAddress]);
 
-  return (
-    <div>
-      <p>Balance: {balance} ETH</p>
-    </div>
-  );
+  return <Balance amount={balance} token={"Goreli"}></Balance>;
 };
 
 export default AccountBalance;

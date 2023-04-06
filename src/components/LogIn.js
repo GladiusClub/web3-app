@@ -37,7 +37,7 @@ function LogIn() {
       .then((userCredential) => {
         // Signed in
         //const user = userCredential.user;
-        navigate("/createproject");
+        navigate("/clubdashboard");
       })
       .catch((error) => {
         const errorCode = error.code;

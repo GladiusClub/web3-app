@@ -12,6 +12,9 @@ import { getDocs, collection } from "firebase/firestore";
 import { H1 } from "../styles/TextStyles";
 import AccountBalance from "../Balance";
 import ShowNftCardButton from "../NftCard";
+import Balance from "../BalanceCard";
+import Box from "@mui/material/Box";
+
 
 function ClubDashboard() {
   const { db } = useFirebase();
@@ -42,9 +45,10 @@ function ClubDashboard() {
     <>
       {userData ? <H1>{userData.club}!</H1> : null}
       {userData ? <p>Your club wallet address is {userData.address}!</p> : null}
-      {userData.address ? (
-        <AccountBalance myAddress={userData.address}></AccountBalance>
-      ) : null}
+      <Box display="flex" flexDirection="row">
+        <Balance />
+        {userData.address && <AccountBalance myAddress={userData.address} />}
+      </Box>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

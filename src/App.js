@@ -8,21 +8,25 @@ import TopBar from "./components/AppBar";
 //import SignUp from "./components/SignUp";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
+import AuthLoading from "./components/AuthLoading";
+
 
 function App() {
   return (
     <>
       <TopBar></TopBar>
       <MainContent>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LandingPage />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route
-            path="/createproject"
-            element={<ProtectedRoute element={<ClubDashboard />} />}
-          />
-        </Routes>
+        <AuthLoading>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LandingPage />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/clubdashboard"
+              element={<ProtectedRoute element={<ClubDashboard />} />}
+            />
+          </Routes>
+        </AuthLoading>
       </MainContent>
     </>
   );

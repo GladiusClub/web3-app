@@ -9,9 +9,12 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-
-import { fakeNames, estonianSportsClubs } from "../fakeData";
-import { H1 } from "./styles/TextStyles";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { styled } from "@mui/system";
+import Typography from "@mui/material/Typography";
+import { estonianSportsClubs } from "../fakeData";
+import { Link } from "react-router-dom";
 
 function SignUpForm({ userType }) {
   const { auth, db } = useFirebase();
@@ -43,111 +46,100 @@ function SignUpForm({ userType }) {
       });
   };
 
-  const handleFakeUsers = () => {
-    for (let i = 0; i < fakeNames.length; i++) {
-      const name = fakeNames[i];
-      const email = `fake${i}@example.com`;
-      const wallet = createNewWallet();
+  const SignUpCard = styled(Card)(({ theme }) => ({
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    padding: theme.spacing(2),
+    width: "30%",
+    minWidth: "300px",
+    borderRadius: theme.spacing(1),
+  }));
 
-      // Loop through each sports club and add the user to their members collection
-      for (let j = 0; j < estonianSportsClubs.length; j++) {
-        const club = estonianSportsClubs[j];
-        setDoc(doc(db, "club", club, "members", name), {
-          name: name,
-          email: email,
-          address: wallet.address,
-          privateKey: wallet.privateKey,
-          club: club,
-        }).catch((error) => {
-          console.error("Error adding document: ", error);
-        });
-      }
-    }
-  };
+  const SignUpFields = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: "10px",
+  }));
 
   return (
-    <div>
-      <H1>Welcome new {userType}</H1>
-      <TextField
-        label="Name"
-        type="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        inputProps={{
-          autoComplete: "new-password",
-          form: {
-            autocomplete: "off",
-          },
-        }}
-        sx={{
-          marginBottom: "10px",
-        }}
-      />
-      <TextField
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        inputProps={{
-          autoComplete: "new-password",
-          form: {
-            autocomplete: "off",
-          },
-        }}
-        sx={{
-          marginBottom: "10px",
-        }}
-      />
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        inputProps={{
-          autoComplete: "new-password",
-          form: {
-            autocomplete: "off",
-          },
-        }}
-        sx={{
-          marginBottom: "10px",
-        }}
-      />
-      <FormControl fullWidth sx={{ marginBottom: "10px" }}>
-        <InputLabel>Club</InputLabel>
-        <Select
-          value={club}
-          onChange={(e) => setClub(e.target.value)}
-          label="Club"
-        >
-          {estonianSportsClubs.map((club, index) => (
-            <MenuItem key={index} value={club}>
-              {club}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSignUp}
-        sx={{
-          marginBottom: "10px",
-        }}
-      >
-        Create A New User
-      </Button>
-      <Button variant="contained" color="primary" onClick={handleFakeUsers}>
-        Create Fake Users
-      </Button>
-    </div>
+    <SignUpCard>
+      <CardContent>
+        <form>
+          <SignUpFields>
+            <Typography variant="h5" sx={{ marginBottom: "10px" }}>
+              Create a new {userType}
+            </Typography>
+            <TextField
+              label="Name"
+              type="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
+            <FormControl
+              fullWidth
+              color="secondary"
+              sx={{ marginBottom: "10px" }}
+            >
+              <InputLabel>Club</InputLabel>
+              <Select
+                value={club}
+                onChange={(e) => setClub(e.target.value)}
+                label="Club"
+              >
+                {estonianSportsClubs.map((club, index) => (
+                  <MenuItem key={index} value={club}>
+                    {club}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </SignUpFields>
+          <Typography variant="body2" sx={{ marginBottom: "10px" }}>
+            Already a member?{" "}
+            <Link
+              to="/login"
+              style={{ textDecoration: "none", color: "#8A2BE2" }}
+            >
+              log in
+            </Link>{" "}
+          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleSignUp}
+            sx={{ marginBottom: "10px" }}
+          >
+            Create {userType}
+          </Button>
+        </form>
+      </CardContent>
+    </SignUpCard>
   );
 }
 
 export default SignUpForm;
-
-//const SignUpFields = styled("div")(({ theme }) => ({
-//    display: "flex",
-//    flexDirection: "column",
-//    marginBottom: "10px",
-//  }));

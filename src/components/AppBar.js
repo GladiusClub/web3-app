@@ -13,20 +13,12 @@ import { useFirebase } from "./firebaseContext";
 const pages = ["For Users", "For Clubs"];
 
 export default function TopBar() {
-  const { user, setAddress } = useUser();
+  const { user } = useUser();
   const location = useLocation();
   const { auth } = useFirebase();
 
   const handleLogout = () => {
     signOut(auth);
-
-    setAddress(null)
-      .then(() => {
-        console.log("User signed out");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   return (
