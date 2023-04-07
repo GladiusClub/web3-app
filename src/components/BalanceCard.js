@@ -8,7 +8,9 @@ import Box from "@mui/material/Box";
 
 export default function Balance({ amount, token }) {
   return (
-    <Card sx={{ minWidth: 275, maxWidth: "30%", margin: "10px" }}>
+    <Card
+      sx={{ minWidth: 275, maxWidth: "30%", margin: "10px", maxHeight: 150 }}
+    >
       <Box
         sx={{
           display: "flex",

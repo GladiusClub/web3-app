@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { createNewWallet } from "./EthConnector";
-import { setDoc, doc } from "firebase/firestore";
-import { useFirebase } from "./firebaseContext";
+//import { createUserWithEmailAndPassword } from "firebase/auth";
+//import { createNewWallet } from "./EthConnector";
+//import { setDoc, doc } from "firebase/firestore";
+//import { useFirebase } from "./firebaseContext";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
@@ -15,14 +15,18 @@ import { styled } from "@mui/system";
 import Typography from "@mui/material/Typography";
 import { estonianSportsClubs } from "../fakeData";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 function SignUpForm({ userType }) {
-  const { auth, db } = useFirebase();
+  //const { auth, db } = useFirebase();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [club, setClub] = useState("");
+  const navigate = useNavigate();
 
+  /* 
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -45,6 +49,7 @@ function SignUpForm({ userType }) {
         console.log(errorCode + errorMessage);
       });
   };
+  */
 
   const SignUpCard = styled(Card)(({ theme }) => ({
     position: "absolute",
@@ -131,7 +136,14 @@ function SignUpForm({ userType }) {
           <Button
             variant="contained"
             color="secondary"
-            onClick={handleSignUp}
+            onClick={() => {
+              if (userType === "club") {
+                navigate("/clubdashboard");
+              } else {
+                navigate("/userdashboard");
+              }
+            }}
+            //{handleSignUp}
             sx={{ marginBottom: "10px" }}
           >
             Create {userType}

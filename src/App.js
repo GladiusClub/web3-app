@@ -9,7 +9,7 @@ import TopBar from "./components/AppBar";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
-
+import UserDashboard from "./components/sections/UserDashboard";
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
               path="/clubdashboard"
               element={<ProtectedRoute element={<ClubDashboard />} />}
             />
+            <Route path="/userdashboard" element={<UserDashboard />} />
           </Routes>
         </AuthLoading>
       </MainContent>
