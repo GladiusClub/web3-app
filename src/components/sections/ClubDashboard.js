@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../UserContext";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  tableCellClasses,
+} from "@mui/material";
 import { useFirebase } from "../firebaseContext";
 import { getDocs, collection } from "firebase/firestore";
 import { H1 } from "../styles/TextStyles";
@@ -14,12 +17,13 @@ import AccountBalance from "../Balance";
 import ShowNftCardButton from "../NftCard";
 import Balance from "../BalanceCard";
 import Box from "@mui/material/Box";
-
+import { FakeMembers } from "../../fakeData";
+import { styled } from "@mui/system";
 
 function ClubDashboard() {
   const { db } = useFirebase();
   const { userData } = useUser();
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState(FakeMembers);
 
   useEffect(() => {
     const fetchClubMembers = async () => {
@@ -50,33 +54,50 @@ function ClubDashboard() {
         {userData.address && <AccountBalance myAddress={userData.address} />}
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Address</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {members.map((member) => (
-              <TableRow key={member.name}>
-                <TableCell component="th" scope="row">
-                  {member.name}
-                </TableCell>
-                <TableCell>{member.email}</TableCell>
-                <TableCell>{member.address}</TableCell>
-                <TableCell>
-                  <ShowNftCardButton member={member}></ShowNftCardButton>
-                </TableCell>
+      <Box display="flex" justifyContent="center" width="100%">
+        <TableContainer component={Paper} sx={{ minWidth: 300, maxWidth: 800 }}>
+          <Table aria-label="simple table">
+            <TableHead
+              sx={{
+                background: "linear-gradient(45deg, #673ab7 30%, #3f51b5 90%)",
+              }}
+            >
+              <TableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Gladius Coins</StyledTableCell>
+                <StyledTableCell>NFTs Earned</StyledTableCell>
+                <StyledTableCell>Edit</StyledTableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {members.map((member) => (
+                <TableRow key={member.name}>
+                  <TableCell component="th" scope="row">
+                    {member.name}
+                  </TableCell>
+                  <TableCell>{member.gladiusCoins}</TableCell>
+                  <TableCell>{member.nftsEarned}</TableCell>
+                  <TableCell>
+                    <ShowNftCardButton member={member}></ShowNftCardButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </>
   );
 }
 
 export default ClubDashboard;
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));

@@ -3,7 +3,7 @@ import React from "react";
 import LandingPage from "./components/sections/LandingPage";
 import { Routes, Route } from "react-router-dom";
 import ClubDashboard from "./components/sections/ClubDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
+//import ProtectedRoute from "./components/ProtectedRoute";
 import TopBar from "./components/AppBar";
 //import SignUp from "./components/SignUp";
 import styled from "styled-components";
@@ -21,11 +21,14 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
+            {/*
             <Route
               path="/clubdashboard"
               element={<ProtectedRoute element={<ClubDashboard />} />}
             />
+            */}
             <Route path="/userdashboard" element={<UserDashboard />} />
+            <Route path="/clubdashboard" element={<ClubDashboard />} />
           </Routes>
         </AuthLoading>
       </MainContent>

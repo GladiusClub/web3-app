@@ -4,8 +4,8 @@ import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { styled } from "@mui/system";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { useFirebase } from "./firebaseContext";
+//import { signInWithEmailAndPassword } from "firebase/auth";
+//import { useFirebase } from "./firebaseContext";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
@@ -27,12 +27,15 @@ const LogInFields = styled("div")(({ theme }) => ({
 }));
 
 function LogIn() {
-  const { auth } = useFirebase();
+  //const { auth } = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSignIn = () => {
+    navigate("/clubdashboard");
+
+    /* 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -44,6 +47,7 @@ function LogIn() {
         const errorMessage = error.message;
         console.log(errorCode + errorMessage);
       });
+      */
   };
 
   return (

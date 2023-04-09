@@ -8,6 +8,7 @@ import { TypeAnimation } from "react-type-animation";
 import backgroundSvg from "../../img/quantum-gradient.svg";
 
 function LandingPage() {
+  //Email: bob@123.com Password: 123456
   return (
     <>
       <WaveBackground />
@@ -42,7 +43,6 @@ function LandingPage() {
         </TextWrapper>
         <LoginWrapper>
           <>
-            <p>Email: bob@123.com Password: 123456</p>
             <LogIn />
           </>
         </LoginWrapper>
