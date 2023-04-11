@@ -87,7 +87,7 @@ const ShowNftCardButton = ({ member }) => {
   return (
     <div>
       <Button variant="contained" color="secondary" onClick={handleClickOpen}>
-        Send NFT
+        Send
       </Button>
       <Dialog
         open={open}
