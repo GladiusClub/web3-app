@@ -10,6 +10,7 @@ import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/sections/UserDashboard";
+import Calendar from "./components/sections/Calendar";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
       <MainContent>
         <AuthLoading>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<Calendar />} />
             <Route path="/login" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
             {/*
