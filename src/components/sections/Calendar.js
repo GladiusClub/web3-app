@@ -54,7 +54,7 @@ function Calendar() {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.addEventSource({
-        googleCalendarApiKey: "AIzaSyACoMWF8kuIMjujR2owZH26GFv1qg0rRBU",
+        googleCalendarApiKey: `${process.env.REACT_APP_CALENDAR_APIKEY}`,
         googleCalendarId: "dcromp88@googlemail.com",
       });
     }
