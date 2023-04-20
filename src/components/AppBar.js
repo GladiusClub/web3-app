@@ -25,7 +25,10 @@ export default function TopBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="fixed"
-        sx={{ background: "linear-gradient(to right, #1c2b4b, #9b1aff)" }}
+        sx={{
+          background: "linear-gradient(to right, #1c2b4b, #9b1aff)",
+          zIndex: 9999,
+        }}
       >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ marginRight: "20px" }}>
