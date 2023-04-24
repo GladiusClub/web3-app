@@ -60,7 +60,7 @@ const listItems = [
 ];
 
 export default function ClubDashboard() {
-  const [selectedIcon, setSelectedIcon] = useState("");
+  const [selectedIcon, setSelectedIcon] = useState("People");
 
   const handleIconClick = (iconName) => {
     setSelectedIcon(iconName);
