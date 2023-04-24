@@ -1,143 +1,117 @@
-import React, { useState, useEffect } from "react";
-import { useUser } from "../UserContext";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  tableCellClasses,
-} from "@mui/material";
-import { useFirebase } from "../firebaseContext";
-import { getDocs, collection } from "firebase/firestore";
-//import { H1 } from "../styles/TextStyles";
-import AccountBalance from "../Balance";
-import ShowNftCardButton from "../NftCard";
-import Balance from "../BalanceCard";
+import React, { useState } from "react";
+import { styled } from "@mui/material/styles";
+import MuiDrawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
+import PeopleIcon from "@mui/icons-material/People";
 import Box from "@mui/material/Box";
-import { FakeMembers } from "../../fakeData";
-import { styled } from "@mui/system";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import SportsIcon from "@mui/icons-material/Sports";
-import SportsHandballIcon from "@mui/icons-material/SportsHandball";
-import CelebrationIcon from "@mui/icons-material/Celebration";
-import GroupWorkIcon from "@mui/icons-material/GroupWork";
+import ClubManagment from "./ClubManagement";
+import Calendar from "./Calendar";
 
-function ClubDashboard() {
-  const { db } = useFirebase();
-  const { userData } = useUser();
-  const [members, setMembers] = useState(FakeMembers);
-  const [value, setValue] = React.useState(0);
+const drawerWidth = 240;
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
+
+const listItems = [
+  { icon: <PeopleIcon />, name: "People", component: <ClubManagment /> },
+  { icon: <CalendarMonthIcon />, name: "Calendar", component: <Calendar /> },
+  {
+    icon: <LocalGroceryStoreIcon />,
+    name: "Store",
+    component: <PlaceholderText />,
+  },
+];
+
+export default function ClubDashboard() {
+  const [selectedIcon, setSelectedIcon] = useState("");
+
+  const handleIconClick = (iconName) => {
+    setSelectedIcon(iconName);
   };
 
-  useEffect(() => {
-    const fetchClubMembers = async () => {
-      if (!userData || !userData.club) {
-        return;
-      }
-
-      const membersCollection = collection(
-        db,
-        "club",
-        userData.club,
-        "members"
-      );
-      const membersSnapshot = await getDocs(membersCollection);
-      const membersData = membersSnapshot.docs.map((doc) => doc.data());
-      setMembers(membersData);
-    };
-
-    fetchClubMembers();
-  }, [userData, db]);
-
   return (
-    <>
-      {/*userData ? <H1>{userData.club}!</H1> : null*/}
-      {/*userData ? <p>Your club wallet address is {userData.address}!</p> : null*/}
-      <Box display="flex" flexDirection="row">
-        <Balance />
-        {userData.address && <AccountBalance myAddress={userData.address} />}
-      </Box>
-
-      <Box display="flex" justifyContent="center" width="100%">
-        <TableContainer component={Paper} sx={{ minWidth: 300, maxWidth: 800 }}>
-          <Box display="flex" justifyContent="center" width="100%" mb={2}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="icon label tabs example"
+    <Box sx={{ display: "flex" }}>
+      <Drawer variant="permanent">
+        <DrawerHeader></DrawerHeader>
+        <Divider />
+        <List>
+          {listItems.map((item, index) => (
+            <ListItem
+              key={index}
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => handleIconClick(item.name)}
             >
-              <Tab icon={<GroupWorkIcon />} label="ALL" />
-              <Tab icon={<SportsIcon />} label="COACHES" />
-              <Tab icon={<SportsHandballIcon />} label="ATHLETES" />
-              <Tab icon={<CelebrationIcon />} label="FANS" />
-            </Tabs>
-          </Box>
-          <Table aria-label="simple table">
-            <TableHead
-              sx={{
-                background: "linear-gradient(45deg, #673ab7 30%, #3f51b5 90%)",
-              }}
-            >
-              <TableRow>
-                <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell>Gladius Coins</StyledTableCell>
-                <StyledTableCell>NFTs Earned</StyledTableCell>
-                <StyledTableCell>Role</StyledTableCell>
-                <StyledTableCell>Transaction</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {members
-                .filter((member) => {
-                  switch (value) {
-                    case 0:
-                      return true;
-                    case 1:
-                      return member.role === "Coach";
-                    case 2:
-                      return member.role === "Athlete";
-                    case 3:
-                      return member.role === "Fan";
-                    default:
-                      return true;
-                  }
-                })
-                .map((member) => (
-                  <TableRow key={member.name}>
-                    <TableCell component="th" scope="row">
-                      {member.name}
-                    </TableCell>
-                    <TableCell>{member.gladiusCoins}</TableCell>
-                    <TableCell>{member.nftsEarned}</TableCell>
-                    <TableCell>{member.role}</TableCell>
-                    <TableCell>
-                      <ShowNftCardButton member={member}></ShowNftCardButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {selectedIcon === "People" && <ClubManagment />}
+        {selectedIcon === "Calendar" && <Calendar />}
+        {selectedIcon === "Store" && <PlaceholderText />}
       </Box>
-    </>
+    </Box>
   );
 }
 
-export default ClubDashboard;
+function PlaceholderText() {
+  const text =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit sit amet libero in lobortis. Aliquam semper, felis id faucibus hendrerit, lorem nulla pellentesque odio, quis efficitur lectus orci vel urna. Phasellus imperdiet nisl eget semper tempor. Etiam efficitur sem sed suscipit venenatis. Suspendisse euismod est ut lectus blandit, vitae egestas risus blandit. Nullam dignissim mi ut ante efficitur, sit amet dapibus orci accumsan. Praesent vestibulum turpis nec nunc congue, id bibendum libero suscipit. Duis malesuada semper est, vel dictum enim vehicula ut. Suspendisse potenti. Sed eget sodales mi. Ut dapibus metus sit amet mi vulputate, sit amet blandit libero luctus. Etiam congue vestibulum purus, id faucibus enim pellentesque nec. Nunc ut massa id odio facilisis euismod. Nam eget arcu vel tortor faucibus suscipit in a ante.";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+  return <p>{text}</p>;
+}

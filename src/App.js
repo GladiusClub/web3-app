@@ -11,7 +11,6 @@ import SignUp from "./components/sections/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/sections/UserDashboard";
 //import Calendar from "./components/sections/Calendar";
-import MiniDrawer from "./components/Drawer";
 
 function App() {
   return (
@@ -24,17 +23,7 @@ function App() {
             <Route path="/login" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/userdashboard" element={<UserDashboard />} />
-            <Route
-              path="/clubdashboard"
-              element={
-                <div style={{ display: "flex" }}>
-                  <MiniDrawer />
-                  <div style={{ flexGrow: 1 }}>
-                    <ClubDashboard />
-                  </div>
-                </div>
-              }
-            />
+            <Route path="/clubdashboard" element={<ClubDashboard />} />
           </Routes>
         </AuthLoading>
       </MainContent>
