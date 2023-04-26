@@ -12,6 +12,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import Box from "@mui/material/Box";
 import ClubManagment from "./ClubManagement";
 import Calendar from "./Calendar";
+import NftMarket from "./NftMarket";
 
 const drawerWidth = 240;
 
@@ -55,7 +56,7 @@ const listItems = [
   {
     icon: <LocalGroceryStoreIcon />,
     name: "Store",
-    component: <PlaceholderText />,
+    component: <NftMarket />,
   },
 ];
 
@@ -103,15 +104,10 @@ export default function ClubDashboard() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {selectedIcon === "People" && <ClubManagment />}
         {selectedIcon === "Calendar" && <Calendar />}
-        {selectedIcon === "Store" && <PlaceholderText />}
+        {selectedIcon === "Store" && <NftMarket />}
       </Box>
     </Box>
   );
 }
 
-function PlaceholderText() {
-  const text =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit sit amet libero in lobortis. Aliquam semper, felis id faucibus hendrerit, lorem nulla pellentesque odio, quis efficitur lectus orci vel urna. Phasellus imperdiet nisl eget semper tempor. Etiam efficitur sem sed suscipit venenatis. Suspendisse euismod est ut lectus blandit, vitae egestas risus blandit. Nullam dignissim mi ut ante efficitur, sit amet dapibus orci accumsan. Praesent vestibulum turpis nec nunc congue, id bibendum libero suscipit. Duis malesuada semper est, vel dictum enim vehicula ut. Suspendisse potenti. Sed eget sodales mi. Ut dapibus metus sit amet mi vulputate, sit amet blandit libero luctus. Etiam congue vestibulum purus, id faucibus enim pellentesque nec. Nunc ut massa id odio facilisis euismod. Nam eget arcu vel tortor faucibus suscipit in a ante.";
 
-  return <p>{text}</p>;
-}
