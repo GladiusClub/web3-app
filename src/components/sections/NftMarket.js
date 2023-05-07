@@ -48,7 +48,6 @@ export default function NftMarket() {
                 component="img"
                 src={image}
                 title={`Image ${index + 1}`}
-                objectFit="contain"
               />
               <CardContent>
                 <Typography gutterBottom variant="h6" component="div">

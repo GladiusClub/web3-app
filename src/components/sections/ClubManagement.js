@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../UserContext";
+import Typography from "@mui/material/Typography";
+
 import {
   Table,
   TableBody,
@@ -25,6 +27,7 @@ import SportsIcon from "@mui/icons-material/Sports";
 import SportsHandballIcon from "@mui/icons-material/SportsHandball";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
+import { estonianSportsClubs } from "../../fakeData";
 
 function ClubManagement() {
   const { db } = useFirebase();
@@ -60,6 +63,29 @@ function ClubManagement() {
     <>
       {/*userData ? <H1>{userData.club}!</H1> : null*/}
       {/*userData ? <p>Your club wallet address is {userData.address}!</p> : null*/}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-around",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <Typography variant="h3" gutterBottom>
+            {estonianSportsClubs[0].name}
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <img
+            src={estonianSportsClubs[0].logo}
+            alt={estonianSportsClubs[0].name}
+            style={{ width: "100px" }}
+          />
+        </Box>
+      </Box>
+
       <Box display="flex" flexDirection="row">
         <Balance />
         {userData.address && <AccountBalance myAddress={userData.address} />}

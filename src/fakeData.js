@@ -1,11 +1,27 @@
 export const fakeNames = ["Tõnu", "Piret", "Mart", "Anu", "Toomas"];
 export const estonianSportsClubs = [
-  "Kalev FC",
-  "Tartu Ülikooli Korvpalliklubi",
-  "Tallinna Jalgpalliklubi",
-  "Pärnu Spordiselts",
-  "Narva Võrkpalliklubi",
+  {
+    name: "Kalev FC",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/0/01/KalevTallinn.png",
+  },
+  {
+    name: "Tartu Ülikooli Korvpalliklubi",
+    logo: "https://via.placeholder.com/150x150?text=Tartu+Ülikooli+Korvpalliklubi",
+  },
+  {
+    name: "Tallinna Jalgpalliklubi",
+    logo: "https://via.placeholder.com/150x150?text=Tallinna+Jalgpalliklubi",
+  },
+  {
+    name: "Pärnu Spordiselts",
+    logo: "https://via.placeholder.com/150x150?text=Pärnu+Spordiselts",
+  },
+  {
+    name: "Narva Võrkpalliklubi",
+    logo: "https://via.placeholder.com/150x150?text=Narva+Võrkpalliklubi",
+  },
 ];
+
 
 export const FakeMembers = [
   {

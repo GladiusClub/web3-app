@@ -9,6 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import PeopleIcon from "@mui/icons-material/People";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import Box from "@mui/material/Box";
 import ClubManagment from "./ClubManagement";
 import Calendar from "./Calendar";
@@ -58,6 +59,10 @@ const listItems = [
     name: "Store",
     component: <NftMarket />,
   },
+  {
+    icon: <LeaderboardIcon />,
+    name: "Analytics",
+  },
 ];
 
 export default function ClubDashboard() {
@@ -105,9 +110,19 @@ export default function ClubDashboard() {
         {selectedIcon === "People" && <ClubManagment />}
         {selectedIcon === "Calendar" && <Calendar />}
         {selectedIcon === "Store" && <NftMarket />}
+        {selectedIcon === "Analytics" && <TextDisplay />}
       </Box>
     </Box>
   );
 }
 
+
+
+function TextDisplay() {
+  return (
+    <div>
+      <h1>Hello</h1>
+    </div>
+  );
+}
 
