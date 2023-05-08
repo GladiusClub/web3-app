@@ -5,27 +5,25 @@ import { Routes, Route } from "react-router-dom";
 import ClubDashboard from "./components/sections/ClubDashboard";
 //import ProtectedRoute from "./components/ProtectedRoute";
 import TopBar from "./components/AppBar";
-//import SignUp from "./components/SignUp";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/sections/UserDashboard";
-//import Calendar from "./components/sections/Calendar";
 
 function App() {
   return (
     <AppContainer>
       <TopBar></TopBar>
       <MainContent>
-        <AuthLoading>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LandingPage />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/userdashboard" element={<UserDashboard />} />
-            <Route path="/clubdashboard" element={<ClubDashboard />} />
-          </Routes>
-        </AuthLoading>
+        {/* <AuthLoading> This stops going back to home screen while you wait for auth*/}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LandingPage />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/userdashboard" element={<UserDashboard />} />
+          <Route path="/clubdashboard" element={<ClubDashboard />} />
+        </Routes>
+        {/* </AuthLoading>*/}
       </MainContent>
     </AppContainer>
   );
