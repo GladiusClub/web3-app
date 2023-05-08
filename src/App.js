@@ -7,7 +7,7 @@ import ClubDashboard from "./components/sections/ClubDashboard";
 import TopBar from "./components/AppBar";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
-import AuthLoading from "./components/AuthLoading";
+//import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/sections/UserDashboard";
 
 function App() {
