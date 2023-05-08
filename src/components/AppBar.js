@@ -9,17 +9,12 @@ import { Link, useLocation } from "react-router-dom";
 import { useUser } from "./UserContext";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "./firebaseContext";
+import { AccountCircle, Settings } from "@mui/icons-material"; // Import the profile icon
 
 const pages = ["For Users", "For Clubs"];
 
 export default function TopBar() {
-  const { user } = useUser();
   const location = useLocation();
-  const { auth } = useFirebase();
-
-  const handleLogout = () => {
-    signOut(auth);
-  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -31,16 +26,25 @@ export default function TopBar() {
         }}
       >
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ marginRight: "20px" }}>
-            GLADIUS
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-            {pages.map((page) => (
-              <MenuItem key={page}>
-                <Typography textAlign="center">{page}</Typography>
-              </MenuItem>
-            ))}
-          </Box>
+          <Link to="/" style={{ textDecoration: "none", color: "#8A2BE2" }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ marginRight: "20px" }}
+            >
+              GLADIUS
+            </Typography>
+          </Link>
+          {location.pathname === "/clubdashboard" ? null : (
+            <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+              {pages.map((page) => (
+                <MenuItem key={page}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
+              ))}
+            </Box>
+          )}
+
           <Box
             sx={{
               display: "flex",
@@ -49,48 +53,77 @@ export default function TopBar() {
               flexGrow: 1,
             }}
           >
-            {user ? (
-              <>
-                <p>{user.email}</p>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  sx={{ marginLeft: "10px" }}
-                  onClick={handleLogout}
-                >
-                  Log Out
-                </Button>
-              </>
-            ) : location.pathname === "/signup" ? (
-              <Link
-                to="/login"
-                style={{ textDecoration: "none", color: "#8A2BE2" }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  sx={{ marginLeft: "10px" }}
-                >
-                  Login
-                </Button>
-              </Link>
-            ) : (
-              <Link
-                to="/signup"
-                style={{ textDecoration: "none", color: "#8A2BE2" }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  sx={{ marginLeft: "10px" }}
-                >
-                  Sign Up
-                </Button>
-              </Link>
-            )}
+            <AuthButtons />
           </Box>
         </Toolbar>
       </AppBar>
     </Box>
   );
+}
+
+function AuthButtons() {
+  const location = useLocation();
+  const { user } = useUser();
+  const { auth } = useFirebase();
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
+
+  const LoggedIn = () => (
+    <>
+      <p>{user.email}</p>
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ marginLeft: "10px" }}
+        onClick={handleLogout}
+      >
+        Log Out
+      </Button>
+    </>
+  );
+
+  const ClubDashboard = () => (
+    <>
+      <AccountCircle sx={{ marginRight: "10px" }} />
+      <Settings sx={{ marginRight: "10px" }} />
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ marginLeft: "10px" }}
+        onClick={handleLogout}
+      >
+        Log Out
+      </Button>
+    </>
+  );
+
+  const LoginButton = () => (
+    <Link to="/login" style={{ textDecoration: "none", color: "#8A2BE2" }}>
+      <Button variant="contained" color="secondary" sx={{ marginLeft: "10px" }}>
+        Login
+      </Button>
+    </Link>
+  );
+
+  const SignupButton = () => (
+    <Link to="/signup" style={{ textDecoration: "none", color: "#8A2BE2" }}>
+      <Button variant="contained" color="secondary" sx={{ marginLeft: "10px" }}>
+        Sign Up
+      </Button>
+    </Link>
+  );
+
+  const renderAuthButtons = () => {
+    if (location.pathname === "/clubdashboard") {
+      return <ClubDashboard />;
+    }
+    if (user) {
+      return <LoggedIn />;
+    }
+
+    return location.pathname === "/signup" ? <LoginButton /> : <SignupButton />;
+  };
+  return renderAuthButtons();
 }

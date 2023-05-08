@@ -25,30 +25,35 @@ export const estonianSportsClubs = [
 
 export const FakeMembers = [
   {
+    id: 1,
     name: "Marten Kask",
     gladiusCoins: 0.54,
     nftsEarned: 6,
     role: "Athlete",
   },
   {
+    id: 2,
     name: "Liisa Tamm",
     gladiusCoins: 1.2,
     nftsEarned: 3,
     role: "Fan",
   },
   {
+    id: 3,
     name: "Peeter Sepp",
     gladiusCoins: 0.89,
     nftsEarned: 4,
     role: "Coach",
   },
   {
+    id: 4,
     name: "Kadri Koppel",
     gladiusCoins: 2.5,
     nftsEarned: 12,
     role: "Athlete",
   },
 ];
+
 
 
 
