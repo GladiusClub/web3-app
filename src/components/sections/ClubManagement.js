@@ -15,7 +15,7 @@ import {
 import { useFirebase } from "../firebaseContext";
 import { getDocs, collection } from "firebase/firestore";
 //import { H1 } from "../styles/TextStyles";
-import AccountBalance from "../Balance";
+//import AccountBalance from "../Balance";
 import ShowNftCardButton from "../NftCard";
 import Balance from "../BalanceCard";
 import Box from "@mui/material/Box";
@@ -99,33 +99,48 @@ function ClubManagement() {
           />
         </Box>
       </Box>
-
-      <Box display="flex" flexDirection="row">
-        <Balance />
-        {userData.address && <AccountBalance myAddress={userData.address} />}
+      <Box paddingTop="20px">
+        <Typography variant="h5" gutterBottom>
+          Club Summary
+        </Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Balance />
+          <Balance />
+          <Balance />
+        </Box>
       </Box>
+      {/*userData.address && <AccountBalance myAddress={userData.address} />*/}
 
-      <Box display="flex" justifyContent="center" width="100%">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example"
-        >
-          <Tab icon={<GroupWorkIcon />} label="All" />
-          <Tab icon={<SportsIcon />} label="Coaches" />
-          <Tab icon={<SportsHandballIcon />} label="Athletes" />
-          <Tab icon={<CelebrationIcon />} label="Fans" />
-        </Tabs>
+      <Box paddingTop="20px">
+        <Typography variant="h5" gutterBottom>
+          Club Members
+        </Typography>
+        <Box display="flex" justifyContent="center" width="100%">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example"
+          >
+            <Tab icon={<GroupWorkIcon />} label="All" />
+            <Tab icon={<SportsIcon />} label="Coaches" />
+            <Tab icon={<SportsHandballIcon />} label="Athletes" />
+            <Tab icon={<CelebrationIcon />} label="Fans" />
+          </Tabs>
+        </Box>
+        <Box display="flex" justifyContent="center" width="100%">
+          <MembersTable
+            members={members}
+            value={value}
+            onRoleChange={handleRoleChange}
+          />
+        </Box>
       </Box>
-
-      <Box display="flex" justifyContent="center" width="100%">
-        <MembersTable
-          members={members}
-          value={value}
-          onRoleChange={handleRoleChange}
-        />
+      <Box paddingTop="20px">
+        <Typography variant="h5" gutterBottom>
+          Club Inventory
+        </Typography>
       </Box>
     </>
   );
