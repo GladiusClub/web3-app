@@ -7,7 +7,7 @@ import ClubDashboard from "./components/sections/ClubDashboard";
 import TopBar from "./components/AppBar";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
-//import AuthLoading from "./components/AuthLoading";
+import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/sections/UserDashboard";
 
 function App() {
@@ -15,15 +15,15 @@ function App() {
     <AppContainer>
       <TopBar></TopBar>
       <MainContent>
-        {/* <AuthLoading> This stops going back to home screen while you wait for auth*/}
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LandingPage />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/userdashboard" element={<UserDashboard />} />
-          <Route path="/clubdashboard" element={<ClubDashboard />} />
-        </Routes>
-        {/* </AuthLoading>*/}
+        <AuthLoading>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LandingPage />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/userdashboard" element={<UserDashboard />} />
+            <Route path="/clubdashboard" element={<ClubDashboard />} />
+          </Routes>
+        </AuthLoading>
       </MainContent>
     </AppContainer>
   );
