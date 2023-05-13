@@ -38,12 +38,33 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import ImageListItemBar from "@mui/material/ImageListItemBar";
+import IconButton from "@mui/material/IconButton";
 
 function ClubManagement() {
   const { db } = useFirebase();
   const { userData } = useUser();
   const [members, setMembers] = useState(FakeMembers);
   const [value, setValue] = React.useState(0);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    async function loadImages() {
+      const loadedImages = await Promise.all(
+        Array.from({ length: 12 }, async (_, i) => {
+          const img = await import(`../../img/gladius_samples/${i + 1}.jpg`);
+          return img.default;
+        })
+      );
+      setImages(loadedImages);
+    }
+
+    loadImages();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -141,6 +162,7 @@ function ClubManagement() {
         <Typography variant="h5" gutterBottom>
           Club Inventory
         </Typography>
+        <ImageGrid images={images} />
       </Box>
     </>
   );
@@ -287,3 +309,28 @@ function MembersTable({ members, value, onRoleChange }) {
     </TableContainer>
   );
 }
+
+const ImageGrid = ({ images }) => (
+  <ImageList sx={{ width: 1000, height: 450 }} cols={4} gap={10}>
+    {images.map((img, index) => (
+      <ImageListItem key={index}>
+        <img src={img} alt={`nft cat ${index}`} loading="lazy" />
+        <ImageListItemBar
+          title={`Image ${index + 1}`}
+          subtitle={<span>by: author</span>}
+          position="below"
+          actionIcon={
+            <IconButton
+              aria-label={`info about Image ${index + 1}`}
+              edge="end"
+              sx={{ mr: 2 }}
+            >
+              <ArrowForwardIcon />
+            </IconButton>
+          }
+        />
+      </ImageListItem>
+    ))}
+  </ImageList>
+);
+

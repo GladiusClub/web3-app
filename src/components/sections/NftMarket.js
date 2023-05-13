@@ -11,6 +11,12 @@ import {
   Paper,
 } from "@mui/material";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
 const imageNames = [
   "Neon Samurai",
   "Hacker's Paradise",
@@ -35,6 +41,8 @@ const imageNames = [
 
 export default function NftMarket() {
   const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function loadImages() {
@@ -49,6 +57,15 @@ export default function NftMarket() {
 
     loadImages();
   }, []);
+
+  const handleBuyClick = (image) => {
+    setSelectedImage(image);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const cardStyle = {
     maxWidth: 345,
@@ -94,6 +111,7 @@ export default function NftMarket() {
                   color="secondary"
                   size="small"
                   sx={{ fontSize: "0.8rem" }}
+                  onClick={() => handleBuyClick(image)}
                 >
                   Buy
                 </Button>
@@ -102,6 +120,7 @@ export default function NftMarket() {
           </Grid>
         ))}
       </Grid>
+      <BuyDialog open={open} onClose={handleClose} image={selectedImage} />
     </div>
   );
 }
@@ -141,3 +160,35 @@ const NftCollection = ({ title, description, images }) => {
     </Paper>
   );
 };
+
+function BuyDialog({ open, onClose, image }) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Buy NFT</DialogTitle>
+      <DialogContent>
+        <DialogContent>
+          <Box display="flex">
+            <img
+              src={image}
+              alt=""
+              style={{ width: "50%", height: "auto", marginRight: "16px" }}
+            />
+            <DialogContentText>
+              {/* Placeholder metadata */}
+              Title: Placeholder Title
+              <br />
+              Price: $100
+            </DialogContentText>
+          </Box>
+        </DialogContent>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>Add to Basket</Button>
+        <Button onClick={onClose} color="secondary">
+          Buy Now
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}

@@ -14,6 +14,7 @@ import Box from "@mui/material/Box";
 import ClubManagment from "./ClubManagement";
 import Calendar from "./Calendar";
 import NftMarket from "./NftMarket";
+import LineChart from "./ClubAnlytics";
 
 const drawerWidth = 240;
 
@@ -110,19 +111,10 @@ export default function ClubDashboard() {
         {selectedIcon === "People" && <ClubManagment />}
         {selectedIcon === "Calendar" && <Calendar />}
         {selectedIcon === "Store" && <NftMarket />}
-        {selectedIcon === "Analytics" && <TextDisplay />}
+        {selectedIcon === "Analytics" && <LineChart />}
       </Box>
     </Box>
   );
 }
 
-
-
-function TextDisplay() {
-  return (
-    <div>
-      <h1>Hello</h1>
-    </div>
-  );
-}
 

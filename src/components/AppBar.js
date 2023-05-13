@@ -10,6 +10,7 @@ import { useUser } from "./UserContext";
 import { signOut } from "firebase/auth";
 import { useFirebase } from "./firebaseContext";
 import { AccountCircle, Settings } from "@mui/icons-material"; // Import the profile icon
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const pages = ["For Users", "For Clubs"];
 
@@ -88,6 +89,7 @@ function AuthButtons() {
     <>
       <AccountCircle sx={{ marginRight: "10px" }} />
       <Settings sx={{ marginRight: "10px" }} />
+      <ShoppingCartIcon sx={{ marginRight: "10px" }} />
       <Button
         variant="contained"
         color="secondary"
