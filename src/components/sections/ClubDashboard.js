@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -67,7 +67,14 @@ const listItems = [
 ];
 
 export default function ClubDashboard() {
-  const [selectedIcon, setSelectedIcon] = useState("People");
+  // Initialize state from localStorage or use default
+  const [selectedIcon, setSelectedIcon] = useState(
+    localStorage.getItem("selectedIcon") || "People"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("selectedIcon", selectedIcon);
+  }, [selectedIcon]);
 
   const handleIconClick = (iconName) => {
     setSelectedIcon(iconName);
@@ -116,5 +123,3 @@ export default function ClubDashboard() {
     </Box>
   );
 }
-
-
