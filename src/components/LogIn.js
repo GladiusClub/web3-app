@@ -13,6 +13,8 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Box } from "@mui/material";
 
+
+
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
   top: "50%",
@@ -107,7 +109,7 @@ function LogIn() {
       </CardContent>
       <Box sx={{ width: 1, marginTop: "10px" }}>
         <ToggleButtonGroup
-          color="primary"
+          color="secondary"
           value={role}
           exclusive
           onChange={handleRoleChange}
