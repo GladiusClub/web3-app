@@ -8,7 +8,7 @@ import TopBar from "./components/AppBar";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
-import UserDashboard from "./components/sections/UserDashboard";
+import UserDashboard from "./components/UserSection/UserDashboard";
 
 function App() {
   return (

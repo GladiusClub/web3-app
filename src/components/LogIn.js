@@ -9,12 +9,17 @@ import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { Box } from "@mui/material";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
   top: "50%",
   transform: "translateY(-50%)",
-  padding: theme.spacing(2),
+  padding: `${theme.spacing(2)}px ${theme.spacing(2)}px 0 ${theme.spacing(
+    2
+  )}px`,
   width: "30%",
   minWidth: "300px",
   borderRadius: theme.spacing(1),
@@ -30,10 +35,22 @@ function LogIn() {
   //const { auth } = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("Athlete/Fan");
+
   const navigate = useNavigate();
 
+  const handleRoleChange = (event, newRole) => {
+    if (newRole !== null) {
+      setRole(newRole);
+    }
+  };
+
   const handleSignIn = () => {
-    navigate("/clubdashboard");
+    if (role === "Club") {
+      navigate("/clubdashboard");
+    } else {
+      navigate("/userdashboard");
+    }
 
     /* 
     signInWithEmailAndPassword(auth, email, password)
@@ -88,6 +105,40 @@ function LogIn() {
           </Button>
         </form>
       </CardContent>
+      <Box sx={{ width: 1, marginTop: "10px" }}>
+        <ToggleButtonGroup
+          color="primary"
+          value={role}
+          exclusive
+          onChange={handleRoleChange}
+          fullWidth
+        >
+          <ToggleButton
+            value="Athlete/Fan"
+            sx={{
+              flexGrow: 1,
+              borderRadius: "0 0 4px 4px",
+              border: "none",
+              borderTop: "0.4px solid",
+              borderRight: "0.2px solid",
+            }}
+          >
+            Athlete/Fan
+          </ToggleButton>
+          <ToggleButton
+            value="Club"
+            sx={{
+              flexGrow: 1,
+              borderRadius: "0 0 4px 4px",
+              border: "none",
+              borderTop: "0.4px solid",
+              borderLeft: "0.2px solid",
+            }}
+          >
+            Club
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
     </LogInCard>
   );
 }
