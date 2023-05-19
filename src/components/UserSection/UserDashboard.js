@@ -6,38 +6,56 @@ import Paper from "@mui/material/Paper";
 import { H2 } from "../styles/TextStyles";
 import Balance from "../BalanceCard";
 import { Box } from "@mui/system";
+import DrawerComponent from "../navigation/Drawer";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PeopleIcon from "@mui/icons-material/People";
+
+const listItems = [
+  { icon: <PeopleIcon />, name: "People" },
+  { icon: <CalendarMonthIcon />, name: "Calendar" },
+];
 
 export default function UserDashboard() {
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
-      <Box>
-        <H2>My NFT collection</H2>
-        <Paper
-          elevation={3}
-          sx={{ borderRadius: "4px", padding: "16px", display: "inline-block" }}
-        >
-          <ImageList sx={{ width: 500, height: 480 }}>
-            {itemData.map((item) => (
-              <ImageListItem key={item.img}>
-                <img
-                  src={`${item.img}?w=248&fit=crop&auto=format`}
-                  srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                  alt={item.title}
-                  loading="lazy"
-                />
-                <ImageListItemBar
-                  title={item.title}
-                  subtitle={<span>by: {item.author}</span>}
-                  position="below"
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
-        </Paper>
-      </Box>
-      <Box>
-        <H2>Assets</H2>
-        <Balance></Balance>
+    <Box sx={{ display: "flex" }}>
+      <DrawerComponent
+        handleIconClick={() => {}}
+        listItems={listItems}
+      ></DrawerComponent>
+      <Box sx={{ display: "flex", flexDirection: "row", p: 3 }}>
+        <Box>
+          <H2>My NFT collection</H2>
+          <Paper
+            elevation={3}
+            sx={{
+              borderRadius: "4px",
+              padding: "16px",
+              display: "inline-block",
+            }}
+          >
+            <ImageList sx={{ width: 500, height: 480 }}>
+              {itemData.map((item) => (
+                <ImageListItem key={item.img}>
+                  <img
+                    src={`${item.img}?w=248&fit=crop&auto=format`}
+                    srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    alt={item.title}
+                    loading="lazy"
+                  />
+                  <ImageListItemBar
+                    title={item.title}
+                    subtitle={<span>by: {item.author}</span>}
+                    position="below"
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+          </Paper>
+        </Box>
+        <Box>
+          <H2>Assets</H2>
+          <Balance></Balance>
+        </Box>
       </Box>
     </Box>
   );
