@@ -11,6 +11,7 @@ import { signOut } from "firebase/auth";
 import { useFirebase } from "../firebaseContext";
 import { AccountCircle, Settings } from "@mui/icons-material"; // Import the profile icon
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import WalletIcon from "@mui/icons-material/Wallet";
 
 const pages = ["For Users", "For Clubs"];
 
@@ -36,7 +37,8 @@ export default function TopBar() {
               GLADIUS
             </Typography>
           </Link>
-          {location.pathname === "/clubdashboard" ? null : (
+          {location.pathname === "/clubdashboard" ||
+          location.pathname === "/userdashboard" ? null : (
             <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
               {pages.map((page) => (
                 <MenuItem key={page}>
@@ -101,6 +103,20 @@ function AuthButtons() {
     </>
   );
 
+  const UserDashboard = () => (
+    <>
+      <WalletIcon sx={{ marginRight: "10px" }} />
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ marginLeft: "10px" }}
+        onClick={handleLogout}
+      >
+        Log Out
+      </Button>
+    </>
+  );
+
   const LoginButton = () => (
     <Link to="/login" style={{ textDecoration: "none", color: "#8A2BE2" }}>
       <Button variant="contained" color="secondary" sx={{ marginLeft: "10px" }}>
@@ -120,6 +136,9 @@ function AuthButtons() {
   const renderAuthButtons = () => {
     if (location.pathname === "/clubdashboard") {
       return <ClubDashboard />;
+    }
+    if (location.pathname === "/userdashboard") {
+      return <UserDashboard />;
     }
     if (user) {
       return <LoggedIn />;
