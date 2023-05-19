@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -6,11 +6,6 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
-import PeopleIcon from "@mui/icons-material/People";
-
-
 
 const drawerWidth = 240;
 
@@ -19,7 +14,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -48,26 +42,19 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-const listItems = [
-  {
-    icon: <PeopleIcon />,
-  },
-  {
-    icon: <CalendarMonthIcon />,
-  },
-  {
-    icon: <LocalGroceryStoreIcon />,
-  },
-];
-
-export default function MiniDrawer() {
+export default function DrawerComponent({ handleIconClick, listItems }) {
   return (
     <Drawer variant="permanent">
-      <DrawerHeader></DrawerHeader>
+      <DrawerHeader />
       <Divider />
       <List>
         {listItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
+          <ListItem
+            key={index}
+            disablePadding
+            sx={{ display: "block" }}
+            onClick={() => handleIconClick(item.name)}
+          >
             <ListItemButton
               sx={{
                 minHeight: 48,

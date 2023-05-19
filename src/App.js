@@ -4,7 +4,7 @@ import LandingPage from "./components/sections/LandingPage";
 import { Routes, Route } from "react-router-dom";
 import ClubDashboard from "./components/sections/ClubDashboard";
 //import ProtectedRoute from "./components/ProtectedRoute";
-import TopBar from "./components/AppBar";
+import TopBar from "./components/navigation/AppBar";
 import styled from "styled-components";
 import SignUp from "./components/sections/SignUpPage";
 import AuthLoading from "./components/AuthLoading";

@@ -6,9 +6,9 @@ import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { Link, useLocation } from "react-router-dom";
-import { useUser } from "./UserContext";
+import { useUser } from "../UserContext";
 import { signOut } from "firebase/auth";
-import { useFirebase } from "./firebaseContext";
+import { useFirebase } from "../firebaseContext";
 import { AccountCircle, Settings } from "@mui/icons-material"; // Import the profile icon
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
