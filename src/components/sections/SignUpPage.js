@@ -9,11 +9,44 @@ import Box from "@mui/material/Box";
 import SignUpForm from "../SignUpForm";
 
 function SignUp() {
+  const [step, setStep] = useState(0);
   const [userType, setUserType] = useState("");
+  const [userDetails, setUserDetails] = useState({});
+  console.log(userDetails);
 
-  const handleUserTypeSelection = (type) => {
-    setUserType(type);
-  };
+  const clubSteps = [
+    <UserTypeSelection
+      onSelection={(type) => {
+        setUserType(type);
+        setStep(step + 1);
+      }}
+    />,
+    <SignUpForm
+      userType={userType}
+      onSubmit={(details) => {
+        setUserDetails(details);
+        setStep(step + 1);
+      }}
+    />,
+  ];
+
+  const athleteSteps = [
+    <UserTypeSelection
+      onSelection={(type) => {
+        setUserType(type);
+        setStep(step + 1);
+      }}
+    />,
+    <SignUpForm
+      userType={userType}
+      onSubmit={(details) => {
+        setUserDetails(details);
+        setStep(step + 1);
+      }}
+    />,
+  ];
+
+  const steps = userType === "club" ? clubSteps : athleteSteps;
 
   return (
     <div
@@ -24,45 +57,47 @@ function SignUp() {
         alignItems: "center",
       }}
     >
-      {userType ? (
-        <SignUpForm userType={userType} />
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "60px", // Adjust this value to your desired spacing
-          }}
-        >
-          <Typography variant="h6" component="div">
-            What are you doing here?
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-              gap: "52px",
-            }}
-          >
-            <UserTypeCard
-              icon={<SportsIcon fontSize="large" />}
-              title="Club"
-              onClick={() => handleUserTypeSelection("club")}
-            />
-            <UserTypeCard
-              icon={<SportsHandballIcon fontSize="large" />}
-              title="Athlete"
-              onClick={() => handleUserTypeSelection("athlete")}
-            />
-          </Box>
-        </Box>
-      )}
+      {steps[step]}
     </div>
   );
 }
+
+const UserTypeSelection = ({ onSelection }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "60px", // Adjust this value to your desired spacing
+      }}
+    >
+      <Typography variant="h6" component="div">
+        What type of Gladius account would you like to make?
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-evenly",
+          alignItems: "center",
+          gap: "52px",
+        }}
+      >
+        <UserTypeCard
+          icon={<SportsIcon fontSize="large" />}
+          title="Club"
+          onClick={() => onSelection("club")}
+        />
+        <UserTypeCard
+          icon={<SportsHandballIcon fontSize="large" />}
+          title="Athlete/Fan"
+          onClick={() => onSelection("athlete")}
+        />
+      </Box>
+    </Box>
+  );
+};
 
 const UserTypeCard = ({ icon, title, onClick }) => (
   <Card sx={{ width: "400px", height: "400px" }}>
