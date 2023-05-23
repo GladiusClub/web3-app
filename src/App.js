@@ -1,12 +1,12 @@
 import "./App.css";
 import React from "react";
-import LandingPage from "./components/sections/LandingPage";
+import LandingPage from "./components/clubSection/LandingPage";
 import { Routes, Route } from "react-router-dom";
-import ClubDashboard from "./components/sections/ClubDashboard";
+import ClubDashboard from "./components/clubSection/ClubDashboard";
 //import ProtectedRoute from "./components/ProtectedRoute";
 import TopBar from "./components/navigation/AppBar";
 import styled from "styled-components";
-import SignUp from "./components/SignUpSection/SignUpPage";
+import SignUp from "./components/signUpAndLogin/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/UserSection/UserDashboard";
 

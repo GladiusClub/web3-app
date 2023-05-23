@@ -1,4 +1,4 @@
-import { fakeNames, estonianSportsClubs } from "../fakeData";
+import { fakeNames, estonianSportsClubs } from "../../fakeData";
 
 const handleFakeUsers = () => {
   for (let i = 0; i < fakeNames.length; i++) {

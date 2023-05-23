@@ -8,6 +8,7 @@ import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import SignUpForm from "./SignUpForm";
 import ClubSelect from "./ClubSelect";
+import ClubStep2 from "./ClubLoginStep2";
 
 function SignUp() {
   const [step, setStep] = useState(0);
@@ -29,6 +30,7 @@ function SignUp() {
         setStep(step + 1);
       }}
     />,
+    <ClubStep2></ClubStep2>,
   ];
 
   const athleteSteps = [

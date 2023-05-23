@@ -2,7 +2,7 @@ import React from "react";
 import styled, { keyframes } from "styled-components";
 //import SignUp from "../SignUp";
 import { themes } from "../styles/ColorStyles";
-import LogIn from "../LogIn";
+import LogIn from "../signUpAndLogin/LogIn";
 import { H1, MediumText } from "../styles/TextStyles";
 import { TypeAnimation } from "react-type-animation";
 import backgroundSvg from "../../img/quantum-gradient.svg";
@@ -101,7 +101,6 @@ const WaveBackground = styled.div`
   backdrop-filter: blur(4px);
   z-index: -1;
 `;
-
 
 const Description = styled(MediumText)``;
 

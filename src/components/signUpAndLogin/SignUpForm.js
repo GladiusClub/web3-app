@@ -89,7 +89,7 @@ function SignUpForm({ userType, onSubmit }) {
               <TextField
                 label="Club Name"
                 type="name"
-                value={name}
+                value={clubName}
                 onChange={(e) => setClubName(e.target.value)}
                 color="secondary"
                 sx={{
@@ -152,4 +152,3 @@ function SignUpForm({ userType, onSubmit }) {
 }
 
 export default SignUpForm;
-  
