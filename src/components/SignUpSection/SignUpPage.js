@@ -6,7 +6,8 @@ import SportsIcon from "@mui/icons-material/Sports";
 import SportsHandballIcon from "@mui/icons-material/SportsHandball";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import SignUpForm from "../SignUpForm";
+import SignUpForm from "./SignUpForm";
+import ClubSelect from "./ClubSelect";
 
 function SignUp() {
   const [step, setStep] = useState(0);
@@ -44,6 +45,7 @@ function SignUp() {
         setStep(step + 1);
       }}
     />,
+    <ClubSelect></ClubSelect>,
   ];
 
   const steps = userType === "club" ? clubSteps : athleteSteps;

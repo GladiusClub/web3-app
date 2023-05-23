@@ -6,7 +6,7 @@ import ClubDashboard from "./components/sections/ClubDashboard";
 //import ProtectedRoute from "./components/ProtectedRoute";
 import TopBar from "./components/navigation/AppBar";
 import styled from "styled-components";
-import SignUp from "./components/sections/SignUpPage";
+import SignUp from "./components/SignUpSection/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/UserSection/UserDashboard";
 
@@ -32,7 +32,7 @@ function App() {
 export default App;
 
 const MainContent = styled.div`
-  padding-top: 64px; // Adjust the padding value based on the AppBar height
+  margin-top: 64px; // Adjust the padding value based on the AppBar height
 `;
 
 const AppContainer = styled.div`
