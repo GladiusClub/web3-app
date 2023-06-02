@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import CreateClassTable from "../Tables/CreateClassTable";
 
 const classes = [
   { name: "Adult Soccer", size: 12 },
@@ -146,15 +147,18 @@ const steps = [
 function HorizontalLinearStepper({ handleSubmit }) {
   const [activeStep, setActiveStep] = useState(0);
   const [className, setClassName] = useState("");
-  const [members, setMembers] = useState([]);
   const [events, setEvents] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => {
+      if (prevActiveStep === steps.length - 1) {
+        handleSubmit();
+      }
+      const nextStep = prevActiveStep + 1;
 
-    if (activeStep === steps.length - 1) {
-      handleSubmit();
-    }
+      return nextStep;
+    });
   };
 
   const handleBack = () => {
@@ -165,12 +169,21 @@ function HorizontalLinearStepper({ handleSubmit }) {
     setClassName(event.target.value);
   };
 
-  const handleMembersChange = (event) => {
-    setMembers(event.target.value);
-  };
-
   const handleEventsChange = (event) => {
     setEvents(event.target.value);
+  };
+
+  const handleCheckboxChange = (event, member) => {
+    const isChecked = event.target.checked;
+
+    setSelectedMembers((prevSelectedMembers) => {
+      if (isChecked) {
+        return [...prevSelectedMembers, member];
+      } else {
+        return prevSelectedMembers.filter((m) => m !== member);
+      }
+    });
+    console.log(selectedMembers);
   };
 
   const renderStepContent = () => {
@@ -190,7 +203,9 @@ function HorizontalLinearStepper({ handleSubmit }) {
         return (
           <div>
             <Typography>Members:</Typography>
-            <input type="text" value={members} onChange={handleMembersChange} />
+            <CreateClassTable
+              handleCheckboxChange={handleCheckboxChange}
+            ></CreateClassTable>
           </div>
         );
       case 2:
@@ -206,32 +221,36 @@ function HorizontalLinearStepper({ handleSubmit }) {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+    <React.Fragment>
+      {activeStep < steps.length && (
+        <Box sx={{ width: "100%" }}>
+          <Stepper activeStep={activeStep}>
+            {steps.map((label, index) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
 
-      <React.Fragment>
-        <Box sx={{ mt: 2 }}>{renderStepContent()}</Box>
-        <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-          <Button
-            color="inherit"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            sx={{ mr: 1 }}
-          >
-            Back
-          </Button>
-          <Box sx={{ flex: "1 1 auto" }} />
-          <Button onClick={handleNext}>
-            {activeStep === steps.length - 1 ? "Submit" : "Next"}
-          </Button>
+          <div>
+            <Box sx={{ mt: 2 }}>{renderStepContent()}</Box>
+            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              <Box sx={{ flex: "1 1 auto" }} />
+              <Button onClick={handleNext}>
+                {activeStep >= steps.length - 1 ? "Submit" : "Next"}
+              </Button>
+            </Box>
+          </div>
         </Box>
-      </React.Fragment>
-    </Box>
+      )}
+    </React.Fragment>
   );
 }
