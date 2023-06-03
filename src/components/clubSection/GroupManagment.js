@@ -21,6 +21,7 @@ import {
 import { styled } from "@mui/system";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CreateClassTable from "../Tables/CreateClassTable";
+import EventsTable from "../Tables/EventsTable";
 
 const classes = [
   { name: "Adult Soccer", size: 12 },
@@ -147,8 +148,10 @@ const steps = [
 function HorizontalLinearStepper({ handleSubmit }) {
   const [activeStep, setActiveStep] = useState(0);
   const [className, setClassName] = useState("");
-  const [events, setEvents] = useState([]);
+  const [selectedEvents, setSelectedEvents] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
+
+  console.log(selectedEvents);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {
@@ -167,10 +170,6 @@ function HorizontalLinearStepper({ handleSubmit }) {
 
   const handleClassNameChange = (event) => {
     setClassName(event.target.value);
-  };
-
-  const handleEventsChange = (event) => {
-    setEvents(event.target.value);
   };
 
   const handleCheckboxChange = (event, member) => {
@@ -212,7 +211,7 @@ function HorizontalLinearStepper({ handleSubmit }) {
         return (
           <div>
             <Typography>Events:</Typography>
-            <input type="text" value={events} onChange={handleEventsChange} />
+            <EventsTable setSelectedEvents={setSelectedEvents}></EventsTable>
           </div>
         );
       default:
