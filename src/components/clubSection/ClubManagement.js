@@ -44,8 +44,7 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 import IconButton from "@mui/material/IconButton";
-import GroupGrid from "./GroupManagment";
-import ClassTable from "./GroupManagmentAlt";
+import ClassDetails from "./GroupManagment";
 
 function ClubManagement() {
   const { db } = useFirebase();
@@ -137,14 +136,7 @@ function ClubManagement() {
         <Typography variant="h5" gutterBottom>
           Class Managment
         </Typography>
-        <GroupGrid></GroupGrid>
-      </Box>
-
-      <Box paddingTop="20px">
-        <Typography variant="h5" gutterBottom>
-          Class Managment Alternative
-        </Typography>
-        <ClassTable></ClassTable>
+        <ClassDetails></ClassDetails>
       </Box>
 
       <Box paddingTop="20px">
