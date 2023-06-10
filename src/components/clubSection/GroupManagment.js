@@ -122,7 +122,6 @@ function HorizontalLinearStepper({ handleSubmit }) {
       case 2:
         return (
           <div>
-            <Typography>Events:</Typography>
             <EventsTable setSelectedEvents={setSelectedEvents}></EventsTable>
           </div>
         );

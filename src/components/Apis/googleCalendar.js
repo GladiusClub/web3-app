@@ -8,7 +8,7 @@ export async function getCalendarEvents(timeMin) {
     const response = await axios.get(
       `https://www.googleapis.com/calendar/v3/calendars/${googleCalendarId}/events?key=${googleCalendarApiKey}&timeMin=${timeMin}`
     );
-    return response.data; // Return the response data directly
+    return response.data;
   } catch (error) {
     console.log(error);
     return [];
