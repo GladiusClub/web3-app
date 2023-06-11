@@ -1,4 +1,5 @@
 import React from "react";
+
 import {
   Table,
   TableBody,
@@ -9,8 +10,10 @@ import {
   Paper,
   tableCellClasses,
   Typography,
+  IconButton,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import EditIcon from "@mui/icons-material/Edit";
 
 const classes = [
   { name: "Adult Soccer", size: 12 },
@@ -41,7 +44,9 @@ const ClassTable = () => {
         >
           <TableRow>
             <StyledTableCell>Class</StyledTableCell>
+            <StyledTableCell align="right">Next Event</StyledTableCell>
             <StyledTableCell align="right">Class Size</StyledTableCell>
+            <StyledTableCell align="right">Edit</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -53,6 +58,7 @@ const ClassTable = () => {
               <TableCell component="th" scope="row">
                 {item.name}
               </TableCell>
+              <TableCell align="right"></TableCell>
               <TableCell align="right">
                 <Typography
                   variant="h6"
@@ -62,6 +68,12 @@ const ClassTable = () => {
                 >
                   {item.size}
                 </Typography>
+              </TableCell>
+
+              <TableCell align="right">
+                <IconButton>
+                  <EditIcon />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}

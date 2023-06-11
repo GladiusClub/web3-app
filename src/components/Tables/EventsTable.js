@@ -8,8 +8,7 @@ import {
   TableCell,
   Checkbox,
 } from "@mui/material";
-import { getCalendarEvents } from "../Apis/googleCalendar";
-import { rrulestr } from "rrule";
+import { getFormattedCalendarEvents } from "../Apis/googleCalendar";
 
 function EventRow({ event, handleEventsChange }) {
   return (
@@ -47,30 +46,8 @@ function EventsTable({ setSelectedEvents }) {
 
   useEffect(() => {
     const now = moment().toISOString();
-    getCalendarEvents(now)
-      .then((data) => {
-        const items = data.items;
-        const formattedEvents = items.map((event) => {
-          let recurring = event.recurrence ? true : false;
-          let recuring_text = "";
-          let start = moment(event.start.dateTime || event.start.date).format(
-            "LT"
-          );
-          if (recurring) {
-            const rrule = rrulestr(event.recurrence[0]);
-            recuring_text = rrule.toText();
-            if (rrule.origOptions.dtstart) {
-              start = moment(rrule.origOptions.dtstart).format("LT");
-            }
-          }
-          return {
-            start: start,
-            summary: event.summary,
-            selected: false,
-            recurring: recurring,
-            recuring_text: recuring_text,
-          };
-        });
+    getFormattedCalendarEvents(now)
+      .then((formattedEvents) => {
         setEvents(formattedEvents);
       })
       .catch((error) => console.log(error));

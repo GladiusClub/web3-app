@@ -141,7 +141,7 @@ function ClubManagement() {
 
       <Box paddingTop="20px">
         <Typography variant="h5" gutterBottom>
-          Club Members
+          Member Managment
         </Typography>
         <Box display="flex" justifyContent="center" width="100%">
           <Tabs
