@@ -15,7 +15,7 @@ function EventRow({ event, handleEventsChange }) {
     <TableRow key={event.summary}>
       <TableCell>{event.summary}</TableCell>
       <TableCell>{event.start}</TableCell>
-      <TableCell>{event.recurring ? event.recuring_text : "No"}</TableCell>
+      <TableCell>{event.recurring ? event.recurringText : "No"}</TableCell>
       <TableCell>
         <Checkbox
           checked={event.selected || false}
@@ -48,6 +48,7 @@ function EventsTable({ setSelectedEvents }) {
     const now = moment().toISOString();
     getFormattedCalendarEvents(now)
       .then((formattedEvents) => {
+        console.log(formattedEvents);
         setEvents(formattedEvents);
       })
       .catch((error) => console.log(error));
