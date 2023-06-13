@@ -23,7 +23,7 @@ function EventRow({ event, handleEventsChange }) {
         />
       </TableCell>
     </TableRow>
-  );
+  ); 
 }
 
 // This component represents the events table
