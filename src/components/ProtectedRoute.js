@@ -1,6 +1,6 @@
 import React from "react";
 import { useUser } from "./UserContext";
-import LandingPage from "./sections/LandingPage";
+import LandingPage from "./LandingPage";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useUser(); // assuming your UserContext provides a user state

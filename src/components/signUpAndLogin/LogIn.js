@@ -4,16 +4,14 @@ import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { styled } from "@mui/system";
-//import { signInWithEmailAndPassword } from "firebase/auth";
-//import { useFirebase } from "./firebaseContext";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Box } from "@mui/material";
-
-
+import { useFirebase } from "../firebaseContext";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
@@ -34,7 +32,7 @@ const LogInFields = styled("div")(({ theme }) => ({
 }));
 
 function LogIn() {
-  //const { auth } = useFirebase();
+  const { auth } = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("Athlete/Fan");
@@ -47,26 +45,44 @@ function LogIn() {
     }
   };
 
+  let timer;
+
+  const handleButtonPress = () => {
+    timer = setTimeout(() => {
+      signInWithEmailAndPassword(auth, "bob@123.com", "123456")
+        .then((userCredential) => {
+          // Signed in
+          //const user = userCredential.user;
+          navigate("/clubdashboard");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode + errorMessage);
+        });
+    }, 1000);
+  };
+
+  const handleButtonRelease = () => {
+    clearTimeout(timer);
+  };
+
   const handleSignIn = () => {
     if (role === "Club") {
-      navigate("/clubdashboard");
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          //const user = userCredential.user;
+          navigate("/clubdashboard");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode + errorMessage);
+        });
     } else {
       navigate("/userdashboard");
     }
-
-    /* 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        //const user = userCredential.user;
-        navigate("/clubdashboard");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode + errorMessage);
-      });
-      */
   };
 
   return (
@@ -102,7 +118,15 @@ function LogIn() {
             </Link>{" "}
             today
           </Typography>
-          <Button variant="contained" color="secondary" onClick={handleSignIn}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleSignIn}
+            onMouseDown={handleButtonPress}
+            onMouseUp={handleButtonRelease}
+            onTouchStart={handleButtonPress}
+            onTouchEnd={handleButtonRelease}
+          >
             Log In
           </Button>
         </form>
