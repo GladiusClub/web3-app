@@ -46,13 +46,11 @@ function LogIn() {
   };
 
   let timer;
-
+  // Long press to login as a test user
   const handleButtonPress = () => {
     timer = setTimeout(() => {
       signInWithEmailAndPassword(auth, "bob@123.com", "123456")
         .then((userCredential) => {
-          // Signed in
-          //const user = userCredential.user;
           navigate("/clubdashboard");
         })
         .catch((error) => {
