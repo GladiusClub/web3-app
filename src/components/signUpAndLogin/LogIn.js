@@ -12,6 +12,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Box } from "@mui/material";
 import { useFirebase } from "../firebaseContext";
+import { getDoc, doc } from "firebase/firestore";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
@@ -32,7 +33,7 @@ const LogInFields = styled("div")(({ theme }) => ({
 }));
 
 function LogIn() {
-  const { auth } = useFirebase();
+  const { db, auth } = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("Athlete/Fan");
@@ -47,10 +48,46 @@ function LogIn() {
 
   let timer;
   // Long press to login as a test user
+
   const handleButtonPress = () => {
     timer = setTimeout(() => {
-      signInWithEmailAndPassword(auth, "bob@123.com", "123456")
+      signInWithEmailAndPassword(auth, "bob@example.com", "123456")
         .then((userCredential) => {
+          const uid = userCredential.user.uid;
+          console.log("Bob's uid: ", uid);
+
+          const userDocRef = doc(db, "users", uid);
+          getDoc(userDocRef)
+            .then((docSnapshot) => {
+              if (docSnapshot.exists()) {
+                const userData = docSnapshot.data();
+                const ownerClubs = userData.owner;
+                console.log("Bob's clubs: ", ownerClubs);
+
+                // Retrieve the first club from the array
+                const firstClubId = ownerClubs[0];
+                const clubDocRef = doc(db, "clubs", firstClubId);
+
+                getDoc(clubDocRef)
+                  .then((clubDocSnapshot) => {
+                    if (clubDocSnapshot.exists()) {
+                      const clubData = clubDocSnapshot.data();
+                      console.log("First club data: ", clubData);
+                    } else {
+                      console.error("No such club!");
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error getting club data: ", error);
+                  });
+              } else {
+                console.error("No such user!");
+              }
+            })
+            .catch((error) => {
+              console.error("Error getting user data: ", error);
+            });
+
           navigate("/clubdashboard");
         })
         .catch((error) => {
