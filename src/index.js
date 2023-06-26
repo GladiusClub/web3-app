@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { FirebaseProvider } from "./components/firebaseContext";
-import { UserProvider } from "./components/UserContext";
+import { FirebaseProvider } from "./components/contexts/firebaseContext";
+import { UserProvider } from "./components/contexts/UserContext";
+import { ClubProvider } from "./components/contexts/clubContext";
 import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -12,9 +13,11 @@ root.render(
   <React.StrictMode>
     <FirebaseProvider>
       <UserProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <ClubProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ClubProvider>
       </UserProvider>
     </FirebaseProvider>
   </React.StrictMode>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useUser } from "../UserContext";
+import { useUser } from "../contexts/UserContext";
 import Typography from "@mui/material/Typography";
 
 import {
@@ -12,7 +12,7 @@ import {
   Paper,
   tableCellClasses,
 } from "@mui/material";
-import { useFirebase } from "../firebaseContext";
+import { useFirebase } from "../contexts/firebaseContext";
 import { getDocs, collection } from "firebase/firestore";
 //import { H1 } from "../styles/TextStyles";
 //import AccountBalance from "../Balance";
@@ -45,6 +45,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 import IconButton from "@mui/material/IconButton";
 import ClassDetails from "./GroupManagment";
+import { useClub } from "../contexts/clubContext";
 
 function ClubManagement() {
   const { db } = useFirebase();
@@ -52,6 +53,7 @@ function ClubManagement() {
   const [members, setMembers] = useState(FakeMembers);
   const [value, setValue] = React.useState(0);
   const [images, setImages] = useState([]);
+  const clubs = useClub();
 
   useEffect(() => {
     async function loadImages() {
@@ -110,7 +112,7 @@ function ClubManagement() {
       >
         <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
           <Typography variant="h3" gutterBottom>
-            {estonianSportsClubs[0].name}
+            {clubs.length > 0 ? clubs[0].name : "No club available"}
           </Typography>
         </Box>
         <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>

@@ -1,7 +1,7 @@
 import React from "react";
 import { ethers } from "ethers";
 import { Button } from "@mui/material";
-import { useUser } from "./UserContext";
+import { useUser } from "./contexts/UserContext";
 import SimpleCollectible from "../contracts/SimpleCollectible.json";
 
 const contractAddress = "0x91B2a730a76b50556Cb14B381D93040ca94f3C2A";

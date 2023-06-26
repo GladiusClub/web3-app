@@ -1,6 +1,6 @@
 // AuthLoading.js
 import React, { useState, useEffect } from "react";
-import { useFirebase } from "./firebaseContext";
+import { useFirebase } from "./contexts/firebaseContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 
