@@ -25,11 +25,26 @@ export const ClubProvider = ({ children }) => {
 
             // Retrieve club data for each club in ownerClubs
             const clubPromises = ownerClubIds.map((clubId) =>
-              getDoc(doc(db, "clubs", clubId))
+              getDoc(doc(db, "clubs", String(clubId)))
             );
 
             Promise.all(clubPromises).then((clubSnapshots) => {
-              const clubsData = clubSnapshots.map((snap) => snap.data());
+              const clubsData = clubSnapshots.map((snap) => {
+                const clubData = snap.data();
+                // Transform the user data in owners and athletes into a more convenient format
+                clubData.owners = clubData.owners.map((owner) => ({
+                  id: owner.uuid,
+                  name: owner.name,
+                  role: "Owner",
+                }));
+                clubData.athletes = clubData.athletes.map((athlete) => ({
+                  id: athlete.uuid,
+                  name: athlete.name,
+                  role: "Athlete",
+                }));
+
+                return clubData;
+              });
               setClubs(clubsData);
             });
           }
