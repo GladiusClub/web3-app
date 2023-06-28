@@ -19,9 +19,10 @@ import IconButton from "@mui/material/IconButton";
 import ClassDetails from "./GroupManagment";
 import { useClub } from "../contexts/clubContext";
 import MembersTable from "../Tables/MembersTable";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 function ClubManagement() {
-  const [members, setMembers] = useState();
+  const [clubMembers, setClubMembers] = useState();
   const [value, setValue] = React.useState(0);
   const [images, setImages] = useState([]);
   const clubs = useClub();
@@ -31,29 +32,14 @@ function ClubManagement() {
       return;
     }
 
-    const athletes = clubs[0].athletes.map((id) => {
-      return {
-        id: id,
-        name: id,
-        role: "Athlete",
-      };
-    });
+    const athletes = clubs[0].athletes;
 
-    const owners = clubs[0].owners.map((id) => {
-      return {
-        id: id,
-        name: id,
-        role: "Owner",
-      };
-    });
+    const owners = clubs[0].owners;
 
     const clubMembers = [...athletes, ...owners];
 
-    setMembers(clubMembers);
+    setClubMembers(clubMembers);
   }, [clubs]);
-
-  console.log(clubs[0]);
-
   useEffect(() => {
     async function loadImages() {
       const loadedImages = await Promise.all(
@@ -137,10 +123,15 @@ function ClubManagement() {
             <Tab icon={<SportsIcon />} label="Coaches" />
             <Tab icon={<SportsHandballIcon />} label="Athletes" />
             <Tab icon={<CelebrationIcon />} label="Fans" />
+            <Tab icon={<LockOpenIcon />} label="Owners" />
           </Tabs>
         </Box>
         <Box display="flex" justifyContent="center" width="100%">
-          {/*<MembersTable members={members} onRoleChange={handleRoleChange} />*/}
+          <MembersTable
+            members={clubMembers}
+            value={value}
+            onRoleChange={handleRoleChange}
+          />
         </Box>
       </Box>
       <Box paddingTop="20px">

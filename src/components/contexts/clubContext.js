@@ -33,12 +33,12 @@ export const ClubProvider = ({ children }) => {
                 const clubData = snap.data();
                 // Transform the user data in owners and athletes into a more convenient format
                 clubData.owners = clubData.owners.map((owner) => ({
-                  id: owner.uuid,
+                  email: owner.email,
                   name: owner.name,
                   role: "Owner",
                 }));
                 clubData.athletes = clubData.athletes.map((athlete) => ({
-                  id: athlete.uuid,
+                  email: athlete.email,
                   name: athlete.name,
                   role: "Athlete",
                 }));

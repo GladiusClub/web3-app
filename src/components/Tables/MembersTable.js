@@ -56,6 +56,7 @@ function RoleSelect({ member, onRoleChange }) {
           <MenuItem value="Coach">Coach</MenuItem>
           <MenuItem value="Athlete">Athlete</MenuItem>
           <MenuItem value="Fan">Fan</MenuItem>
+          <MenuItem value="Owner">Owner</MenuItem>
         </Select>
       </FormControl>
       <RoleChangeDialog
@@ -104,7 +105,7 @@ function MemberRow({ member, onRoleChange }) {
       <TableCell component="th" scope="row">
         {member.name}
       </TableCell>
-      <TableCell>{member.gladiusCoins}</TableCell>
+      <TableCell>{member.email}</TableCell>
       <TableCell>{member.nftsEarned}</TableCell>
       <TableCell>
         <RoleSelect member={member} onRoleChange={onRoleChange} />
@@ -118,7 +119,7 @@ function MemberRow({ member, onRoleChange }) {
 
 export default function MembersTable({ members, value, onRoleChange }) {
   return (
-    <TableContainer component={Paper} sx={{ minWidth: 300, maxWidth: 800 }}>
+    <TableContainer component={Paper} sx={{ minWidth: 300 }}>
       <Table aria-label="simple table">
         <TableHead
           sx={{
@@ -127,35 +128,38 @@ export default function MembersTable({ members, value, onRoleChange }) {
         >
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell>Gladius Coins</StyledTableCell>
+            <StyledTableCell>Email</StyledTableCell>
             <StyledTableCell>NFTs Earned</StyledTableCell>
             <StyledTableCell>Role</StyledTableCell>
             <StyledTableCell>Transaction</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {members
-            .filter((member) => {
-              switch (value) {
-                case 0:
-                  return true;
-                case 1:
-                  return member.role === "Coach";
-                case 2:
-                  return member.role === "Athlete";
-                case 3:
-                  return member.role === "Fan";
-                default:
-                  return true;
-              }
-            })
-            .map((member) => (
-              <MemberRow
-                key={member.id}
-                member={member}
-                onRoleChange={onRoleChange}
-              />
-            ))}
+          {members &&
+            members
+              .filter((member) => {
+                switch (value) {
+                  case 0:
+                    return true;
+                  case 1:
+                    return member.role === "Coach";
+                  case 2:
+                    return member.role === "Athlete";
+                  case 3:
+                    return member.role === "Fan";
+                  case 4:
+                    return member.role === "Owner";
+                  default:
+                    return true;
+                }
+              })
+              .map((member) => (
+                <MemberRow
+                  key={member.name}
+                  member={member}
+                  onRoleChange={onRoleChange}
+                />
+              ))}
         </TableBody>
       </Table>
     </TableContainer>
