@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useFirebase } from "./firebaseContext";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
 
 const ClubContext = createContext();
 
@@ -13,6 +13,8 @@ export const ClubProvider = ({ children }) => {
   const { auth, db } = useFirebase();
   const [clubs, setClubs] = useState([]);
 
+  //const updateUserRole = async () => {};
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (userCredential) => {
       if (userCredential) {
@@ -21,30 +23,38 @@ export const ClubProvider = ({ children }) => {
         getDoc(userDocRef).then((docSnapshot) => {
           if (docSnapshot.exists()) {
             const userData = docSnapshot.data();
-            const ownerClubIds = userData.owner;
 
-            // Retrieve club data for each club in ownerClubs
-            const clubPromises = ownerClubIds.map((clubId) =>
-              getDoc(doc(db, "clubs", String(clubId)))
+            const memberClubIds = userData.clubs_roles.map(
+              (club) => club.club_id
             );
 
-            Promise.all(clubPromises).then((clubSnapshots) => {
-              const clubsData = clubSnapshots.map((snap) => {
-                const clubData = snap.data();
-                // Transform the user data in owners and athletes into a more convenient format
-                clubData.owners = clubData.owners.map((owner) => ({
-                  email: owner.email,
-                  name: owner.name,
-                  role: "Owner",
-                }));
-                clubData.athletes = clubData.athletes.map((athlete) => ({
-                  email: athlete.email,
-                  name: athlete.name,
-                  role: "Athlete",
-                }));
+            Promise.all(
+              memberClubIds.map(async (clubId) => {
+                const clubDocRef = doc(db, "clubs", clubId);
+                const clubSnap = await getDoc(clubDocRef);
+                const clubData = clubSnap.data();
+
+                const memberCollectionRef = collection(clubDocRef, "users");
+                const memberQuerySnapshot = await getDocs(memberCollectionRef);
+
+                const memberDataPromises = memberQuerySnapshot.docs.map(
+                  async (doc) => {
+                    const memberData = doc.data();
+                    return {
+                      email: memberData.email,
+                      name: memberData.name,
+                      role: memberData.role,
+                    };
+                  }
+                );
+
+                const memberData = await Promise.all(memberDataPromises);
+
+                clubData.members = memberData;
 
                 return clubData;
-              });
+              })
+            ).then((clubsData) => {
               setClubs(clubsData);
             });
           }

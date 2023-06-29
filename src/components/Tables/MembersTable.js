@@ -53,10 +53,10 @@ function RoleSelect({ member, onRoleChange }) {
           value={member.role}
           onChange={(event) => openRoleChangeDialog(event.target.value)}
         >
-          <MenuItem value="Coach">Coach</MenuItem>
-          <MenuItem value="Athlete">Athlete</MenuItem>
-          <MenuItem value="Fan">Fan</MenuItem>
-          <MenuItem value="Owner">Owner</MenuItem>
+          <MenuItem value="coach">Coach</MenuItem>
+          <MenuItem value="athlete">Athlete</MenuItem>
+          <MenuItem value="fan">Fan</MenuItem>
+          <MenuItem value="owner">Owner</MenuItem>
         </Select>
       </FormControl>
       <RoleChangeDialog

@@ -28,18 +28,12 @@ function ClubManagement() {
   const clubs = useClub();
 
   useEffect(() => {
-    if (!clubs.length) {
-      return;
+    if (clubs[0]) {
+      setClubMembers(clubs[0].members);
+      console.log(clubs[0].members);
     }
-
-    const athletes = clubs[0].athletes;
-
-    const owners = clubs[0].owners;
-
-    const clubMembers = [...athletes, ...owners];
-
-    setClubMembers(clubMembers);
   }, [clubs]);
+
   useEffect(() => {
     async function loadImages() {
       const loadedImages = await Promise.all(
@@ -59,7 +53,8 @@ function ClubManagement() {
   };
 
   const handleRoleChange = (event, memberId) => {
-    // Change the data in the database
+    //const newRole = event.target.value;
+    //updateUserRole(memberId, newRole);
   };
 
   return (
@@ -78,7 +73,7 @@ function ClubManagement() {
       >
         <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
           <Typography variant="h3" gutterBottom>
-            {clubs.length > 0 ? clubs[0].name : "No club available"}
+            {/*clubs.length > 0 ? clubs[0].name : "No club available"*/}
           </Typography>
         </Box>
         <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
