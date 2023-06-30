@@ -13,7 +13,21 @@ export const ClubProvider = ({ children }) => {
   const { auth, db } = useFirebase();
   const [clubs, setClubs] = useState([]);
 
-  //const updateUserRole = async () => {};
+  const updateUserRole = async (userId, role, clubId) => {
+    try {
+      const clubDocRef = doc(db, "clubs", clubId);
+      const userDocRef = doc(db, clubDocRef, "users", userId);
+
+      // Update 'role' field of the user document
+      await updateDoc(userDocRef, {
+        role: role,
+      });
+    
+      console.log(`User role updated successfully.`);
+    } catch (error) {
+      console.error(`Error updating user role: `, error);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (userCredential) => {
@@ -68,5 +82,5 @@ export const ClubProvider = ({ children }) => {
     return unsubscribe;
   }, [db, auth]);
 
-  return <ClubContext.Provider value={clubs}>{children}</ClubContext.Provider>;
+  return <ClubContext.Provider value={{ clubs, updateUserRole }}>{children}</ClubContext.Provider>;
 };
