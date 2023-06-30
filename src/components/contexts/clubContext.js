@@ -22,6 +22,21 @@ export const ClubProvider = ({ children }) => {
       await updateDoc(userDocRef, {
         role: role,
       });
+
+      // Also update the local clubs state
+      setClubs((prevClubs) => {
+        return prevClubs.map((club) => {
+          if (club.id === clubId) {
+            club.members = club.members.map((member) => {
+              if (member.id === userId) {
+                member.role = role;
+              }
+              return member;
+            });
+          }
+          return club;
+        });
+      });
     
       console.log(`User role updated successfully.`);
     } catch (error) {
