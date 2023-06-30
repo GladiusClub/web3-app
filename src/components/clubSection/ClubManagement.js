@@ -25,12 +25,12 @@ function ClubManagement() {
   const [clubMembers, setClubMembers] = useState();
   const [value, setValue] = React.useState(0);
   const [images, setImages] = useState([]);
-  const clubs = useClub();
+  const { clubs, updateUserRole } = useClub();
 
   useEffect(() => {
     if (clubs[0]) {
       setClubMembers(clubs[0].members);
-      console.log(clubs[0].members);
+      console.log(clubs[0]);
     }
   }, [clubs]);
 
@@ -52,9 +52,8 @@ function ClubManagement() {
     setValue(newValue);
   };
 
-  const handleRoleChange = (event, memberId) => {
-    //const newRole = event.target.value;
-    //updateUserRole(memberId, newRole);
+  const handleRoleChange = (memberId, role) => {
+    updateUserRole(memberId, role, clubs[0].id);
   };
 
   return (
@@ -73,7 +72,7 @@ function ClubManagement() {
       >
         <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
           <Typography variant="h3" gutterBottom>
-            {/*clubs.length > 0 ? clubs[0].name : "No club available"*/}
+            {clubs.length > 0 ? clubs[0].name : "No club available"}
           </Typography>
         </Box>
         <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>

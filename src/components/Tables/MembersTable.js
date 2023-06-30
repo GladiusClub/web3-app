@@ -142,13 +142,13 @@ export default function MembersTable({ members, value, onRoleChange }) {
                   case 0:
                     return true;
                   case 1:
-                    return member.role === "Coach";
+                    return member.role === "coach";
                   case 2:
-                    return member.role === "Athlete";
+                    return member.role === "athlete";
                   case 3:
-                    return member.role === "Fan";
+                    return member.role === "fan";
                   case 4:
-                    return member.role === "Owner";
+                    return member.role === "owner";
                   default:
                     return true;
                 }

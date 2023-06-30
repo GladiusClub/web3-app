@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useFirebase } from "./firebaseContext";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  updateDoc,
+} from "firebase/firestore";
 
 const ClubContext = createContext();
 
@@ -14,9 +20,9 @@ export const ClubProvider = ({ children }) => {
   const [clubs, setClubs] = useState([]);
 
   const updateUserRole = async (userId, role, clubId) => {
+    console.log("Updating role", userId, role, clubId);
     try {
-      const clubDocRef = doc(db, "clubs", clubId);
-      const userDocRef = doc(db, clubDocRef, "users", userId);
+      const userDocRef = doc(db, `clubs/${clubId}/users/${userId}`);
 
       // Update 'role' field of the user document
       await updateDoc(userDocRef, {
@@ -37,7 +43,7 @@ export const ClubProvider = ({ children }) => {
           return club;
         });
       });
-    
+
       console.log(`User role updated successfully.`);
     } catch (error) {
       console.error(`Error updating user role: `, error);
@@ -62,6 +68,7 @@ export const ClubProvider = ({ children }) => {
                 const clubDocRef = doc(db, "clubs", clubId);
                 const clubSnap = await getDoc(clubDocRef);
                 const clubData = clubSnap.data();
+                clubData.id = clubId;
 
                 const memberCollectionRef = collection(clubDocRef, "users");
                 const memberQuerySnapshot = await getDocs(memberCollectionRef);
@@ -70,6 +77,7 @@ export const ClubProvider = ({ children }) => {
                   async (doc) => {
                     const memberData = doc.data();
                     return {
+                      id: doc.id,
                       email: memberData.email,
                       name: memberData.name,
                       role: memberData.role,
@@ -97,5 +105,9 @@ export const ClubProvider = ({ children }) => {
     return unsubscribe;
   }, [db, auth]);
 
-  return <ClubContext.Provider value={{ clubs, updateUserRole }}>{children}</ClubContext.Provider>;
+  return (
+    <ClubContext.Provider value={{ clubs, updateUserRole }}>
+      {children}
+    </ClubContext.Provider>
+  );
 };
