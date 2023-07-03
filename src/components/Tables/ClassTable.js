@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Table,
@@ -14,14 +14,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
-
-const classes = [
-  { name: "Adult Soccer", size: 12 },
-  { name: "Youth Basketball", size: 18 },
-  { name: "Senior Swimming", size: 8 },
-  { name: "Women's Volleyball", size: 15 },
-  { name: "Men's Tennis", size: 10 },
-];
+import { useClub } from "../contexts/clubContext";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,6 +27,21 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const ClassTable = () => {
+  const { getAllGroupNames } = useClub();
+  const [groupNames, setGroupNames] = useState([]);
+
+  useEffect(() => {
+    // Assume clubId is known
+    const clubId = "1";
+    getAllGroupNames(clubId)
+      .then((names) => {
+        setGroupNames(names);
+      })
+      .catch((err) => {
+        console.error("Error fetching group names:", err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -50,13 +58,13 @@ const ClassTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {classes.map((item, index) => (
+          {groupNames.map((groupName, index) => (
             <TableRow
               key={index}
               sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}
             >
               <TableCell component="th" scope="row">
-                {item.name}
+                {groupName}
               </TableCell>
               <TableCell align="right"></TableCell>
               <TableCell align="right">
@@ -66,7 +74,7 @@ const ClassTable = () => {
                   color="secondary"
                   sx={{ fontWeight: "bold" }}
                 >
-                  {item.size}
+                  {/* Show class size if available */}
                 </Typography>
               </TableCell>
 

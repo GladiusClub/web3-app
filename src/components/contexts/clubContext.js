@@ -1,13 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useFirebase } from "./firebaseContext";
 import { onAuthStateChanged } from "firebase/auth";
-import {
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import { useClubActions } from "../Apis/clubActions";
 
 const ClubContext = createContext();
 
@@ -18,37 +13,7 @@ export const useClub = () => {
 export const ClubProvider = ({ children }) => {
   const { auth, db } = useFirebase();
   const [clubs, setClubs] = useState([]);
-
-  const updateUserRole = async (userId, role, clubId) => {
-    console.log("Updating role", userId, role, clubId);
-    try {
-      const userDocRef = doc(db, `clubs/${clubId}/users/${userId}`);
-
-      // Update 'role' field of the user document
-      await updateDoc(userDocRef, {
-        role: role,
-      });
-
-      // Also update the local clubs state
-      setClubs((prevClubs) => {
-        return prevClubs.map((club) => {
-          if (club.id === clubId) {
-            club.members = club.members.map((member) => {
-              if (member.id === userId) {
-                member.role = role;
-              }
-              return member;
-            });
-          }
-          return club;
-        });
-      });
-
-      console.log(`User role updated successfully.`);
-    } catch (error) {
-      console.error(`Error updating user role: `, error);
-    }
-  };
+  const clubActions = useClubActions(setClubs);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (userCredential) => {
@@ -70,7 +35,7 @@ export const ClubProvider = ({ children }) => {
                 const clubData = clubSnap.data();
                 clubData.id = clubId;
 
-                const memberCollectionRef = collection(clubDocRef, "users");
+                const memberCollectionRef = collection(clubDocRef, "members");
                 const memberQuerySnapshot = await getDocs(memberCollectionRef);
 
                 const memberDataPromises = memberQuerySnapshot.docs.map(
@@ -106,7 +71,7 @@ export const ClubProvider = ({ children }) => {
   }, [db, auth]);
 
   return (
-    <ClubContext.Provider value={{ clubs, updateUserRole }}>
+    <ClubContext.Provider value={{ clubs, setClubs, ...clubActions }}>
       {children}
     </ClubContext.Provider>
   );

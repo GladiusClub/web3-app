@@ -153,9 +153,9 @@ export default function MembersTable({ members, value, onRoleChange }) {
                     return true;
                 }
               })
-              .map((member) => (
+              .map((member, index) => (
                 <MemberRow
-                  key={member.name}
+                  key={index}
                   member={member}
                   onRoleChange={onRoleChange}
                 />
