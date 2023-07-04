@@ -51,8 +51,26 @@ export const ClubProvider = ({ children }) => {
                 );
 
                 const memberData = await Promise.all(memberDataPromises);
-
                 clubData.members = memberData;
+
+                // Add this section to fetch groups data
+                const groupsCollectionRef = collection(clubDocRef, "groups");
+                const groupsQuerySnapshot = await getDocs(groupsCollectionRef);
+
+                const groupsDataPromises = groupsQuerySnapshot.docs.map(
+                  async (doc) => {
+                    const groupData = doc.data();
+                    return {
+                      id: doc.id,
+                      name: groupData.name,
+                      member_uuids: groupData.member_uuids || [],
+                      event_ids: groupData.event_ids || [],
+                    };
+                  }
+                );
+
+                const groupsData = await Promise.all(groupsDataPromises);
+                clubData.groups = groupsData;
 
                 return clubData;
               })
@@ -71,7 +89,7 @@ export const ClubProvider = ({ children }) => {
   }, [db, auth]);
 
   return (
-    <ClubContext.Provider value={{ clubs, setClubs, ...clubActions }}>
+    <ClubContext.Provider value={{ clubs, ...clubActions }}>
       {children}
     </ClubContext.Provider>
   );

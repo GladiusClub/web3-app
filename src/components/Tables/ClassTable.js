@@ -26,8 +26,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const ClassTable = () => {
-  const { getAllGroupNames } = useClub();
+const ClassTable = ({ clubGroups }) => {
+  const { clubs, getAllGroupNames } = useClub();
   const [groupNames, setGroupNames] = useState([]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const ClassTable = () => {
         console.error("Error fetching group names:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clubs]);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

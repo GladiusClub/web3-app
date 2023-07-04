@@ -1,5 +1,11 @@
 import { useFirebase } from "../contexts/firebaseContext";
-import { doc, updateDoc, collection, getDocs } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  collection,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
 
 export const useClubActions = (setClubs) => {
   const { db } = useFirebase();
@@ -52,8 +58,46 @@ export const useClubActions = (setClubs) => {
     return groupNames;
   };
 
+  const createNewGroup = async (clubId, groupName) => {
+    try {
+      // Get reference to groups collection of a club
+      const groupsRef = collection(db, `clubs/${clubId}/groups`);
+
+      // Create a new document in groups collection with members as an empty array
+      const docRef = await addDoc(groupsRef, {
+        name: groupName,
+        member_uuids: [],
+        event_ids: [],
+      });
+
+      console.log("Document written with ID: ", docRef.id);
+
+      // Also update the local clubs state
+      setClubs((prevClubs) => {
+        return prevClubs.map((club) => {
+          if (club.id === clubId) {
+            const existingGroups = club.groups || [];
+            club.groups = [
+              ...existingGroups,
+              {
+                id: docRef.id,
+                name: groupName,
+                member_uuids: [],
+                event_ids: [],
+              },
+            ];
+          }
+          return club;
+        });
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
   return {
     updateUserRole,
     getAllGroupNames,
+    createNewGroup,
   };
 };

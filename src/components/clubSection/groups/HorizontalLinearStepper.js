@@ -2,54 +2,9 @@ import React, { useState } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { Button, Dialog, DialogTitle, Box } from "@mui/material";
-import CreateClassTable from "../Tables/CreateClassTable";
-import EventsTable from "../Tables/EventsTable";
-import ClassTable from "../Tables/ClassTable";
-import Typography from "@mui/material/Typography";
-
-export default function ClassDetails() {
-  const [openDialog, setOpenDialog] = useState(false); // State for dialog visibility
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  return (
-    <div>
-      <Button
-        color="secondary"
-        variant="contained"
-        sx={{ marginBottom: 2 }}
-        onClick={handleOpenDialog}
-      >
-        Add Class +
-      </Button>
-      <ClassTable></ClassTable>
-      <AddClassDialog open={openDialog} handleClose={handleCloseDialog} />
-    </div>
-  );
-}
-
-function AddClassDialog({ open, handleClose }) {
-  const handleSubmit = () => {
-    // Close the dialog
-    handleClose();
-  };
-
-  return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Add Class</DialogTitle>
-      <Box sx={{ margin: "16px" }}>
-        <HorizontalLinearStepper handleSubmit={handleSubmit} />
-      </Box>
-    </Dialog>
-  );
-}
+import { Button, Box, Typography } from "@mui/material";
+import CreateClassTable from "../../Tables/CreateClassTable";
+import EventsTable from "../../Tables/EventsTable";
 
 const steps = [
   "Pick Class Name",
@@ -68,7 +23,7 @@ function HorizontalLinearStepper({ handleSubmit }) {
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {
       if (prevActiveStep === steps.length - 1) {
-        handleSubmit();
+        handleSubmit(className);
       }
       const nextStep = prevActiveStep + 1;
 
@@ -164,3 +119,5 @@ function HorizontalLinearStepper({ handleSubmit }) {
     </React.Fragment>
   );
 }
+
+export default HorizontalLinearStepper;

@@ -16,13 +16,14 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 import IconButton from "@mui/material/IconButton";
-import ClassDetails from "./GroupManagment";
+import ClassDetails from "./groups/ClassDetails";
 import { useClub } from "../contexts/clubContext";
 import MembersTable from "../Tables/MembersTable";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 function ClubManagement() {
   const [clubMembers, setClubMembers] = useState();
+  const [clubGroups, setClubGroups] = useState();
   const [value, setValue] = React.useState(0);
   const [images, setImages] = useState([]);
   const { clubs, updateUserRole } = useClub();
@@ -30,6 +31,7 @@ function ClubManagement() {
   useEffect(() => {
     if (clubs[0]) {
       setClubMembers(clubs[0].members);
+      setClubGroups(clubs[0].groups);
       console.log(clubs[0]);
     }
   }, [clubs]);
@@ -98,7 +100,7 @@ function ClubManagement() {
         <Typography variant="h5" gutterBottom>
           Class Managment
         </Typography>
-        <ClassDetails></ClassDetails>
+        <ClassDetails clubGroups={clubGroups}></ClassDetails>
       </Box>
 
       <Box paddingTop="20px">
