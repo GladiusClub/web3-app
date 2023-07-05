@@ -13,7 +13,7 @@ export const useClubActions = (setClubs) => {
   const updateUserRole = async (userId, role, clubId) => {
     console.log("Updating role", userId, role, clubId);
     try {
-      const userDocRef = doc(db, `clubs/${clubId}/users/${userId}`);
+      const userDocRef = doc(db, `clubs/${clubId}/members/${userId}`);
 
       // Update 'role' field of the user document
       await updateDoc(userDocRef, {
@@ -35,9 +35,9 @@ export const useClubActions = (setClubs) => {
         });
       });
 
-      console.log(`User role updated successfully.`);
+      console.log(`User member updated successfully.`);
     } catch (error) {
-      console.error(`Error updating user role: `, error);
+      console.error(`Error updating member role: `, error);
     }
   };
 
@@ -58,16 +58,24 @@ export const useClubActions = (setClubs) => {
     return groupNames;
   };
 
-  const createNewGroup = async (clubId, groupName) => {
+  const createNewGroup = async (
+    clubId,
+    groupName,
+    groupMembers = [],
+    groupEvents = []
+  ) => {
     try {
       // Get reference to groups collection of a club
       const groupsRef = collection(db, `clubs/${clubId}/groups`);
 
+      const memberIds = groupMembers.map((member) => member.id);
+      const eventIds = groupEvents.map((event) => event.id);
+
       // Create a new document in groups collection with members as an empty array
       const docRef = await addDoc(groupsRef, {
         name: groupName,
-        member_uuids: [],
-        event_ids: [],
+        member_uuids: memberIds,
+        event_ids: eventIds,
       });
 
       console.log("Document written with ID: ", docRef.id);

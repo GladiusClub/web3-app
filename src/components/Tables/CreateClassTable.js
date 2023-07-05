@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Table, TableBody, TableRow, TableCell, Checkbox } from "@mui/material";
-import { FakeMembers } from "../../fakeData";
+import { useClub } from "../contexts/clubContext";
 
 // This component represents a single row in the member table
 function MemberRow({ member, handleCheckboxChange }) {
@@ -19,16 +19,26 @@ function MemberRow({ member, handleCheckboxChange }) {
 
 // This component represents the member table
 function CreateClassTable({ handleCheckboxChange }) {
+  const { clubs } = useClub();
+  const [clubMembers, setClubMembers] = useState();
+
+  useEffect(() => {
+    if (clubs[0]) {
+      setClubMembers(clubs[0].members);
+    }
+  }, [clubs]);
+
   return (
     <Table>
       <TableBody>
-        {FakeMembers.map((member) => (
-          <MemberRow
-            key={member.name}
-            member={member}
-            handleCheckboxChange={handleCheckboxChange}
-          />
-        ))}
+        {clubMembers &&
+          clubMembers.map((member) => (
+            <MemberRow
+              key={member.name}
+              member={member}
+              handleCheckboxChange={handleCheckboxChange}
+            />
+          ))}
       </TableBody>
     </Table>
   );

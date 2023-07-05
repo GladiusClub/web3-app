@@ -23,7 +23,7 @@ function HorizontalLinearStepper({ handleSubmit }) {
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {
       if (prevActiveStep === steps.length - 1) {
-        handleSubmit(className);
+        handleSubmit(className, selectedMembers);
       }
       const nextStep = prevActiveStep + 1;
 
