@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   Checkbox,
   TextField,
 } from "@mui/material";
-import { FakeMembers } from "../../fakeData";
+import { useClub } from "../contexts/clubContext";
 
 // This component represents a single row in the member table
 function MemberRow({ member, handleCheckboxChange }) {
@@ -68,7 +68,17 @@ function MemberRow({ member, handleCheckboxChange }) {
 }
 
 // This component represents the member table
-function AttendanceTable({ handleCheckboxChange }) {
+function AttendanceTable({ eventId, handleCheckboxChange }) {
+  const { clubs } = useClub();
+  const [clubMembers, setClubMembers] = useState([]);
+  console.log(eventId);
+
+  useEffect(() => {
+    if (clubs[0]) {
+      setClubMembers(clubs[0].members);
+    }
+  }, [clubs]);
+
   return (
     <Table>
       <TableHead>
@@ -81,7 +91,7 @@ function AttendanceTable({ handleCheckboxChange }) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {FakeMembers.map((member) => (
+        {clubMembers.map((member) => (
           <MemberRow
             key={member.name}
             member={member}

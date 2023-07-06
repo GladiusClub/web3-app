@@ -52,6 +52,8 @@ function EventDialog({
           </Select>
         </FormControl>
         <AttendanceTable
+          eventId={selectedEvent ? selectedEvent.id.split("_")[0] : null}
+          googleCalendarId={"dcromp88@googlemail.com"}
           handleCheckboxChange={handleCheckboxChange}
         ></AttendanceTable>
       </Box>
@@ -123,8 +125,12 @@ function Calendar() {
         return prevSelectedMembers.filter((m) => m !== member);
       }
     });
-    console.log(selectedMembers);
   };
+
+  // Inside your component
+  useEffect(() => {
+    console.log(selectedMembers);
+  }, [selectedMembers]);
 
   useEffect(() => {
     if (calendarRef.current) {

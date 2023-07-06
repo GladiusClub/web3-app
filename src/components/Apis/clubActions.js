@@ -103,9 +103,45 @@ export const useClubActions = (setClubs) => {
     }
   };
 
+  const getGroupsByEvent = async (clubId, calendarId, eventId) => {
+    // Define an array to store matching group and member IDs
+    let matchingGroups = [];
+
+    try {
+      // Get reference to groups collection of a club
+      const groupsRef = collection(db, `clubs/${clubId}/groups`);
+
+      // Get all groups in the club
+      const groupSnapshots = await getDocs(groupsRef);
+
+      // Iterate over each group and check for matching calendar and event IDs
+      groupSnapshots.forEach((groupDoc) => {
+        const groupData = groupDoc.data();
+
+        // Check if event_ids array includes the target eventId and calendarId
+        const hasMatchingEvent = groupData.event_ids.some((event) => {
+          return event.calendarId === calendarId && event.id === eventId;
+        });
+
+        if (hasMatchingEvent) {
+          // If a match is found, add the group and member IDs to the matchingGroups array
+          matchingGroups.push({
+            groupId: groupDoc.id,
+            memberIds: groupData.member_uuids,
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Error getting groups: ", error);
+    }
+
+    return matchingGroups;
+  };
+
   return {
     updateUserRole,
     getAllGroupNames,
     createNewGroup,
+    getGroupsByEvent,
   };
 };
