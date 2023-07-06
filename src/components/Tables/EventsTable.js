@@ -39,7 +39,12 @@ function EventsTable({ setSelectedEvents }) {
           ? { ...event, selected: isChecked }
           : event
       );
-      setSelectedEvents(updatedEvents.filter((event) => event.selected));
+      // Update selected events with only calendarId and eventId
+      setSelectedEvents(
+        updatedEvents
+          .filter((event) => event.selected)
+          .map(({ calendarId, eventId }) => ({ calendarId, eventId }))
+      );
       return updatedEvents;
     });
   };
@@ -67,7 +72,7 @@ function EventsTable({ setSelectedEvents }) {
       <TableBody>
         {events.map((event) => (
           <EventRow
-            key={event.summary}
+            key={event.eventId}
             event={event}
             handleEventsChange={handleEventsChange}
           />

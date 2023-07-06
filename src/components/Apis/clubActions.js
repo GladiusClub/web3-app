@@ -67,15 +67,15 @@ export const useClubActions = (setClubs) => {
     try {
       // Get reference to groups collection of a club
       const groupsRef = collection(db, `clubs/${clubId}/groups`);
+      console.log(groupEvents);
 
       const memberIds = groupMembers.map((member) => member.id);
-      const eventIds = groupEvents.map((event) => event.id);
 
       // Create a new document in groups collection with members as an empty array
       const docRef = await addDoc(groupsRef, {
         name: groupName,
         member_uuids: memberIds,
-        event_ids: eventIds,
+        event_ids: groupEvents,
       });
 
       console.log("Document written with ID: ", docRef.id);

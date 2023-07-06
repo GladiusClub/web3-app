@@ -28,6 +28,8 @@ export async function getFormattedCalendarEvents(timeMin) {
         selected: false,
         recurring: recurring,
         recurringText: recurringText,
+        eventId: event.id, // parent event id
+        calendarId: googleCalendarId, // calendar id
       };
     });
     return formattedEvents;
@@ -36,6 +38,7 @@ export async function getFormattedCalendarEvents(timeMin) {
     return [];
   }
 }
+
 
 export async function getNextEvent(className, timeMin) {
   return "Backend offline";

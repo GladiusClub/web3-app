@@ -6,14 +6,14 @@ import { useClub } from "../../contexts/clubContext";
 function AddClassDialog({ open, handleClose }) {
   const { createNewGroup } = useClub();
 
-  const handleSubmit = async (className, selectedMembers) => {
+  const handleSubmit = async (className, selectedMembers, selectedEvents) => {
     const clubId = "1";
     try {
       // Call the createGroup action.
       // Assumed structure of createGroup function: createGroup(clubId, groupName, members, events)
       // Close the dialog
       handleClose();
-      await createNewGroup(clubId, className, selectedMembers);
+      await createNewGroup(clubId, className, selectedMembers, selectedEvents);
     } catch (error) {
       console.error(`Error creating group: `, error);
     }
