@@ -68,16 +68,27 @@ function MemberRow({ member, handleCheckboxChange }) {
 }
 
 // This component represents the member table
-function AttendanceTable({ eventId, handleCheckboxChange }) {
-  const { clubs } = useClub();
-  const [clubMembers, setClubMembers] = useState([]);
-  console.log(eventId);
+function AttendanceTable({ googleCalendarId, eventId, handleCheckboxChange }) {
+  const { clubs, getGroupsByEvent } = useClub();
+  const [filteredMembers, setFilteredMembers] = useState([]);
 
   useEffect(() => {
     if (clubs[0]) {
-      setClubMembers(clubs[0].members);
+      getGroupsByEvent("1", googleCalendarId, eventId).then(
+        (matchingGroups) => {
+          // Create a single array with all memberIds from all matching groups
+          let allMemberIds = matchingGroups.flatMap((group) => group.memberIds);
+
+          // Filter clubMembers based on the memberIds
+          let membersInMatchingGroups = clubs[0].members.filter((member) =>
+            allMemberIds.includes(member.id)
+          );
+
+          setFilteredMembers(membersInMatchingGroups);
+        }
+      );
     }
-  }, [clubs]);
+  }, [clubs, eventId, googleCalendarId, getGroupsByEvent]);
 
   return (
     <Table>
@@ -91,7 +102,7 @@ function AttendanceTable({ eventId, handleCheckboxChange }) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {clubMembers.map((member) => (
+        {filteredMembers.map((member) => (
           <MemberRow
             key={member.name}
             member={member}

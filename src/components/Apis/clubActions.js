@@ -106,7 +106,7 @@ export const useClubActions = (setClubs) => {
   const getGroupsByEvent = async (clubId, calendarId, eventId) => {
     // Define an array to store matching group and member IDs
     let matchingGroups = [];
-
+  
     try {
       // Get reference to groups collection of a club
       const groupsRef = collection(db, `clubs/${clubId}/groups`);
@@ -118,10 +118,13 @@ export const useClubActions = (setClubs) => {
       groupSnapshots.forEach((groupDoc) => {
         const groupData = groupDoc.data();
 
-        // Check if event_ids array includes the target eventId and calendarId
-        const hasMatchingEvent = groupData.event_ids.some((event) => {
-          return event.calendarId === calendarId && event.id === eventId;
-        });
+        // Check if event_ids field exists and is an array, then check if it includes the target eventId and calendarId
+        const hasMatchingEvent =
+          groupData.event_ids &&
+          Array.isArray(groupData.event_ids) &&
+          groupData.event_ids.some((event) => {
+            return event.calendarId === calendarId && event.eventId === eventId;
+          });
 
         if (hasMatchingEvent) {
           // If a match is found, add the group and member IDs to the matchingGroups array
@@ -134,7 +137,7 @@ export const useClubActions = (setClubs) => {
     } catch (error) {
       console.error("Error getting groups: ", error);
     }
-
+  
     return matchingGroups;
   };
 
