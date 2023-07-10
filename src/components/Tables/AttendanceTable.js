@@ -97,13 +97,16 @@ function AttendanceTable({
   handleWinChange,
   handleCoefficientChange,
 }) {
-  const { clubs, getGroupsByEvent } = useClub();
+
+
+  const { clubs, getGroupsByEvent, getMemberAttendanceDetails } = useClub();
   const [filteredMembers, setFilteredMembers] = useState([]);
 
   useEffect(() => {
     if (clubs[0]) {
-      getGroupsByEvent("1", googleCalendarId, eventId).then(
-        (matchingGroups) => {
+      const parentEventId = eventId.split("_")[0];
+      getGroupsByEvent("1", googleCalendarId, parentEventId).then(
+        async (matchingGroups) => {
           // Create a single array with all memberIds from all matching groups
           let allMemberIds = matchingGroups.flatMap((group) => group.memberIds);
 
@@ -112,11 +115,35 @@ function AttendanceTable({
             allMemberIds.includes(member.id)
           );
 
+          // Add attendance details to each member
+          for (let member of membersInMatchingGroups) {
+            const details = await getMemberAttendanceDetails(
+              "1",
+              member.id,
+              googleCalendarId,
+              eventId
+            );
+            member = { ...member, ...details };
+            console.log("details", details);
+          }
+
           setFilteredMembers(membersInMatchingGroups);
         }
       );
     }
-  }, [clubs, eventId, googleCalendarId, getGroupsByEvent]);
+  }, [
+    clubs,
+    eventId,
+    googleCalendarId,
+    getGroupsByEvent,
+    getMemberAttendanceDetails,
+  ]);
+
+  useEffect(() => {
+    console.log(filteredMembers);
+  }, [filteredMembers]);
+
+
 
   return (
     <Table>

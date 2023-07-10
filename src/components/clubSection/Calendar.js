@@ -39,21 +39,25 @@ function EventDialog({
   }, [attendance, win, score, coefficient]);
 
   const recordAttendanceForAllMembers = async () => {
-    const eventId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
+    const eventParentId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
+    const eventId = selectedEvent ? selectedEvent.id : null;
 
     for (let memberId in attendance) {
       const member = attendance[memberId];
-      //const memberWin = win[memberId];
+      const memberWin = win[memberId];
       const memberScore = score[memberId];
-      //const memberCoefficient = coefficient[memberId];
+      const memberCoefficient = coefficient[memberId];
 
       await recordAttendance(
         "1",
         memberId,
         "dcromp88@googlemail.com",
+        eventParentId,
         eventId,
         member,
-        memberScore
+        memberWin,
+        memberScore,
+        memberCoefficient
       );
     }
 
@@ -111,7 +115,7 @@ function EventDialog({
           </Select>
         </FormControl>
         <AttendanceTable
-          eventId={selectedEvent ? selectedEvent.id.split("_")[0] : null}
+          eventId={selectedEvent ? selectedEvent.id : null}
           googleCalendarId={"dcromp88@googlemail.com"}
           handleAttendanceChange={handleAttendanceChange}
           handleScoreChange={handleScoreChange}

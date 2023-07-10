@@ -5,6 +5,9 @@ import {
   collection,
   getDocs,
   addDoc,
+  query,
+  where,
+  setDoc,
 } from "firebase/firestore";
 
 export const useClubActions = (setClubs) => {
@@ -106,7 +109,7 @@ export const useClubActions = (setClubs) => {
   const getGroupsByEvent = async (clubId, calendarId, eventId) => {
     // Define an array to store matching group and member IDs
     let matchingGroups = [];
-  
+
     try {
       // Get reference to groups collection of a club
       const groupsRef = collection(db, `clubs/${clubId}/groups`);
@@ -137,7 +140,7 @@ export const useClubActions = (setClubs) => {
     } catch (error) {
       console.error("Error getting groups: ", error);
     }
-  
+
     return matchingGroups;
   };
 
@@ -145,24 +148,33 @@ export const useClubActions = (setClubs) => {
     clubId,
     userId,
     calendarId,
+    eventParentId,
     eventId,
     attended,
-    score
+    win = null,
+    score = null,
+    coefficient = null
   ) => {
     try {
+      const docId = `${calendarId}_${eventId}`;
+
       // Get reference to attendance collection of a member in a club
       const attendanceRef = collection(
         db,
         `clubs/${clubId}/members/${userId}/attendance`
       );
 
-      // Create a new document in attendance collection
-      const docRef = await addDoc(attendanceRef, {
+      const docRef = doc(attendanceRef, docId);
+
+      // Set data for the document
+      await setDoc(docRef, {
         calendarId,
+        eventParentId,
         eventId,
-        date: new Date(), // current date and time
         attended,
+        win,
         score,
+        coefficient,
       });
 
       console.log("Attendance recorded with ID: ", docRef.id);
@@ -173,11 +185,66 @@ export const useClubActions = (setClubs) => {
     }
   };
 
+  const getMemberAttendanceDetails = async (clubId, calendarId, eventId) => {
+    // An array to store all members' attendance details
+    let memberAttendanceDetails = [];
+
+    try {
+      // Get reference to members collection of a club
+      const membersRef = collection(db, `clubs/${clubId}/members`);
+
+      // Get all members in the club
+      const memberSnapshots = await getDocs(membersRef);
+
+      // Iterate over each member and fetch their attendance details for the specified event
+      memberSnapshots.forEach(async (memberDoc) => {
+        const memberId = memberDoc.id;
+
+        // Get reference to attendance collection of a member
+        const attendanceRef = collection(
+          db,
+          `clubs/${clubId}/members/${memberId}/attendance`
+        );
+
+        // Query the attendance collection for documents matching the specified calendarId and eventId
+        const attendanceQuery = query(
+          attendanceRef,
+          where("calendarId", "==", calendarId),
+          where("eventId", "==", eventId)
+        );
+
+        // Execute the query
+        const attendanceSnapshot = await getDocs(attendanceQuery);
+
+        // If the query returns a document, it means the member has an attendance record for the specified event
+        if (!attendanceSnapshot.empty) {
+          const attendanceDoc = attendanceSnapshot.docs[0]; // get the first document
+          const attendanceData = attendanceDoc.data();
+
+          // Add the member's attendance details to the array
+          memberAttendanceDetails.push({
+            memberId: memberId,
+            attended: attendanceData.attended,
+            win: attendanceData.win,
+            score: attendanceData.score,
+            coefficient: attendanceData.coefficient,
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Error getting member attendance details: ", error);
+    }
+
+    // Return the array of members' attendance details
+    return memberAttendanceDetails;
+  };
+
   return {
     updateUserRole,
     getAllGroupNames,
     createNewGroup,
     getGroupsByEvent,
     recordAttendance,
+    getMemberAttendanceDetails,
   };
 };
