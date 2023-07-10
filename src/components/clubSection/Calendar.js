@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
 import AttendanceTable from "../Tables/AttendanceTable";
-//import { useClub } from "../contexts/clubContext";
+import { useClub } from "../contexts/clubContext";
 
 // This component represents the event dialog
 function EventDialog({
@@ -27,45 +27,63 @@ function EventDialog({
   setSelectedEvent,
   calendarRef,
 }) {
-  //const { recordAttendance } = useClub();
+  const { recordAttendance } = useClub();
   const [attendance, setAttendance] = useState({});
   const [win, setWin] = useState({});
   const [score, setScore] = useState({});
-  //const [coefficient, setCoefficient] = useState({});
+  const [coefficient, setCoefficient] = useState({});
 
   // Inside your component
   useEffect(() => {
-    console.log(attendance);
-    console.log(win);
-  }, [attendance, win]);
+    console.log(attendance, win, score, coefficient);
+  }, [attendance, win, score, coefficient]);
 
-  const saveScores = () => {
-    //recordAttendance("1",);
+  const recordAttendanceForAllMembers = async () => {
+    const eventId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
+
+    for (let memberId in attendance) {
+      const member = attendance[memberId];
+      //const memberWin = win[memberId];
+      const memberScore = score[memberId];
+      //const memberCoefficient = coefficient[memberId];
+
+      await recordAttendance(
+        "1",
+        memberId,
+        "dcromp88@googlemail.com",
+        eventId,
+        member,
+        memberScore
+      );
+    }
 
     handleClose();
   };
 
   const handleScoreChange = (memberId, value) => {
     setScore((prev) => ({ ...prev, [memberId]: value }));
-    console.log(score);
   };
 
   const handleWinChange = (memberId, value) => {
     setWin((prev) => ({ ...prev, [memberId]: value }));
   };
 
-  const handleAttendanceChange = (event, member) => {
+  const handleAttendanceChange = (memberId, event) => {
     const isChecked = event.target.checked;
 
     setAttendance((prevAttendance) => {
       if (isChecked) {
-        return { ...prevAttendance, [member.id]: member };
+        return { ...prevAttendance, [memberId]: isChecked };
       } else {
         const newState = { ...prevAttendance };
-        delete newState[member.id];
+        delete newState[memberId];
         return newState;
       }
     });
+  };
+
+  const handleCoefficientChange = (memberId, value) => {
+    setCoefficient((prev) => ({ ...prev, [memberId]: value }));
   };
 
   return (
@@ -98,6 +116,7 @@ function EventDialog({
           handleAttendanceChange={handleAttendanceChange}
           handleScoreChange={handleScoreChange}
           handleWinChange={handleWinChange}
+          handleCoefficientChange={handleCoefficientChange}
         ></AttendanceTable>
       </Box>
       <DialogActions>
@@ -110,9 +129,9 @@ function EventDialog({
               backgroundColor: "purple",
             },
           }}
-          onClick={saveScores}
+          onClick={recordAttendanceForAllMembers}
         >
-          Send GLD
+          Save
         </Button>
       </DialogActions>
     </Dialog>

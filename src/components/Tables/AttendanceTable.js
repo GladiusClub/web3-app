@@ -16,9 +16,11 @@ function MemberRow({
   handleAttendanceChange,
   handleScoreChange,
   handleWinChange,
+  handleCoefficientChange,
 }) {
   const [isIntError, setIsIntError] = useState(false);
   const [score, setScore] = useState("");
+  const [coefficient, setCoefficient] = useState("");
   const [win, setWin] = useState(false);
 
   const handleLocalScoreChange = (event) => {
@@ -38,9 +40,11 @@ function MemberRow({
     handleWinChange(member.id, event.target.checked);
   };
 
-  //const handleLocalCoefficientChange = (event) => {
-  // handleCoefficientChange(member.id, event.target.value);
-  //};
+  const handleLocalCoefficientChange = (event) => {
+    const val = event.target.value;
+    setCoefficient(val);
+    handleCoefficientChange(member.id, val);
+  };
 
   return (
     <TableRow key={member.name}>
@@ -48,7 +52,7 @@ function MemberRow({
       <TableCell>
         <Checkbox
           checked={member.attendance}
-          onChange={(event) => handleAttendanceChange(event, member)}
+          onChange={(event) => handleAttendanceChange(member.id, event)}
         />
       </TableCell>
       <TableCell>
@@ -76,6 +80,8 @@ function MemberRow({
             min: 0,
           }}
           placeholder="Enter a float"
+          value={coefficient}
+          onChange={handleLocalCoefficientChange}
         />
       </TableCell>
     </TableRow>
@@ -89,6 +95,7 @@ function AttendanceTable({
   handleAttendanceChange,
   handleScoreChange,
   handleWinChange,
+  handleCoefficientChange,
 }) {
   const { clubs, getGroupsByEvent } = useClub();
   const [filteredMembers, setFilteredMembers] = useState([]);
@@ -130,6 +137,7 @@ function AttendanceTable({
             handleAttendanceChange={handleAttendanceChange}
             handleScoreChange={handleScoreChange}
             handleWinChange={handleWinChange}
+            handleCoefficientChange={handleCoefficientChange}
           />
         ))}
       </TableBody>
