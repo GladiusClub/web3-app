@@ -11,11 +11,13 @@ import {
 import { useClub } from "../contexts/clubContext";
 
 // This component represents a single row in the member table
-function MemberRow({ member, handleCheckboxChange }) {
-  const [intVal, setIntVal] = useState("");
+function MemberRow({ member, handleAttendanceChange, handleScoreChange }) {
   const [isIntError, setIsIntError] = useState(false);
+  const [score, setScore] = useState("");
 
-  const handleIntChange = (event) => {
+  console.log(member.id, score);
+
+  const handleLocalScoreChange = (event) => {
     const val = event.target.value;
 
     if (val === "" || Number.isInteger(Number(val))) {
@@ -23,8 +25,8 @@ function MemberRow({ member, handleCheckboxChange }) {
     } else {
       setIsIntError(true);
     }
-
-    setIntVal(val);
+    setScore(val);
+    handleScoreChange(val, member);
   };
 
   return (
@@ -33,7 +35,7 @@ function MemberRow({ member, handleCheckboxChange }) {
       <TableCell>
         <Checkbox
           checked={member.attendance}
-          onChange={(event) => handleCheckboxChange(event, member)}
+          onChange={(event) => handleAttendanceChange(event, member)}
         />
       </TableCell>
       <TableCell>
@@ -48,9 +50,9 @@ function MemberRow({ member, handleCheckboxChange }) {
           }}
           placeholder="Enter an integer"
           error={isIntError}
-          value={intVal}
-          onChange={handleIntChange}
           helperText={isIntError ? "Not an Integer." : ""}
+          value={score}
+          onChange={handleLocalScoreChange}
         />
       </TableCell>
       <TableCell>
@@ -68,7 +70,12 @@ function MemberRow({ member, handleCheckboxChange }) {
 }
 
 // This component represents the member table
-function AttendanceTable({ googleCalendarId, eventId, handleCheckboxChange }) {
+function AttendanceTable({
+  googleCalendarId,
+  eventId,
+  handleAttendanceChange,
+  handleScoreChange,
+}) {
   const { clubs, getGroupsByEvent } = useClub();
   const [filteredMembers, setFilteredMembers] = useState([]);
 
@@ -98,7 +105,7 @@ function AttendanceTable({ googleCalendarId, eventId, handleCheckboxChange }) {
           <TableCell>Attendance</TableCell>
           <TableCell>Win</TableCell>
           <TableCell>Scores</TableCell>
-          <TableCell>Coefficent</TableCell>
+          <TableCell>Coefficient</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -106,7 +113,8 @@ function AttendanceTable({ googleCalendarId, eventId, handleCheckboxChange }) {
           <MemberRow
             key={member.name}
             member={member}
-            handleCheckboxChange={handleCheckboxChange}
+            handleAttendanceChange={handleAttendanceChange}
+            handleScoreChange={handleScoreChange}
           />
         ))}
       </TableBody>

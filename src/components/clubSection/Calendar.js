@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
 import AttendanceTable from "../Tables/AttendanceTable";
+//import { useClub } from "../contexts/clubContext";
 
 // This component represents the event dialog
 function EventDialog({
@@ -25,8 +26,43 @@ function EventDialog({
   selectedEvent,
   setSelectedEvent,
   calendarRef,
-  handleCheckboxChange,
 }) {
+  //const { recordAttendance } = useClub();
+  const [attendance, setAttendance] = useState({});
+  //const [win, setWin] = useState({});
+  const [score, setScore] = useState({});
+  //const [coefficient, setCoefficient] = useState({});
+
+  // Inside your component
+  useEffect(() => {
+    console.log(attendance);
+  }, [attendance]);
+
+  const saveScores = () => {
+    //recordAttendance("1",);
+
+    handleClose();
+  };
+
+  const handleScoreChange = (memberId, value) => {
+    setScore((prev) => ({ ...prev, [memberId]: value }));
+    console.log(score);
+  };
+
+  const handleAttendanceChange = (event, member) => {
+    const isChecked = event.target.checked;
+
+    setAttendance((prevAttendance) => {
+      if (isChecked) {
+        return { ...prevAttendance, [member.id]: member };
+      } else {
+        const newState = { ...prevAttendance };
+        delete newState[member.id];
+        return newState;
+      }
+    });
+  };
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md">
       <Box sx={{ p: 5 }}>
@@ -54,7 +90,8 @@ function EventDialog({
         <AttendanceTable
           eventId={selectedEvent ? selectedEvent.id.split("_")[0] : null}
           googleCalendarId={"dcromp88@googlemail.com"}
-          handleCheckboxChange={handleCheckboxChange}
+          handleAttendanceChange={handleAttendanceChange}
+          handleScoreChange={handleScoreChange}
         ></AttendanceTable>
       </Box>
       <DialogActions>
@@ -67,7 +104,7 @@ function EventDialog({
               backgroundColor: "purple",
             },
           }}
-          onClick={handleClose}
+          onClick={saveScores}
         >
           Send GLD
         </Button>
@@ -80,7 +117,6 @@ function EventDialog({
 function Calendar() {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedMembers, setSelectedMembers] = useState([]);
   const [events, setEvents] = useState([]);
   const calendarRef = useRef(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -115,23 +151,6 @@ function Calendar() {
     setOpen(false);
   };
 
-  const handleCheckboxChange = (event, member) => {
-    const isChecked = event.target.checked;
-
-    setSelectedMembers((prevSelectedMembers) => {
-      if (isChecked) {
-        return [...prevSelectedMembers, member];
-      } else {
-        return prevSelectedMembers.filter((m) => m !== member);
-      }
-    });
-  };
-
-  // Inside your component
-  useEffect(() => {
-    console.log(selectedMembers);
-  }, [selectedMembers]);
-
   useEffect(() => {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
@@ -161,7 +180,6 @@ function Calendar() {
         selectedEvent={selectedEvent}
         setSelectedEvent={setSelectedEvent}
         calendarRef={calendarRef}
-        handleCheckboxChange={handleCheckboxChange}
       />
     </Paper>
   );

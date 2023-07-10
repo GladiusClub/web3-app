@@ -141,10 +141,43 @@ export const useClubActions = (setClubs) => {
     return matchingGroups;
   };
 
+  const recordAttendance = async (
+    clubId,
+    userId,
+    calendarId,
+    eventId,
+    attended,
+    score
+  ) => {
+    try {
+      // Get reference to attendance collection of a member in a club
+      const attendanceRef = collection(
+        db,
+        `clubs/${clubId}/members/${userId}/attendance`
+      );
+
+      // Create a new document in attendance collection
+      const docRef = await addDoc(attendanceRef, {
+        calendarId,
+        eventId,
+        date: new Date(), // current date and time
+        attended,
+        score,
+      });
+
+      console.log("Attendance recorded with ID: ", docRef.id);
+
+      // No need to update the local clubs state since attendance is not part of it
+    } catch (error) {
+      console.error("Error recording attendance: ", error);
+    }
+  };
+
   return {
     updateUserRole,
     getAllGroupNames,
     createNewGroup,
     getGroupsByEvent,
+    recordAttendance,
   };
 };
