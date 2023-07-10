@@ -29,14 +29,15 @@ function EventDialog({
 }) {
   //const { recordAttendance } = useClub();
   const [attendance, setAttendance] = useState({});
-  //const [win, setWin] = useState({});
+  const [win, setWin] = useState({});
   const [score, setScore] = useState({});
   //const [coefficient, setCoefficient] = useState({});
 
   // Inside your component
   useEffect(() => {
     console.log(attendance);
-  }, [attendance]);
+    console.log(win);
+  }, [attendance, win]);
 
   const saveScores = () => {
     //recordAttendance("1",);
@@ -47,6 +48,10 @@ function EventDialog({
   const handleScoreChange = (memberId, value) => {
     setScore((prev) => ({ ...prev, [memberId]: value }));
     console.log(score);
+  };
+
+  const handleWinChange = (memberId, value) => {
+    setWin((prev) => ({ ...prev, [memberId]: value }));
   };
 
   const handleAttendanceChange = (event, member) => {
@@ -92,6 +97,7 @@ function EventDialog({
           googleCalendarId={"dcromp88@googlemail.com"}
           handleAttendanceChange={handleAttendanceChange}
           handleScoreChange={handleScoreChange}
+          handleWinChange={handleWinChange}
         ></AttendanceTable>
       </Box>
       <DialogActions>

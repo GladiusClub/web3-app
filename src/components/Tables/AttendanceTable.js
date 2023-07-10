@@ -11,11 +11,15 @@ import {
 import { useClub } from "../contexts/clubContext";
 
 // This component represents a single row in the member table
-function MemberRow({ member, handleAttendanceChange, handleScoreChange }) {
+function MemberRow({
+  member,
+  handleAttendanceChange,
+  handleScoreChange,
+  handleWinChange,
+}) {
   const [isIntError, setIsIntError] = useState(false);
   const [score, setScore] = useState("");
-
-  console.log(member.id, score);
+  const [win, setWin] = useState(false);
 
   const handleLocalScoreChange = (event) => {
     const val = event.target.value;
@@ -26,8 +30,17 @@ function MemberRow({ member, handleAttendanceChange, handleScoreChange }) {
       setIsIntError(true);
     }
     setScore(val);
-    handleScoreChange(val, member);
+    handleScoreChange(member.id, val);
   };
+
+  const handleLocalWinChange = (event) => {
+    setWin(event.target.checked);
+    handleWinChange(member.id, event.target.checked);
+  };
+
+  //const handleLocalCoefficientChange = (event) => {
+  // handleCoefficientChange(member.id, event.target.value);
+  //};
 
   return (
     <TableRow key={member.name}>
@@ -39,7 +52,7 @@ function MemberRow({ member, handleAttendanceChange, handleScoreChange }) {
         />
       </TableCell>
       <TableCell>
-        <Checkbox />
+        <Checkbox checked={win} onChange={handleLocalWinChange} />
       </TableCell>
       <TableCell>
         <TextField
@@ -75,6 +88,7 @@ function AttendanceTable({
   eventId,
   handleAttendanceChange,
   handleScoreChange,
+  handleWinChange,
 }) {
   const { clubs, getGroupsByEvent } = useClub();
   const [filteredMembers, setFilteredMembers] = useState([]);
@@ -115,6 +129,7 @@ function AttendanceTable({
             member={member}
             handleAttendanceChange={handleAttendanceChange}
             handleScoreChange={handleScoreChange}
+            handleWinChange={handleWinChange}
           />
         ))}
       </TableBody>
