@@ -8,6 +8,7 @@ import {
   query,
   where,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 export const useClubActions = (setClubs) => {
@@ -166,29 +167,32 @@ export const useClubActions = (setClubs) => {
 
       const docRef = doc(attendanceRef, docId);
 
-      // Set data for the document
-      await setDoc(docRef, {
-        calendarId,
-        eventParentId,
-        eventId,
-        attended,
-        win,
-        score,
-        coefficient,
-      });
-
-      console.log("Attendance recorded with ID: ", docRef.id);
+      // If attended is false, delete the document, else set its data
+      if (attended) {
+        // Set data for the document
+        await setDoc(docRef, {
+          calendarId,
+          eventParentId,
+          eventId,
+          attended,
+          win,
+          score,
+          coefficient,
+        });
+        console.log("Attendance recorded with ID: ", docRef.id);
+      } else {
+        // Delete the document
+        await deleteDoc(docRef);
+        console.log("Attendance removed with ID: ", docRef.id);
+      }
 
       // No need to update the local clubs state since attendance is not part of it
     } catch (error) {
-      console.error("Error recording attendance: ", error);
+      console.error("Error updating attendance: ", error);
     }
   };
 
   const getMemberAttendanceDetails = async (clubId, calendarId, eventId) => {
-    // An array to store all members' attendance details
-    let memberAttendanceDetails = [];
-
     try {
       // Get reference to members collection of a club
       const membersRef = collection(db, `clubs/${clubId}/members`);
@@ -196,8 +200,8 @@ export const useClubActions = (setClubs) => {
       // Get all members in the club
       const memberSnapshots = await getDocs(membersRef);
 
-      // Iterate over each member and fetch their attendance details for the specified event
-      memberSnapshots.forEach(async (memberDoc) => {
+      // Use Promise.all to make sure we have all the attendance data before returning the result
+      const attendancePromises = memberSnapshots.docs.map(async (memberDoc) => {
         const memberId = memberDoc.id;
 
         // Get reference to attendance collection of a member
@@ -221,22 +225,26 @@ export const useClubActions = (setClubs) => {
           const attendanceDoc = attendanceSnapshot.docs[0]; // get the first document
           const attendanceData = attendanceDoc.data();
 
-          // Add the member's attendance details to the array
-          memberAttendanceDetails.push({
-            memberId: memberId,
+          // Return the member's attendance details
+          return {
+            id: memberId,
             attended: attendanceData.attended,
             win: attendanceData.win,
             score: attendanceData.score,
             coefficient: attendanceData.coefficient,
-          });
+          };
+        } else {
+          return null;
         }
       });
+
+      const memberAttendanceDetails = await Promise.all(attendancePromises);
+
+      // Filter out null values from memberAttendanceDetails
+      return memberAttendanceDetails.filter((member) => member !== null);
     } catch (error) {
       console.error("Error getting member attendance details: ", error);
     }
-
-    // Return the array of members' attendance details
-    return memberAttendanceDetails;
   };
 
   return {

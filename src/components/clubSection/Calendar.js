@@ -75,16 +75,12 @@ function EventDialog({
   const handleAttendanceChange = (memberId, event) => {
     const isChecked = event.target.checked;
 
-    setAttendance((prevAttendance) => {
-      if (isChecked) {
-        return { ...prevAttendance, [memberId]: isChecked };
-      } else {
-        const newState = { ...prevAttendance };
-        delete newState[memberId];
-        return newState;
-      }
-    });
+    setAttendance((prevAttendance) => ({
+      ...prevAttendance,
+      [memberId]: isChecked,
+    }));
   };
+
 
   const handleCoefficientChange = (memberId, value) => {
     setCoefficient((prev) => ({ ...prev, [memberId]: value }));

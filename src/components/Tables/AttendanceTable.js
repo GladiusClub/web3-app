@@ -97,53 +97,75 @@ function AttendanceTable({
   handleWinChange,
   handleCoefficientChange,
 }) {
-
-
   const { clubs, getGroupsByEvent, getMemberAttendanceDetails } = useClub();
   const [filteredMembers, setFilteredMembers] = useState([]);
+  const [membersInMatchingGroups, setMembersInMatchingGroups] = useState([]);
 
   useEffect(() => {
-    if (clubs[0]) {
-      const parentEventId = eventId.split("_")[0];
-      getGroupsByEvent("1", googleCalendarId, parentEventId).then(
-        async (matchingGroups) => {
-          // Create a single array with all memberIds from all matching groups
-          let allMemberIds = matchingGroups.flatMap((group) => group.memberIds);
+    const fetchData = async () => {
+      if (clubs[0]) {
+        try {
+          const parentEventId = eventId.split("_")[0];
 
-          // Filter clubMembers based on the memberIds
-          let membersInMatchingGroups = clubs[0].members.filter((member) =>
-            allMemberIds.includes(member.id)
+          const matchingGroups = await getGroupsByEvent(
+            "1",
+            googleCalendarId,
+            parentEventId
           );
 
-          // Add attendance details to each member
-          for (let member of membersInMatchingGroups) {
-            const details = await getMemberAttendanceDetails(
-              "1",
-              member.id,
-              googleCalendarId,
-              eventId
-            );
-            member = { ...member, ...details };
-            console.log("details", details);
-          }
+          let allMemberIds = matchingGroups.flatMap((group) => group.memberIds);
 
-          setFilteredMembers(membersInMatchingGroups);
+          const tempMembersInMatchingGroups = clubs[0].members.filter(
+            (member) => allMemberIds.includes(member.id)
+          );
+
+          setMembersInMatchingGroups(tempMembersInMatchingGroups);
+        } catch (error) {
+          console.error(error);
         }
-      );
-    }
+      }
+    };
+
+    fetchData();
+  }, [clubs, eventId, googleCalendarId, getGroupsByEvent]);
+
+  useEffect(() => {
+    const fetchMemberDetails = async () => {
+      if (membersInMatchingGroups.length > 0) {
+        try {
+          const allMemberDetails = await getMemberAttendanceDetails(
+            "1",
+            googleCalendarId,
+            eventId
+          );
+
+          const tempFilteredMembers = membersInMatchingGroups.map((member) => {
+            const details = allMemberDetails.find(
+              (detail) => detail.id === member.id
+            );
+
+            console.log(details); // Add this log
+            return { ...member, ...details };
+          });
+
+          setFilteredMembers(tempFilteredMembers);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+
+    fetchMemberDetails();
   }, [
-    clubs,
-    eventId,
+    membersInMatchingGroups,
     googleCalendarId,
-    getGroupsByEvent,
+    eventId,
     getMemberAttendanceDetails,
   ]);
 
   useEffect(() => {
     console.log(filteredMembers);
   }, [filteredMembers]);
-
-
 
   return (
     <Table>
