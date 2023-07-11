@@ -19,9 +19,11 @@ function MemberRow({
   handleCoefficientChange,
 }) {
   const [isIntError, setIsIntError] = useState(false);
-  const [score, setScore] = useState("");
-  const [coefficient, setCoefficient] = useState("");
-  const [win, setWin] = useState(false);
+  const [attendance, setAttendance] = useState(member.attended || ""); //
+
+  const [score, setScore] = useState(member.score || ""); // If member.score exists, use it as default, else use empty string
+  const [coefficient, setCoefficient] = useState(member.coefficient || ""); // If member.coefficient exists, use it as default, else use empty string
+  const [win, setWin] = useState(member.win || false); // If member.win exists, use it as default, else use false
 
   const handleLocalScoreChange = (event) => {
     const val = event.target.value;
@@ -40,6 +42,11 @@ function MemberRow({
     handleWinChange(member.id, event.target.checked);
   };
 
+  const handleLocalAttendanceChange = (event) => {
+    setAttendance(event.target.checked);
+    handleAttendanceChange(member.id, event);
+  };
+
   const handleLocalCoefficientChange = (event) => {
     const val = event.target.value;
     setCoefficient(val);
@@ -51,8 +58,8 @@ function MemberRow({
       <TableCell>{member.name}</TableCell>
       <TableCell>
         <Checkbox
-          checked={member.attendance}
-          onChange={(event) => handleAttendanceChange(member.id, event)}
+          checked={attendance} // If member.attended exists, use it as default, else use false
+          onChange={handleLocalAttendanceChange}
         />
       </TableCell>
       <TableCell>
