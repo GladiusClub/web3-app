@@ -32,11 +32,7 @@ const CustomLineChart = () => {
         <Tooltip />
       </LineChart>
 
-      <iframe
-        title="My Godot Game"
-        src={`${process.env.PUBLIC_URL}/game/Game.html`}
-        style={{ width: "800px", height: "600px" }}
-      />
+
     </div>
   );
 };
