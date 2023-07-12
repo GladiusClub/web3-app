@@ -19,7 +19,7 @@ function MemberRow({
   handleCoefficientChange,
 }) {
   const [isIntError, setIsIntError] = useState(false);
-  const [attendance, setAttendance] = useState(member.attended || ""); //
+  const [attendance, setAttendance] = useState(member.attended || false); //
 
   const [score, setScore] = useState(member.score || ""); // If member.score exists, use it as default, else use empty string
   const [coefficient, setCoefficient] = useState(member.coefficient || ""); // If member.coefficient exists, use it as default, else use empty string
@@ -63,7 +63,11 @@ function MemberRow({
         />
       </TableCell>
       <TableCell>
-        <Checkbox checked={win} onChange={handleLocalWinChange} />
+        <Checkbox
+          checked={win}
+          onChange={handleLocalWinChange}
+          disabled={!attendance}
+        />
       </TableCell>
       <TableCell>
         <TextField
@@ -77,6 +81,7 @@ function MemberRow({
           helperText={isIntError ? "Not an Integer." : ""}
           value={score}
           onChange={handleLocalScoreChange}
+          disabled={!attendance}
         />
       </TableCell>
       <TableCell>
@@ -89,6 +94,7 @@ function MemberRow({
           placeholder="Enter a float"
           value={coefficient}
           onChange={handleLocalCoefficientChange}
+          disabled={!attendance}
         />
       </TableCell>
     </TableRow>
@@ -150,8 +156,6 @@ function AttendanceTable({
             const details = allMemberDetails.find(
               (detail) => detail.id === member.id
             );
-
-            console.log(details); // Add this log
             return { ...member, ...details };
           });
 
@@ -170,9 +174,7 @@ function AttendanceTable({
     getMemberAttendanceDetails,
   ]);
 
-  useEffect(() => {
-    console.log(filteredMembers);
-  }, [filteredMembers]);
+  useEffect(() => {}, [filteredMembers]);
 
   return (
     <Table>
