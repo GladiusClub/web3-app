@@ -17,6 +17,10 @@ const data = [
   { name: "June", Sales: 4000 },
 ];
 
+
+
+
+
 const CustomLineChart = () => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -27,6 +31,12 @@ const CustomLineChart = () => {
         <YAxis />
         <Tooltip />
       </LineChart>
+
+      <iframe
+        title="My Godot Game"
+        src={`${process.env.PUBLIC_URL}/game/Game.html`}
+        style={{ width: "800px", height: "600px" }}
+      />
     </div>
   );
 };
