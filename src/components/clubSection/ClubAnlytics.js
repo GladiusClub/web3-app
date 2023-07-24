@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useClub } from "../contexts/clubContext";
 import {
   LineChart,
   Line,
@@ -17,11 +18,16 @@ const data = [
   { name: "June", Sales: 4000 },
 ];
 
-
-
-
-
 const CustomLineChart = () => {
+  const { getUserScoresByDate } = useClub();
+
+  useEffect(() => {
+    // Note: replace "1" with the actual club ID you want to use
+    getUserScoresByDate("1")
+      .then((scores) => console.log(scores))
+      .catch((error) => console.error(error));
+  }, [getUserScoresByDate]);
+
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <LineChart width={600} height={300} data={data}>
@@ -31,8 +37,6 @@ const CustomLineChart = () => {
         <YAxis />
         <Tooltip />
       </LineChart>
-
-
     </div>
   );
 };

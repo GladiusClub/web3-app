@@ -35,8 +35,8 @@ function EventDialog({
 
   // Inside your component
   useEffect(() => {
-    console.log(attendance, win, score, coefficient);
-  }, [attendance, win, score, coefficient]);
+    console.log(selectedDate, attendance, win, score, coefficient);
+  }, [selectedDate, attendance, win, score, coefficient]);
 
   const recordAttendanceForAllMembers = async () => {
     const eventParentId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
@@ -52,6 +52,7 @@ function EventDialog({
         "1",
         memberId,
         "dcromp88@googlemail.com",
+        selectedDate,
         eventParentId,
         eventId,
         member,

@@ -149,6 +149,7 @@ export const useClubActions = (setClubs) => {
     clubId,
     userId,
     calendarId,
+    date,
     eventParentId,
     eventId,
     attended,
@@ -172,6 +173,7 @@ export const useClubActions = (setClubs) => {
         // Set data for the document
         await setDoc(docRef, {
           calendarId,
+          date,
           eventParentId,
           eventId,
           attended,
@@ -247,6 +249,52 @@ export const useClubActions = (setClubs) => {
     }
   };
 
+  const getUserScoresByDate = async (clubId) => {
+    try {
+      // Get reference to members collection of a club
+      const membersRef = collection(db, `clubs/${clubId}/members`);
+
+      // Get all members in the club
+      const memberSnapshots = await getDocs(membersRef);
+
+      // Use Promise.all to make sure we have all the attendance data before returning the result
+      const userScoresPromises = memberSnapshots.docs.map(async (memberDoc) => {
+        const memberId = memberDoc.id;
+
+        // Get reference to attendance collection of a member
+        const attendanceRef = collection(
+          db,
+          `clubs/${clubId}/members/${memberId}/attendance`
+        );
+
+        // Get all attendance records of a member
+        const attendanceSnapshots = await getDocs(attendanceRef);
+
+        // Map each attendance record to an object containing the date (extracted from eventId) and the score
+        const scoresByDate = attendanceSnapshots.docs.map((attendanceDoc) => {
+          const attendanceData = attendanceDoc.data();
+          const date = attendanceData.date;
+          return {
+            date,
+            score: attendanceData.score,
+          };
+        });
+
+        // Return an object containing the member id and their scores by date
+        return {
+          id: memberId,
+          scoresByDate,
+        };
+      });
+
+      const userScoresByDate = await Promise.all(userScoresPromises);
+
+      return userScoresByDate;
+    } catch (error) {
+      console.error("Error getting user scores by date: ", error);
+    }
+  };
+
   return {
     updateUserRole,
     getAllGroupNames,
@@ -254,5 +302,6 @@ export const useClubActions = (setClubs) => {
     getGroupsByEvent,
     recordAttendance,
     getMemberAttendanceDetails,
+    getUserScoresByDate,
   };
 };
