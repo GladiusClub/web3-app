@@ -260,6 +260,9 @@ export const useClubActions = (setClubs) => {
       // Use Promise.all to make sure we have all the attendance data before returning the result
       const userScoresPromises = memberSnapshots.docs.map(async (memberDoc) => {
         const memberId = memberDoc.id;
+        const memberData = memberDoc.data();
+        const memberName = memberData.name;
+
 
         // Get reference to attendance collection of a member
         const attendanceRef = collection(
@@ -283,6 +286,7 @@ export const useClubActions = (setClubs) => {
         // Return an object containing the member id and their scores by date
         return {
           id: memberId,
+          name: memberName,
           scoresByDate,
         };
       });
