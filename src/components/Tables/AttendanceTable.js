@@ -11,15 +11,9 @@ import {
 import { useClub } from "../contexts/clubContext";
 
 // This component represents a single row in the member table
-function MemberRow({
-  member,
-  handleAttendanceChange,
-  handleScoreChange,
-  handleWinChange,
-  handleCoefficientChange,
-}) {
+function MemberRow({ member, handleMemberChanged }) {
   const [isIntError, setIsIntError] = useState(false);
-  const [attendance, setAttendance] = useState(member.attended || false); //
+  const [attended, setAttended] = useState(member.attended || false); //
 
   const [score, setScore] = useState(member.score || ""); // If member.score exists, use it as default, else use empty string
   const [coefficient, setCoefficient] = useState(member.coefficient || ""); // If member.coefficient exists, use it as default, else use empty string
@@ -27,30 +21,92 @@ function MemberRow({
 
   const handleLocalScoreChange = (event) => {
     const val = event.target.value;
-
+    setScore(val);
     if (val === "" || Number.isInteger(Number(val))) {
       setIsIntError(false);
     } else {
       setIsIntError(true);
     }
-    setScore(val);
-    handleScoreChange(member.id, val);
-  };
+    handleMemberChanged((prev) => {
+      const existingMemberIndex = prev.findIndex((m) => m.id === member.id);
 
-  const handleLocalWinChange = (event) => {
-    setWin(event.target.checked);
-    handleWinChange(member.id, event.target.checked);
+      if (existingMemberIndex !== -1) {
+        // Update the score property of the existing member with the new value
+        const updatedMember = { ...prev[existingMemberIndex], score: val };
+        const updatedMembers = [...prev];
+        updatedMembers[existingMemberIndex] = updatedMember;
+        return updatedMembers;
+      } else {
+        // Add the member to the state if it doesn't exist
+        return [...prev, { ...member, score: val }];
+      }
+    });
   };
 
   const handleLocalAttendanceChange = (event) => {
-    setAttendance(event.target.checked);
-    handleAttendanceChange(member.id, event);
+    const newAttendedValue = event.target.checked;
+    setAttended(newAttendedValue);
+    handleMemberChanged((prev) => {
+      const existingMemberIndex = prev.findIndex((m) => m.id === member.id);
+
+      if (existingMemberIndex !== -1) {
+        // Update the attendance property of the existing member with the new value
+        const updatedMember = {
+          ...prev[existingMemberIndex],
+          attended: newAttendedValue,
+        };
+        const updatedMembers = [...prev];
+        updatedMembers[existingMemberIndex] = updatedMember;
+        return updatedMembers;
+      } else {
+        // Add the member to the state if it doesn't exist
+        return [...prev, { ...member, attended: newAttendedValue }];
+      }
+    });
   };
 
   const handleLocalCoefficientChange = (event) => {
     const val = event.target.value;
     setCoefficient(val);
-    handleCoefficientChange(member.id, val);
+    handleMemberChanged((prev) => {
+      const existingMemberIndex = prev.findIndex((m) => m.id === member.id);
+
+      if (existingMemberIndex !== -1) {
+        // Update the coefficient property of the existing member with the new value
+        const updatedMember = {
+          ...prev[existingMemberIndex],
+          coefficient: val,
+        };
+        const updatedMembers = [...prev];
+        updatedMembers[existingMemberIndex] = updatedMember;
+        return updatedMembers;
+      } else {
+        // Add the member to the state if it doesn't exist
+        return [...prev, { ...member, coefficient: val }];
+      }
+    });
+  };
+
+  const handleLocalWinChange = (event) => {
+    const newWinValue = event.target.checked;
+    setWin(newWinValue);
+    handleMemberChanged((prev) => {
+      const existingMemberIndex = prev.findIndex((m) => m.id === member.id);
+
+      if (existingMemberIndex !== -1) {
+        // Update the win property of the existing member with the new value
+        const updatedMember = {
+          ...prev[existingMemberIndex],
+          win: newWinValue,
+        };
+        const updatedMembers = [...prev];
+        updatedMembers[existingMemberIndex] = updatedMember;
+        return updatedMembers;
+      } else {
+        // Add the member to the state if it doesn't exist
+        return [...prev, { ...member, win: newWinValue }];
+      }
+    });
   };
 
   return (
@@ -58,7 +114,7 @@ function MemberRow({
       <TableCell>{member.name}</TableCell>
       <TableCell>
         <Checkbox
-          checked={attendance} // If member.attended exists, use it as default, else use false
+          checked={attended} // If member.attended exists, use it as default, else use false
           onChange={handleLocalAttendanceChange}
         />
       </TableCell>
@@ -66,7 +122,7 @@ function MemberRow({
         <Checkbox
           checked={win}
           onChange={handleLocalWinChange}
-          disabled={!attendance}
+          disabled={!attended}
         />
       </TableCell>
       <TableCell>
@@ -81,7 +137,7 @@ function MemberRow({
           helperText={isIntError ? "Not an Integer." : ""}
           value={score}
           onChange={handleLocalScoreChange}
-          disabled={!attendance}
+          disabled={!attended}
         />
       </TableCell>
       <TableCell>
@@ -94,7 +150,7 @@ function MemberRow({
           placeholder="Enter a float"
           value={coefficient}
           onChange={handleLocalCoefficientChange}
-          disabled={!attendance}
+          disabled={!attended}
         />
       </TableCell>
     </TableRow>
@@ -102,14 +158,7 @@ function MemberRow({
 }
 
 // This component represents the member table
-function AttendanceTable({
-  googleCalendarId,
-  eventId,
-  handleAttendanceChange,
-  handleScoreChange,
-  handleWinChange,
-  handleCoefficientChange,
-}) {
+function AttendanceTable({ googleCalendarId, eventId, handleMemberChanged }) {
   const { clubs, getGroupsByEvent, getMemberAttendanceDetails } = useClub();
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [membersInMatchingGroups, setMembersInMatchingGroups] = useState([]);
@@ -192,10 +241,7 @@ function AttendanceTable({
           <MemberRow
             key={member.name}
             member={member}
-            handleAttendanceChange={handleAttendanceChange}
-            handleScoreChange={handleScoreChange}
-            handleWinChange={handleWinChange}
-            handleCoefficientChange={handleCoefficientChange}
+            handleMemberChanged={handleMemberChanged}
           />
         ))}
       </TableBody>

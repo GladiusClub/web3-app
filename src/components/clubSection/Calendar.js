@@ -28,25 +28,27 @@ function EventDialog({
   calendarRef,
 }) {
   const { recordAttendance } = useClub();
-  const [attendance, setAttendance] = useState({});
-  const [win, setWin] = useState({});
-  const [score, setScore] = useState({});
-  const [coefficient, setCoefficient] = useState({});
+  const [memberChanges, setmemberChanges] = useState([]);
+  const resetStateVariables = () => {
+    setmemberChanges([]);
+  };
 
   // Inside your component
   useEffect(() => {
-    console.log(selectedDate, attendance, win, score, coefficient);
-  }, [selectedDate, attendance, win, score, coefficient]);
+    console.log("Values to save: ", memberChanges);
+  }, [memberChanges]);
 
   const recordAttendanceForAllMembers = async () => {
     const eventParentId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
     const eventId = selectedEvent ? selectedEvent.id : null;
 
-    for (let memberId in attendance) {
-      const member = attendance[memberId];
-      const memberWin = win[memberId];
-      const memberScore = score[memberId];
-      const memberCoefficient = coefficient[memberId];
+    for (let index in memberChanges) {
+      const member = memberChanges[index];
+      const memberId = member.id;
+      const attended = member.attended;
+      const memberWin = member.win;
+      const memberScore = member.score;
+      const memberCoefficient = member.coefficient;
 
       await recordAttendance(
         "1",
@@ -55,36 +57,14 @@ function EventDialog({
         selectedDate,
         eventParentId,
         eventId,
-        member,
+        attended,
         memberWin,
         memberScore,
         memberCoefficient
       );
     }
-
+    resetStateVariables();
     handleClose();
-  };
-
-  const handleScoreChange = (memberId, value) => {
-    setScore((prev) => ({ ...prev, [memberId]: value }));
-  };
-
-  const handleWinChange = (memberId, value) => {
-    setWin((prev) => ({ ...prev, [memberId]: value }));
-  };
-
-  const handleAttendanceChange = (memberId, event) => {
-    const isChecked = event.target.checked;
-
-    setAttendance((prevAttendance) => ({
-      ...prevAttendance,
-      [memberId]: isChecked,
-    }));
-  };
-
-
-  const handleCoefficientChange = (memberId, value) => {
-    setCoefficient((prev) => ({ ...prev, [memberId]: value }));
   };
 
   return (
@@ -114,10 +94,7 @@ function EventDialog({
         <AttendanceTable
           eventId={selectedEvent ? selectedEvent.id : null}
           googleCalendarId={"dcromp88@googlemail.com"}
-          handleAttendanceChange={handleAttendanceChange}
-          handleScoreChange={handleScoreChange}
-          handleWinChange={handleWinChange}
-          handleCoefficientChange={handleCoefficientChange}
+          handleMemberChanged={setmemberChanges}
         ></AttendanceTable>
       </Box>
       <DialogActions>

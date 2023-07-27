@@ -34,7 +34,7 @@ const CustomLineChart = () => {
 
           sortedScoresByDate.forEach((scoreByDate) => {
             // Update the running total for the user
-            userTotals[userScore.name] += scoreByDate.score;
+            userTotals[userScore.name] += Number(scoreByDate.score);
 
             const existingDataPoint = acc.find(
               (dataPoint) => dataPoint.date === scoreByDate.date

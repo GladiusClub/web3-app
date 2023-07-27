@@ -168,8 +168,11 @@ export const useClubActions = (setClubs) => {
 
       const docRef = doc(attendanceRef, docId);
 
-      // If attended is false, delete the document, else set its data
-      if (attended) {
+      if (attended === false) {
+        // Delete the document (only if attended is explicitly set to false)
+        await deleteDoc(docRef);
+        console.log("Attendance removed with ID: ", docRef.id);
+      } else {
         // Set data for the document
         await setDoc(docRef, {
           calendarId,
@@ -182,10 +185,6 @@ export const useClubActions = (setClubs) => {
           coefficient,
         });
         console.log("Attendance recorded with ID: ", docRef.id);
-      } else {
-        // Delete the document
-        await deleteDoc(docRef);
-        console.log("Attendance removed with ID: ", docRef.id);
       }
 
       // No need to update the local clubs state since attendance is not part of it
