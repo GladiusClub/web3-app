@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 //import { H1 } from "../styles/TextStyles";
 //import AccountBalance from "../Balance";
-import Balance from "../BalanceCard";
+import BalanceCard from "../BalanceCard";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -90,9 +90,9 @@ function ClubManagement() {
           Club Summary
         </Typography>
         <Box display="flex" justifyContent="space-between">
-          <Balance />
-          <Balance />
-          <Balance />
+          <BalanceCard />
+          <BalanceCard />
+          <BalanceCard />
         </Box>
       </Box>
       {/*userData.address && <AccountBalance myAddress={userData.address} />*/}
