@@ -1,39 +1,45 @@
-import React, { useEffect, useState } from "react";
-import GLCToken from "../contracts/GLCToken.json";
+import React, { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
+import IconButton from "@mui/material/IconButton";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import GLCToken from "../contracts/GLCToken.json";
+import Button from "@mui/material/Button";
 
-const myAddress = "0xce912F29932994e60A7aEEa9F18F7C16E086CBAc";
 const contractAddress = "0x7A57269A63F37244c09742d765B18b1852078072";
 
 const provider = new ethers.providers.JsonRpcProvider(
   `https://polygon-mumbai.infura.io/v3/${process.env.REACT_APP_INFURAAPIKEY}`
 );
-
 const contract = new ethers.Contract(contractAddress, GLCToken.abi, provider);
 
-const BalanceCard = () => {
+const BalanceCard = ({ address }) => {
   const [balance, setBalance] = useState("");
 
-  useEffect(() => {
-    const fetchBalance = async () => {
+  const fetchBalance = useCallback(() => {
+    if (!address) {
+      return;
+    }
+
+    (async () => {
       try {
-        const rawBalance = await contract.balanceOf(myAddress);
+        const rawBalance = await contract.balanceOf(address);
         const decimals = await contract.decimals();
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
         setBalance(formattedBalance);
       } catch (error) {
         console.error("Error fetching balance:", error);
       }
-    };
+    })();
+  }, [address]);
 
+  useEffect(() => {
     fetchBalance();
-  }, []);
+  }, [fetchBalance]);
 
   return (
     <Card
@@ -49,14 +55,28 @@ const BalanceCard = () => {
       >
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Your Balance{" "}
+            Your Balance
           </Typography>
           <Typography variant="h5" component="div">
             {balance ? `${balance} GLC` : "No Balance Detected"}
           </Typography>
         </CardContent>
-        <CardActions>
-          <Button size="small">View Transactions</Button>
+        <CardActions sx={{ justifyContent: "space-between" }}>
+          <Button
+            color="secondary"
+            size="small"
+            onClick={() =>
+              window.open(
+                `https://mumbai.polygonscan.com/address/${address}#tokentxns`,
+                "_blank"
+              )
+            }
+          >
+            View Transactions
+          </Button>
+          <IconButton size="small" onClick={fetchBalance}>
+            <RefreshIcon />
+          </IconButton>
         </CardActions>
       </Box>
     </Card>

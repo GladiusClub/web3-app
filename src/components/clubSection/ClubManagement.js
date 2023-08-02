@@ -90,9 +90,7 @@ function ClubManagement() {
           Club Summary
         </Typography>
         <Box display="flex" justifyContent="space-between">
-          <BalanceCard />
-          <BalanceCard />
-          <BalanceCard />
+          <BalanceCard address={clubs[0]?.address || ""} />
         </Box>
       </Box>
       {/*userData.address && <AccountBalance myAddress={userData.address} />*/}
