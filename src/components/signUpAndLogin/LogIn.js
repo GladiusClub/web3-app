@@ -75,7 +75,11 @@ function LogIn() {
       signInWithEmailAndPassword(auth, "bob@example.com", "123456")
         .then((userCredential) => {
           const uid = userCredential.user.uid;
+          const user = userCredential.user;
           console.log("Bob's uid: ", uid);
+          user.getIdToken(/* forceRefresh */ true).then((idToken) => {
+            console.log("Token: ", idToken);
+          });
 
           navigate("/clubdashboard");
         })
