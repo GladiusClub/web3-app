@@ -20,6 +20,7 @@ import ClassDetails from "./groups/ClassDetails";
 import { useClub } from "../contexts/clubContext";
 import MembersTable from "../Tables/MembersTable";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import SendTransactionCard from "../SendTransactionCard";
 
 function ClubManagement() {
   const [clubMembers, setClubMembers] = useState();
@@ -91,6 +92,7 @@ function ClubManagement() {
         </Typography>
         <Box display="flex" justifyContent="space-between">
           <BalanceCard address={clubs[0]?.address || ""} />
+          <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
         </Box>
       </Box>
       {/*userData.address && <AccountBalance myAddress={userData.address} />*/}

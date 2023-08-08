@@ -82,7 +82,6 @@ function LogIn() {
           });
 
           navigate("/clubdashboard");
-          handleLogin();
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -90,31 +89,6 @@ function LogIn() {
           console.log(errorCode + errorMessage);
         });
     }, 1000);
-  };
-
-  const handleLogin = async () => {
-    // Assuming you've handled the actual login logic above and the user is signed in.
-
-    const idToken = await auth.currentUser.getIdToken(true);
-
-    const response = await fetch(
-      "https://us-central1-wallet-login-45c1c.cloudfunctions.net/mumbai_token_transfer",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          to_address: "0xce912F29932994e60A7aEEa9F18F7C16E086CBAc",
-          amount: "69",
-          mint: false,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    console.log(data);
   };
   
 

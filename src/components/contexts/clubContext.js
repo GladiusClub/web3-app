@@ -46,6 +46,7 @@ export const ClubProvider = ({ children }) => {
                       email: memberData.email,
                       name: memberData.name,
                       role: memberData.role,
+                      address: memberData.address,
                     };
                   }
                 );
