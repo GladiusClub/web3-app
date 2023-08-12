@@ -31,6 +31,14 @@ const SendTransactionCard = ({ clubMembers }) => {
 
     try {
       setIsLoading(true);
+      const transactions = [
+        {
+          to_address: selectedAddress, // Use the address from state
+          amount: amount,
+        },
+        // You can add more transactions to this array as needed
+      ];
+
       const response = await fetch(
         "https://us-central1-wallet-login-45c1c.cloudfunctions.net/mumbai_token_transfer",
         {
@@ -40,13 +48,10 @@ const SendTransactionCard = ({ clubMembers }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            to_address: selectedAddress, // Use the address from state
-            amount: amount,
-            mint: false,
+            transactions: transactions,
           }),
         }
       );
-
       const data = await response.json();
       setIsLoading(false);
       console.log(data);
@@ -56,7 +61,6 @@ const SendTransactionCard = ({ clubMembers }) => {
     }
   };
 
-  // ... other imports and code ...
 
   return (
     <Card
