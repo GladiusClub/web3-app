@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -20,7 +20,7 @@ import { useClub } from "../contexts/clubContext";
 // This component represents the event dialog
 function EventDialog({
   open,
-  handleClose,
+  setOpen,
   selectedDate,
   events,
   selectedEvent,
@@ -29,16 +29,12 @@ function EventDialog({
 }) {
   const { recordAttendance } = useClub();
   const [memberChanges, setmemberChanges] = useState([]);
-  const resetStateVariables = () => {
+
+  const resetStateVariables = useCallback(() => {
     setmemberChanges([]);
-  };
+  }, []);
 
-  // Inside your component
-  useEffect(() => {
-    console.log("Values to save: ", memberChanges);
-  }, [memberChanges]);
-
-  const recordAttendanceForAllMembers = async () => {
+  const recordAttendanceForAllMembers = useCallback(async () => {
     const eventParentId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
     const eventId = selectedEvent ? selectedEvent.id : null;
 
@@ -64,8 +60,36 @@ function EventDialog({
       );
     }
     resetStateVariables();
+  }, [
+    selectedEvent,
+    memberChanges,
+    recordAttendance,
+    selectedDate,
+    resetStateVariables,
+  ]);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const recordAttendanceAndClose = async () => {
+    await recordAttendanceForAllMembers();
     handleClose();
   };
+
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (memberChanges.length > 0) {
+        recordAttendanceForAllMembers();
+      }
+    }, 5000); // Auto-save every 5 seconds
+
+    return () => clearInterval(autoSaveInterval); // Clear the interval when the component unmounts
+  }, [memberChanges, recordAttendanceForAllMembers]);
+
+  useEffect(() => {
+    console.log("Values to save: ", memberChanges);
+  }, [memberChanges]);
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md">
@@ -98,7 +122,7 @@ function EventDialog({
         ></AttendanceTable>
       </Box>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={recordAttendanceAndClose}>Close & Save</Button>
         <Button
           sx={{
             backgroundColor: "darkmagenta",
@@ -107,9 +131,9 @@ function EventDialog({
               backgroundColor: "purple",
             },
           }}
-          onClick={recordAttendanceForAllMembers}
+          onClick={recordAttendanceAndClose}
         >
-          Save
+          Transfer
         </Button>
       </DialogActions>
     </Dialog>
@@ -150,10 +174,6 @@ function Calendar() {
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
@@ -177,7 +197,7 @@ function Calendar() {
       />
       <EventDialog
         open={open}
-        handleClose={handleClose}
+        setOpen={setOpen}
         selectedDate={selectedDate}
         events={events}
         selectedEvent={selectedEvent}

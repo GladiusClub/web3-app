@@ -233,6 +233,7 @@ export const useClubActions = (setClubs) => {
             win: attendanceData.win,
             score: attendanceData.score,
             coefficient: attendanceData.coefficient,
+            paid: attendanceData.paid,
           };
         } else {
           return null;
