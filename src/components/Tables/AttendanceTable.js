@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +8,6 @@ import {
   Checkbox,
   TextField,
 } from "@mui/material";
-import { useClub } from "../contexts/clubContext";
 
 // This component represents a single row in the member table
 function MemberRow({ member, handleMemberChanged }) {
@@ -158,73 +157,7 @@ function MemberRow({ member, handleMemberChanged }) {
 }
 
 // This component represents the member table
-function AttendanceTable({ googleCalendarId, eventId, handleMemberChanged }) {
-  const { clubs, getGroupsByEvent, getMemberAttendanceDetails } = useClub();
-  const [filteredMembers, setFilteredMembers] = useState([]);
-  const [membersInMatchingGroups, setMembersInMatchingGroups] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (clubs[0]) {
-        try {
-          const parentEventId = eventId.split("_")[0];
-
-          const matchingGroups = await getGroupsByEvent(
-            "1",
-            googleCalendarId,
-            parentEventId
-          );
-
-          let allMemberIds = matchingGroups.flatMap((group) => group.memberIds);
-
-          const tempMembersInMatchingGroups = clubs[0].members.filter(
-            (member) => allMemberIds.includes(member.id)
-          );
-
-          setMembersInMatchingGroups(tempMembersInMatchingGroups);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-
-    fetchData();
-  }, [clubs, eventId, googleCalendarId, getGroupsByEvent]);
-
-  useEffect(() => {
-    const fetchMemberDetails = async () => {
-      if (membersInMatchingGroups.length > 0) {
-        try {
-          const allMemberDetails = await getMemberAttendanceDetails(
-            "1",
-            googleCalendarId,
-            eventId
-          );
-
-          const tempFilteredMembers = membersInMatchingGroups.map((member) => {
-            const details = allMemberDetails.find(
-              (detail) => detail.id === member.id
-            );
-            return { ...member, ...details };
-          });
-
-          setFilteredMembers(tempFilteredMembers);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-
-    fetchMemberDetails();
-  }, [
-    membersInMatchingGroups,
-    googleCalendarId,
-    eventId,
-    getMemberAttendanceDetails,
-  ]);
-
-  useEffect(() => {}, [filteredMembers]);
-
+function AttendanceTable({ filteredMembers, handleMemberChanged }) {
   return (
     <Table>
       <TableHead>

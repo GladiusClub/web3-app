@@ -12,6 +12,7 @@ import {
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
 import TransferDialog from "./TransferDialog";
+import useEventData from "../CustomHooks/useEventData";
 
 function EventDialog({
   open,
@@ -23,29 +24,34 @@ function EventDialog({
   calendarRef,
 }) {
   const { recordAttendance } = useClub();
-  const [memberChanges, setmemberChanges] = useState([]);
+  const [memberChanges, setMemberChanges] = useState([]);
   const [transferMode, setTransferMode] = useState(false);
 
+  const { memberDetails, loading } = useEventData(selectedEvent?.id, open);
+
+  const googleCalendarId = "dcromp88@googlemail.com";
+
   const resetStateVariables = useCallback(() => {
-    setmemberChanges([]);
+    setMemberChanges([]);
   }, []);
 
   const recordAttendanceForAllMembers = useCallback(async () => {
-    const eventParentId = selectedEvent ? selectedEvent.id.split("_")[0] : null;
-    const eventId = selectedEvent ? selectedEvent.id : null;
+    const eventParentId = selectedEvent?.id.split("_")[0]; // Use optional chaining
+    const eventId = selectedEvent?.id;
 
-    for (let index in memberChanges) {
-      const member = memberChanges[index];
-      const memberId = member.id;
-      const attended = member.attended;
-      const memberWin = member.win;
-      const memberScore = member.score;
-      const memberCoefficient = member.coefficient;
+    for (let member of memberChanges) {
+      const {
+        id: memberId,
+        attended,
+        win: memberWin,
+        score: memberScore,
+        coefficient: memberCoefficient,
+      } = member;
 
       await recordAttendance(
         "1",
         memberId,
-        "dcromp88@googlemail.com",
+        googleCalendarId,
         selectedDate,
         eventParentId,
         eventId,
@@ -64,6 +70,16 @@ function EventDialog({
     resetStateVariables,
   ]);
 
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (memberChanges.length > 0) {
+        recordAttendanceForAllMembers();
+      }
+    }, 5000); // Auto-save every 5 seconds
+
+    return () => clearInterval(autoSaveInterval);
+  }, [memberChanges, recordAttendanceForAllMembers]);
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -72,20 +88,6 @@ function EventDialog({
     await recordAttendanceForAllMembers();
     handleClose();
   };
-
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      if (memberChanges.length > 0) {
-        recordAttendanceForAllMembers();
-      }
-    }, 5000); // Auto-save every 5 seconds
-
-    return () => clearInterval(autoSaveInterval); // Clear the interval when the component unmounts
-  }, [memberChanges, recordAttendanceForAllMembers]);
-
-  useEffect(() => {
-    console.log("Values to save: ", memberChanges);
-  }, [memberChanges]);
 
   const handleTransferClick = async () => {
     await recordAttendanceForAllMembers();
@@ -96,6 +98,10 @@ function EventDialog({
     setTransferMode(false);
     setOpen(false); // Close the main dialog when transfer is closed
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
@@ -125,9 +131,8 @@ function EventDialog({
             </Select>
           </FormControl>
           <AttendanceTable
-            eventId={selectedEvent ? selectedEvent.id : null}
-            googleCalendarId={"dcromp88@googlemail.com"}
-            handleMemberChanged={setmemberChanges}
+            filteredMembers={memberDetails}
+            handleMemberChanged={setMemberChanges}
           ></AttendanceTable>
         </Box>
         <DialogActions>
