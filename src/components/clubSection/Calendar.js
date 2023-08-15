@@ -16,6 +16,7 @@ import {
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
+import TransferDialog from "./TransferDialog";
 
 // This component represents the event dialog
 function EventDialog({
@@ -29,6 +30,7 @@ function EventDialog({
 }) {
   const { recordAttendance } = useClub();
   const [memberChanges, setmemberChanges] = useState([]);
+  const [transferMode, setTransferMode] = useState(false);
 
   const resetStateVariables = useCallback(() => {
     setmemberChanges([]);
@@ -91,52 +93,70 @@ function EventDialog({
     console.log("Values to save: ", memberChanges);
   }, [memberChanges]);
 
+  const handleTransferClick = async () => {
+    await recordAttendanceForAllMembers();
+    setTransferMode(true);
+  };
+
+  const handleCloseTransfer = () => {
+    setTransferMode(false);
+    setOpen(false); // Close the main dialog when transfer is closed
+  };
+
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md">
-      <Box sx={{ p: 5 }}>
-        <DialogTitle>
-          Select Event for {selectedDate ? selectedDate : ""}
-        </DialogTitle>
-        <FormControl fullWidth>
-          <Select
-            value={selectedEvent ? selectedEvent.id : ""}
-            onChange={(e) => {
-              const eventId = e.target.value;
-              const event = calendarRef.current.getApi().getEventById(eventId);
-              setSelectedEvent(event);
+    <div>
+      <Dialog open={open && !transferMode} onClose={handleClose} maxWidth="md">
+        <Box sx={{ p: 5 }}>
+          <DialogTitle>
+            Select Event for {selectedDate ? selectedDate : ""}
+          </DialogTitle>
+          <FormControl fullWidth>
+            <Select
+              value={selectedEvent ? selectedEvent.id : ""}
+              onChange={(e) => {
+                const eventId = e.target.value;
+                const event = calendarRef.current
+                  .getApi()
+                  .getEventById(eventId);
+                setSelectedEvent(event);
+              }}
+              sx={{ minWidth: 200, mb: 1 }}
+            >
+              {selectedDate &&
+                events.map((event, index) => (
+                  <MenuItem key={`${event.id}-${index}`} value={event.id}>
+                    {event.title}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <AttendanceTable
+            eventId={selectedEvent ? selectedEvent.id : null}
+            googleCalendarId={"dcromp88@googlemail.com"}
+            handleMemberChanged={setmemberChanges}
+          ></AttendanceTable>
+        </Box>
+        <DialogActions>
+          <Button onClick={recordAttendanceAndClose}>Close & Save</Button>
+          <Button
+            sx={{
+              backgroundColor: "darkmagenta",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "purple",
+              },
             }}
-            sx={{ minWidth: 200, mb: 1 }}
+            onClick={handleTransferClick} //onClick={recordAttendanceAndClose}
           >
-            {selectedDate &&
-              events.map((event, index) => (
-                <MenuItem key={`${event.id}-${index}`} value={event.id}>
-                  {event.title}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
-        <AttendanceTable
-          eventId={selectedEvent ? selectedEvent.id : null}
-          googleCalendarId={"dcromp88@googlemail.com"}
-          handleMemberChanged={setmemberChanges}
-        ></AttendanceTable>
-      </Box>
-      <DialogActions>
-        <Button onClick={recordAttendanceAndClose}>Close & Save</Button>
-        <Button
-          sx={{
-            backgroundColor: "darkmagenta",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "purple",
-            },
-          }}
-          onClick={recordAttendanceAndClose}
-        >
-          Transfer
-        </Button>
-      </DialogActions>
-    </Dialog>
+            Transfer
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <TransferDialog
+        open={open && transferMode}
+        onClose={handleCloseTransfer}
+      />
+    </div>
   );
 }
 
