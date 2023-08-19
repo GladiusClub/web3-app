@@ -14,6 +14,8 @@ import { useClub } from "../contexts/clubContext";
 import TransferDialog from "./TransferDialog";
 import useEventData from "../CustomHooks/useEventData";
 
+const googleCalendarId = "dcromp88@googlemail.com";
+
 function EventDialog({
   open,
   setOpen,
@@ -27,9 +29,31 @@ function EventDialog({
   const [memberChanges, setMemberChanges] = useState([]);
   const [transferMode, setTransferMode] = useState(false);
 
-  const { memberDetails, loading } = useEventData(selectedEvent?.id, open);
+  const { memberDetails: fetchedMemberDetails, loading } = useEventData(
+    selectedEvent?.id,
+    open
+  );
 
-  const googleCalendarId = "dcromp88@googlemail.com";
+  const [memberDetails, setMemberDetails] = useState(fetchedMemberDetails);
+
+  useEffect(() => {
+    setMemberDetails(fetchedMemberDetails);
+  }, [fetchedMemberDetails]);
+
+  useEffect(() => {
+    console.log("Local member details:", memberDetails);
+  }, [memberDetails]);
+
+  const updateLocalMemberDetails = useCallback(() => {
+    const updatedMembers = memberDetails.map((member) => {
+      const change = memberChanges.find((change) => change.id === member.id);
+      if (change) {
+        return { ...member, ...change };
+      }
+      return member;
+    });
+    setMemberDetails(updatedMembers);
+  }, [memberDetails, memberChanges]);
 
   const resetStateVariables = useCallback(() => {
     setMemberChanges([]);
@@ -61,6 +85,7 @@ function EventDialog({
         memberCoefficient
       );
     }
+    updateLocalMemberDetails();
     resetStateVariables();
   }, [
     selectedEvent,
@@ -68,6 +93,7 @@ function EventDialog({
     recordAttendance,
     selectedDate,
     resetStateVariables,
+    updateLocalMemberDetails,
   ]);
 
   useEffect(() => {
@@ -145,7 +171,7 @@ function EventDialog({
                 backgroundColor: "purple",
               },
             }}
-            onClick={handleTransferClick} //onClick={recordAttendanceAndClose}
+            onClick={handleTransferClick}
           >
             Transfer
           </Button>
@@ -154,6 +180,7 @@ function EventDialog({
       <TransferDialog
         open={open && transferMode}
         onClose={handleCloseTransfer}
+        filteredMembers={memberDetails}
       />
     </div>
   );
