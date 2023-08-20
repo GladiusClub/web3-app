@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableRow,
@@ -11,18 +11,30 @@ import {
 } from "@mui/material";
 
 function TransferDialog({ open, onClose, filteredMembers }) {
-  const [membersToTransfer, setMembersToTransfer] = useState(
-    filteredMembers.map((member) => ({
-      ...member,
-      transfer: !member.paid,
-    }))
-  );
+  const [addressesToTransfer, setAddressesToTransfer] = useState([]);
+
+  const [membersToTransfer, setMembersToTransfer] = useState([]);
+
+  useEffect(() => {
+    setMembersToTransfer(
+      filteredMembers.map((member) => ({
+        ...member,
+        transfer: !member.paid,
+      }))
+    );
+  }, [filteredMembers]);
+
+  useEffect(() => {
+    const addresses = membersToTransfer
+      .filter((member) => member.transfer)
+      .map((member) => member.address);
+    setAddressesToTransfer(addresses);
+  }, [membersToTransfer]);
 
   const handlePay = () => {
-    const membersToBeTransferred = membersToTransfer.filter(
-      (member) => member.transfer
-    );
-    console.log(membersToBeTransferred);
+    console.log("Addresses to be transferred:", addressesToTransfer);
+    setAddressesToTransfer([]);
+    onClose();
   };
 
   return (
