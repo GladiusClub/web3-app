@@ -11,56 +11,12 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useFirebase } from "./contexts/firebaseContext";
+import useSendTransaction from "./CustomHooks/useSendTransaction";
 
 const SendTransactionCard = ({ clubMembers }) => {
-  const { auth } = useFirebase();
   const [selectedAddress, setSelectedAddress] = React.useState("");
   const [amount, setAmount] = React.useState(""); // State for amount
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const handleSend = async () => {
-    // Ensure an address is selected before proceeding
-    if (!selectedAddress) {
-      console.error("Please select a member's address before sending.");
-      return;
-    }
-
-    // Assuming the user is signed in and the necessary auth handling is in place
-    const idToken = await auth.currentUser.getIdToken(true);
-
-    try {
-      setIsLoading(true);
-      const transactions = [
-        {
-          to_address: selectedAddress, // Use the address from state
-          amount: amount,
-        },
-        // You can add more transactions to this array as needed
-      ];
-
-      const response = await fetch(
-        "https://us-central1-wallet-login-45c1c.cloudfunctions.net/mumbai_token_transfer",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            transactions: transactions,
-          }),
-        }
-      );
-      const data = await response.json();
-      setIsLoading(false);
-      console.log(data);
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Error sending transaction:", error);
-    }
-  };
-
+  const { handleSend, isLoading } = useSendTransaction();
 
   return (
     <Card
@@ -124,7 +80,10 @@ const SendTransactionCard = ({ clubMembers }) => {
           </Box>
         ) : (
           <CardActions sx={{ justifyContent: "flex-end" }}>
-            <Button color="secondary" onClick={handleSend}>
+            <Button
+              color="secondary"
+              onClick={() => handleSend(selectedAddress, amount)}
+            >
               Send
             </Button>
           </CardActions>

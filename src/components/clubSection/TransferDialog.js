@@ -9,11 +9,12 @@ import {
   Button,
   Dialog,
 } from "@mui/material";
+import useSendTransaction from "../CustomHooks/useSendTransaction";
 
 function TransferDialog({ open, onClose, filteredMembers }) {
   const [addressesToTransfer, setAddressesToTransfer] = useState([]);
-
   const [membersToTransfer, setMembersToTransfer] = useState([]);
+  const { handleSend } = useSendTransaction();
 
   useEffect(() => {
     setMembersToTransfer(
@@ -33,6 +34,7 @@ function TransferDialog({ open, onClose, filteredMembers }) {
 
   const handlePay = () => {
     console.log("Addresses to be transferred:", addressesToTransfer);
+    handleSend(addressesToTransfer, 1);
     setAddressesToTransfer([]);
     onClose();
   };
