@@ -8,10 +8,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { Box } from "@mui/material";
 import { useFirebase } from "../contexts/firebaseContext";
+import { doc, getDoc } from "firebase/firestore";
 
 const LogInCard = styled(Card)(({ theme }) => ({
   position: "absolute",
@@ -32,31 +30,42 @@ const LogInFields = styled("div")(({ theme }) => ({
 }));
 
 function LogIn() {
-  const { auth } = useFirebase();
+  const { db, auth } = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Athlete/Fan");
 
   const navigate = useNavigate();
-
-  const handleRoleChange = (event, newRole) => {
-    if (newRole !== null) {
-      setRole(newRole);
-    }
-  };
 
   let timer;
   // Long press to login as a test user
 
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         // Signed in
-        //const user = userCredential.user;
-        if (role === "Club") {
-          navigate("/clubdashboard");
+        const userRef = doc(db, "users", userCredential.user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const clubRoles = userData.clubs_roles;
+          console.log(clubRoles);
+
+          if (clubRoles && clubRoles.length > 0) {
+            const firstRole = clubRoles[0];
+            const userRole = firstRole.role;
+
+            if (userRole === "owner") {
+              navigate("/clubdashboard");
+            } else {
+              navigate("/userdashboard");
+            }
+          } else {
+            navigate("/userdashboard"); // Default navigation if club_roles does not exist or is empty
+          }
         } else {
-          navigate("/userdashboard");
+          console.error("User document does not exist!");
+          // Handle this case, maybe navigate to a default route or show an error
         }
       })
       .catch((error) => {
@@ -90,7 +99,6 @@ function LogIn() {
         });
     }, 1000);
   };
-  
 
   return (
     <LogInCard>
@@ -138,40 +146,6 @@ function LogIn() {
           </Button>
         </form>
       </CardContent>
-      <Box sx={{ width: 1, marginTop: "10px" }}>
-        <ToggleButtonGroup
-          color="secondary"
-          value={role}
-          exclusive
-          onChange={handleRoleChange}
-          fullWidth
-        >
-          <ToggleButton
-            value="Athlete/Fan"
-            sx={{
-              flexGrow: 1,
-              borderRadius: "0 0 4px 4px",
-              border: "none",
-              borderTop: "0.4px solid",
-              borderRight: "0.2px solid",
-            }}
-          >
-            Athlete/Fan
-          </ToggleButton>
-          <ToggleButton
-            value="Club"
-            sx={{
-              flexGrow: 1,
-              borderRadius: "0 0 4px 4px",
-              border: "none",
-              borderTop: "0.4px solid",
-              borderLeft: "0.2px solid",
-            }}
-          >
-            Club
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
     </LogInCard>
   );
 }
