@@ -3,13 +3,14 @@ import { useUser } from "./contexts/UserContext";
 import LandingPage from "./LandingPage";
 import { doc, getDoc } from "firebase/firestore";
 import { useFirebase } from "./contexts/firebaseContext";
-import { Navigate } from "react-router-dom"; // make sure to import Navigate for redirection
+import { useNavigate } from "react-router-dom";
 
 const ProtectedRoute = ({ element, routeType }) => {
   const { user } = useUser();
   const { db } = useFirebase();
   const [userRole, setUserRole] = useState();
-  const [loading, setLoading] = useState(true); // introduce loading state
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -28,34 +29,44 @@ const ProtectedRoute = ({ element, routeType }) => {
           }
         }
       }
-      setLoading(false); // role fetching is done, set loading to false
+      setLoading(false);
     };
+
     setUserRole(null);
     setLoading(true);
-
     fetchUserRole();
   }, [user, db]);
 
-  const renderProtectedComponent = () => {
-    if (loading) {
-      return <div>Loading...</div>; // or return some spinner component
+  const shouldNavigateAway = () => {
+    if (!loading) {
+      if (!user) {
+        return true;
+      }
+      if (
+        routeType !== "user" &&
+        !(routeType === "club" && userRole === "owner")
+      ) {
+        return true;
+      }
     }
-
-    if (!user) {
-      return <LandingPage />;
-    }
-
-    if (
-      routeType === "user" ||
-      (routeType === "club" && userRole === "owner")
-    ) {
-      return element;
-    }
-
-    return <Navigate to="/" />;
+    return false;
   };
 
-  return renderProtectedComponent();
+  useEffect(() => {
+    if (shouldNavigateAway()) {
+      navigate("/");
+    }
+  }, [loading, user, userRole]);
+
+  if (loading) {
+    return <div>Loading...</div>; // or return some spinner component
+  }
+
+  if (shouldNavigateAway()) {
+    return null;
+  }
+
+  return element;
 };
 
 export default ProtectedRoute;
