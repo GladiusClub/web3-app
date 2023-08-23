@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "./contexts/UserContext";
-import LandingPage from "./LandingPage";
 import { doc, getDoc } from "firebase/firestore";
 import { useFirebase } from "./contexts/firebaseContext";
 import { useNavigate } from "react-router-dom";
@@ -53,10 +52,19 @@ const ProtectedRoute = ({ element, routeType }) => {
   };
 
   useEffect(() => {
-    if (shouldNavigateAway()) {
-      navigate("/");
+    if (!loading) {
+      if (!user) {
+        navigate("/");
+        return;
+      }
+      if (
+        routeType !== "user" &&
+        !(routeType === "club" && userRole === "owner")
+      ) {
+        navigate("/");
+      }
     }
-  }, [loading, user, userRole]);
+  }, [loading, user, userRole, routeType, navigate]);
 
   if (loading) {
     return <div>Loading...</div>; // or return some spinner component

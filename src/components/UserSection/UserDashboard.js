@@ -6,6 +6,7 @@ import DrawerComponent from "../navigation/Drawer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
 import { useUser } from "../contexts/UserContext";
+import { useClub } from "../contexts/clubContext";
 
 const listItems = [
   { icon: <PeopleIcon />, name: "People" },
@@ -14,6 +15,9 @@ const listItems = [
 
 export default function UserDashboard() {
   const { userData } = useUser();
+  const { clubs } = useClub();
+  console.log(clubs[0]);
+
   return (
     <Box sx={{ display: "flex" }}>
       <DrawerComponent
