@@ -30,6 +30,7 @@ export const UserProvider = ({ children }) => {
     return unsubscribe;
   }, [auth, db]);
 
+
   const contextValue = {
     user,
     setUser,
