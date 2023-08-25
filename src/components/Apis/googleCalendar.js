@@ -3,9 +3,8 @@ import moment from "moment";
 import { rrulestr } from "rrule";
 
 const googleCalendarApiKey = `${process.env.REACT_APP_CALENDAR_APIKEY}`;
-const googleCalendarId = "dcromp88@googlemail.com";
 
-export async function getFormattedCalendarEvents(timeMin) {
+export async function getFormattedCalendarEvents(timeMin, googleCalendarId) {
   try {
     const response = await axios.get(
       `https://www.googleapis.com/calendar/v3/calendars/${googleCalendarId}/events?key=${googleCalendarApiKey}&timeMin=${timeMin}`

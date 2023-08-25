@@ -18,7 +18,6 @@ function HorizontalLinearStepper({ handleSubmit }) {
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
 
-  console.log(selectedEvents);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {

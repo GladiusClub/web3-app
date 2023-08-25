@@ -9,6 +9,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import { getFormattedCalendarEvents } from "../Apis/googleCalendar";
+import { useClub } from "../contexts/clubContext";
 
 function EventRow({ event, handleEventsChange }) {
   return (
@@ -23,12 +24,20 @@ function EventRow({ event, handleEventsChange }) {
         />
       </TableCell>
     </TableRow>
-  ); 
+  );
 }
 
 // This component represents the events table
 function EventsTable({ setSelectedEvents }) {
   const [events, setEvents] = useState([]);
+  const [clubCalendar, setClubCalendar] = useState();
+  const { clubs } = useClub();
+
+  useEffect(() => {
+    if (clubs[0]) {
+      setClubCalendar(clubs[0].calendars[0]);
+    }
+  }, [clubs]);
 
   const handleEventsChange = (e, changedEvent) => {
     const isChecked = e.target.checked;
@@ -50,14 +59,17 @@ function EventsTable({ setSelectedEvents }) {
   };
 
   useEffect(() => {
+    if (!clubCalendar) return; // This will exit the effect if clubCalendar is not populated
+
     const now = moment().toISOString();
-    getFormattedCalendarEvents(now)
+    getFormattedCalendarEvents(now, clubCalendar)
       .then((formattedEvents) => {
         console.log(formattedEvents);
         setEvents(formattedEvents);
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [clubCalendar]);
+  
 
   return (
     <Table>

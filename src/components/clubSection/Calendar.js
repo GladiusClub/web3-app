@@ -5,6 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Paper } from "@mui/material";
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
 import EventDialog from "./EventDialog";
+import { useClub } from "../contexts/clubContext";
 
 // Main calendar component
 function Calendar() {
@@ -13,6 +14,14 @@ function Calendar() {
   const [events, setEvents] = useState([]);
   const calendarRef = useRef(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [clubCalendar, setClubCalendar] = useState();
+  const { clubs } = useClub();
+
+  useEffect(() => {
+    if (clubs[0]) {
+      setClubCalendar(clubs[0].calendars[0]);
+    }
+  }, [clubs]);
 
   const handleClick = (date, event) => {
     const dateStr = date.dateStr.slice(0, 10);
@@ -41,14 +50,14 @@ function Calendar() {
   };
 
   useEffect(() => {
-    if (calendarRef.current) {
+    if (calendarRef.current && clubCalendar) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.addEventSource({
         googleCalendarApiKey: `${process.env.REACT_APP_CALENDAR_APIKEY}`,
-        googleCalendarId: "dcromp88@googlemail.com",
+        googleCalendarId: clubCalendar,
       });
     }
-  }, [calendarRef]);
+  }, [calendarRef, clubCalendar]);
 
   return (
     <Paper sx={{ maxWidth: "800px", margin: "10 auto", mt: 4, p: 2 }}>
@@ -69,6 +78,7 @@ function Calendar() {
         selectedEvent={selectedEvent}
         setSelectedEvent={setSelectedEvent}
         calendarRef={calendarRef}
+        googleCalendarId={clubCalendar}
       />
     </Paper>
   );

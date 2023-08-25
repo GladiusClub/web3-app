@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
-//import { H1 } from "../styles/TextStyles";
-//import AccountBalance from "../Balance";
 import BalanceCard from "../BalanceCard";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -61,9 +59,6 @@ function ClubManagement() {
 
   return (
     <>
-      {/*userData ? <H1>{userData.club}!</H1> : null*/}
-
-      {/*userData ? <p>Your club wallet address is {userData.address}!</p> : null*/}
       <Box
         sx={{
           display: "flex",

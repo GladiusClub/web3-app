@@ -14,7 +14,6 @@ import { useClub } from "../contexts/clubContext";
 import TransferDialog from "./TransferDialog";
 import useEventData from "../CustomHooks/useEventData";
 
-const googleCalendarId = "dcromp88@googlemail.com";
 
 function EventDialog({
   open,
@@ -24,6 +23,7 @@ function EventDialog({
   selectedEvent,
   setSelectedEvent,
   calendarRef,
+  googleCalendarId,
 }) {
   const { recordAttendance } = useClub();
   const [memberChanges, setMemberChanges] = useState([]);
@@ -94,6 +94,7 @@ function EventDialog({
     selectedDate,
     resetStateVariables,
     updateLocalMemberDetails,
+    googleCalendarId,
   ]);
 
   useEffect(() => {
