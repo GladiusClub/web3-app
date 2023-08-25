@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { H2 } from "../styles/TextStyles";
 import Balance from "../BalanceCard";
 import { Box } from "@mui/system";
@@ -7,6 +7,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
 import { useUser } from "../contexts/UserContext";
 import { useClub } from "../contexts/clubContext";
+import SendTransactionCard from "../SendTransactionCard";
 
 const listItems = [
   { icon: <PeopleIcon />, name: "People" },
@@ -16,7 +17,13 @@ const listItems = [
 export default function UserDashboard() {
   const { userData } = useUser();
   const { clubs } = useClub();
-  console.log(clubs[0]);
+  const [clubMembers, setClubMembers] = useState();
+
+  useEffect(() => {
+    if (clubs[0]) {
+      setClubMembers(clubs[0].members);
+    }
+  }, [clubs]);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -28,6 +35,7 @@ export default function UserDashboard() {
         <Box>
           <H2>Assets</H2>
           <Balance address={userData?.address || ""}></Balance>
+          <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
         </Box>
       </Box>
     </Box>
