@@ -8,6 +8,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { useUser } from "../contexts/UserContext";
 import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
+import LeaderboardTable from "./LeaderBoardTable";
 
 const listItems = [
   { icon: <PeopleIcon />, name: "People" },
@@ -27,17 +28,17 @@ export default function UserDashboard() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <DrawerComponent
-        handleIconClick={() => {}}
-        listItems={listItems}
-      ></DrawerComponent>
-      <Box sx={{ display: "flex", flexDirection: "row", p: 3 }}>
-        <Box>
-          <H2>Assets</H2>
-          <Balance address={userData?.address || ""}></Balance>
-          <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
+      <DrawerComponent handleIconClick={() => {}} listItems={listItems} />
+
+      <Box sx={{ display: "flex", flexDirection: "column", p: 3 }}>
+        <H2 sx={{ mt: 0 }}>Assets</H2>
+        <Balance address={userData?.address || ""} />
+        <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
+        <Box sx={{ width: "50vw" }}>
+          <LeaderboardTable />
         </Box>
       </Box>
     </Box>
   );
+  
 }
