@@ -15,6 +15,7 @@ import TransferDialog from "./TransferDialog";
 import useEventData from "../CustomHooks/useEventData";
 
 
+
 function EventDialog({
   open,
   setOpen,
@@ -25,13 +26,16 @@ function EventDialog({
   calendarRef,
   googleCalendarId,
 }) {
-  const { recordAttendance } = useClub();
+  const { clubs, recordAttendance } = useClub();
   const [memberChanges, setMemberChanges] = useState([]);
   const [transferMode, setTransferMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const { memberDetails: fetchedMemberDetails, loading } = useEventData(
+  const { memberDetails: fetchedMemberDetails } = useEventData(
     selectedEvent?.id,
-    open
+    open,
+    googleCalendarId,
+    setLoading
   );
 
   const [memberDetails, setMemberDetails] = useState(fetchedMemberDetails);
@@ -73,7 +77,7 @@ function EventDialog({
       } = member;
 
       await recordAttendance(
-        "1",
+        clubs[0].id,
         memberId,
         googleCalendarId,
         selectedDate,
@@ -95,6 +99,7 @@ function EventDialog({
     resetStateVariables,
     updateLocalMemberDetails,
     googleCalendarId,
+    clubs,
   ]);
 
   useEffect(() => {
@@ -130,6 +135,18 @@ function EventDialog({
     return <p>Loading...</p>;
   }
 
+  const handleEventChange = (e) => {
+    setMemberDetails([]);
+    const eventId = e.target.value;
+    const event = calendarRef.current.getApi().getEventById(eventId);
+    setSelectedEvent(event);
+    // Reset memberDetails immediately when a new event is selected
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div>
       <Dialog open={open && !transferMode} onClose={handleClose} maxWidth="md">
@@ -140,13 +157,7 @@ function EventDialog({
           <FormControl fullWidth>
             <Select
               value={selectedEvent ? selectedEvent.id : ""}
-              onChange={(e) => {
-                const eventId = e.target.value;
-                const event = calendarRef.current
-                  .getApi()
-                  .getEventById(eventId);
-                setSelectedEvent(event);
-              }}
+              onChange={handleEventChange}
               sx={{ minWidth: 200, mb: 1 }}
             >
               {selectedDate &&

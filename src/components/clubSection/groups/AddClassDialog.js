@@ -4,10 +4,10 @@ import HorizontalLinearStepper from "./HorizontalLinearStepper";
 import { useClub } from "../../contexts/clubContext";
 
 function AddClassDialog({ open, handleClose }) {
-  const { createNewGroup } = useClub();
+  const { clubs, createNewGroup } = useClub();
 
   const handleSubmit = async (className, selectedMembers, selectedEvents) => {
-    const clubId = "1";
+    const clubId = clubs[0].id;
     try {
       // Call the createGroup action.
       // Assumed structure of createGroup function: createGroup(clubId, groupName, members, events)

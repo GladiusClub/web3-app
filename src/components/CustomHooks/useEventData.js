@@ -1,22 +1,23 @@
 import { useState, useEffect } from "react";
 import { useClub } from "../contexts/clubContext";
 
-function useEventData(eventId, open) {
+function useEventData(eventId, open, googleCalendarId, setLoading) {
   const [matchingGroups, setMatchingGroups] = useState([]);
   const [memberDetails, setMemberDetails] = useState([]);
   const { clubs, getGroupsByEvent, getMemberAttendanceDetails } = useClub();
-  const googleCalendarId = "dcromp88@googlemail.com";
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setMatchingGroups([]);
+    setMemberDetails([]);
     setLoading(true);
+
     const fetchData = async () => {
       try {
         if (clubs[0] && eventId) {
           const parentEventId = eventId.split("_")[0];
 
           const fetchedMatchingGroups = await getGroupsByEvent(
-            "1",
+            clubs[0].id,
             googleCalendarId,
             parentEventId
           );
@@ -31,7 +32,7 @@ function useEventData(eventId, open) {
           );
 
           const fetchedMemberDetails = await getMemberAttendanceDetails(
-            "1",
+            clubs[0].id,
             googleCalendarId,
             eventId
           );
@@ -55,9 +56,17 @@ function useEventData(eventId, open) {
     };
 
     fetchData();
-  }, [eventId, clubs, getGroupsByEvent, getMemberAttendanceDetails, open]);
+  }, [
+    eventId,
+    clubs,
+    getGroupsByEvent,
+    getMemberAttendanceDetails,
+    open,
+    googleCalendarId,
+    setLoading,
+  ]);
 
-  return { matchingGroups, memberDetails, loading };
+  return { matchingGroups, memberDetails };
 }
 
 export default useEventData;
