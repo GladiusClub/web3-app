@@ -51,7 +51,7 @@ function UploadLogoButton({ onClick }) {
   );
 }
 
-function SignUpForm({ userType, onSubmit }) {
+function ClubSignUpForm({ onSubmit }) {
   const [clubName, setClubName] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -80,23 +80,19 @@ function SignUpForm({ userType, onSubmit }) {
               sx={{ marginBottom: "10px" }}
               align="center"
             >
-              Create a new Gladius Account
+              Create a new Club Account
             </Typography>
-            {userType === "club" && (
-              <UploadLogoButton onClick={handleUploadClick} />
-            )}
-            {userType === "club" && (
-              <TextField
-                label="Club Name"
-                type="name"
-                value={clubName}
-                onChange={(e) => setClubName(e.target.value)}
-                color="secondary"
-                sx={{
-                  marginBottom: "10px",
-                }}
-              />
-            )}
+            <UploadLogoButton onClick={handleUploadClick} />
+            <TextField
+              label="Club Name"
+              type="name"
+              value={clubName}
+              onChange={(e) => setClubName(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
             <TextField
               label="Name"
               type="name"
@@ -143,7 +139,7 @@ function SignUpForm({ userType, onSubmit }) {
             onClick={handleSignUp}
             sx={{ marginBottom: "10px" }}
           >
-            Create {userType}
+            Create Club
           </Button>
         </form>
       </CardContent>
@@ -151,4 +147,83 @@ function SignUpForm({ userType, onSubmit }) {
   );
 }
 
-export default SignUpForm;
+function UserSignUpForm({ onSubmit }) {
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignUp = () => {
+    onSubmit({
+      userName: userName,
+      email: email,
+      password: password,
+    });
+  };
+
+  return (
+    <SignUpCard>
+      <CardContent>
+        <form>
+          <SignUpFields>
+            <Typography
+              variant="h5"
+              sx={{ marginBottom: "10px" }}
+              align="center"
+            >
+              Create a new User Account
+            </Typography>
+            <TextField
+              label="User Name"
+              type="name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              color="secondary"
+              sx={{
+                marginBottom: "10px",
+              }}
+            />
+          </SignUpFields>
+          <Typography variant="body2" sx={{ marginBottom: "10px" }}>
+            Already a member?{" "}
+            <Link
+              to="/login"
+              style={{ textDecoration: "none", color: "#8A2BE2" }}
+            >
+              log in
+            </Link>{" "}
+          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleSignUp}
+            sx={{ marginBottom: "10px" }}
+          >
+            Create User
+          </Button>
+        </form>
+      </CardContent>
+    </SignUpCard>
+  );
+}
+
+export { ClubSignUpForm, UserSignUpForm };

@@ -6,14 +6,18 @@ import SportsIcon from "@mui/icons-material/Sports";
 import SportsHandballIcon from "@mui/icons-material/SportsHandball";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import SignUpForm from "./SignUpForm";
+import { ClubSignUpForm, UserSignUpForm } from "./SignUpForm";
 import ClubSelect from "./ClubSelect";
 import ClubStep2 from "./ClubLoginStep2";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useFirebase } from "../contexts/firebaseContext";
 
 function SignUp() {
   const [step, setStep] = useState(0);
   const [userType, setUserType] = useState("");
   const [userDetails, setUserDetails] = useState({});
+  const { auth } = useFirebase();
+
   console.log(userDetails);
 
   const clubSteps = [
@@ -23,7 +27,7 @@ function SignUp() {
         setStep(step + 1);
       }}
     />,
-    <SignUpForm
+    <ClubSignUpForm
       userType={userType}
       onSubmit={(details) => {
         setUserDetails(details);
@@ -40,13 +44,30 @@ function SignUp() {
         setStep(step + 1);
       }}
     />,
-    <SignUpForm
+    <UserSignUpForm
       userType={userType}
       onSubmit={(details) => {
-        setUserDetails(details);
-        setStep(step + 1);
+        createUserWithEmailAndPassword(auth, details.email, details.password)
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+
+            // Set the name as the username
+            return updateProfile(user, { displayName: details.name }).then(
+              () => {
+                // Profile updated
+                setUserDetails(details);
+                setStep(step + 1);
+              }
+            );
+          })
+          .catch((error) => {
+            // An error occurred during the sign-up
+            console.error("Error signing up: ", error);
+          });
       }}
     />,
+
     <ClubSelect></ClubSelect>,
   ];
 
