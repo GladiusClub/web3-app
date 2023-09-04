@@ -54,7 +54,7 @@ function SignUp() {
             console.log(userCredential);
 
             // Set the name as the username
-            return updateProfile(user, { displayName: details.name }).then(
+            return updateProfile(user, { displayName: details.userName }).then(
               () => {
                 // Profile updated
                 setUserDetails(details);
