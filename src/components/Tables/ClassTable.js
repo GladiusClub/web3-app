@@ -16,6 +16,7 @@ import {
 import { styled } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
 import { useClub } from "../contexts/clubContext";
+import MembersDialog from "../clubSection/groups/MembersDialog";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -28,11 +29,20 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const ClassTable = ({ clubGroups }) => {
-  const { clubs, getAllGroupNames, deleteGroup } = useClub();
+  const { clubs, getAllGroupNames, deleteGroup, getGroupData } = useClub();
   const [groups, setGroups] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [isMembersDialogOpen, setIsMembersDialogOpen] = useState(false);
+
+  const handleMembersDialogOpen = () => {
+    setIsMembersDialogOpen(true);
+  };
+
+  const handleMembersDialogClose = () => {
+    setIsMembersDialogOpen(false);
+  };
 
   const fetchGroupData = () => {
     if (clubs[0]) {
@@ -94,12 +104,24 @@ const ClassTable = ({ clubGroups }) => {
                   onClose={handleClose}
                   onClick={handleClose}
                 >
-                  <MenuItem onClick={() => console.log("Add/Remove Members")}>
-                    Add/Remove Members
-                  </MenuItem>
-                  <MenuItem onClick={() => console.log("Add/Remove Events")}>
+                  <MenuItem
+                    onClick={() => {
+                      getGroupData(clubs[0].id, selectedGroup.id)
+                        .then((groupData) =>
+                          console.log("Group Data:", groupData)
+                        )
+                        .catch((error) =>
+                          console.error("Error fetching group data:", error)
+                        );
+                    }}
+                  >
                     Add/Remove Events
                   </MenuItem>
+
+                  <MenuItem onClick={handleMembersDialogOpen}>
+                    Add/Remove Members
+                  </MenuItem>
+
                   <MenuItem
                     onClick={() => {
                       deleteGroup(clubs[0].id, selectedGroup.id)
@@ -122,6 +144,11 @@ const ClassTable = ({ clubGroups }) => {
           ))}
         </TableBody>
       </Table>
+      <MembersDialog
+        isOpen={isMembersDialogOpen}
+        handleClose={handleMembersDialogClose}
+        selectedGroup={selectedGroup}
+      />
     </TableContainer>
   );
 };

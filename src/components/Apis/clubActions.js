@@ -5,6 +5,7 @@ import {
   collection,
   getDocs,
   addDoc,
+  getDoc,
   query,
   where,
   setDoc,
@@ -63,6 +64,47 @@ export const useClubActions = (setClubs) => {
     return groups;
   };
 
+  const getGroupData = async (clubId, groupId) => {
+    try {
+      // Get reference to the specific group document in the groups collection of a club
+      const groupDocRef = doc(db, `clubs/${clubId}/groups/${groupId}`);
+
+      // Get the document
+      const groupDoc = await getDoc(groupDocRef);
+
+      // Check if the document exists
+      if (groupDoc.exists()) {
+        // Get the data from the document
+        const groupData = groupDoc.data();
+
+        console.log("Group data retrieved successfully:", groupData);
+
+        // Return the data
+        return groupData;
+      } else {
+        console.error("No such group found");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error retrieving group data:", error);
+      return null;
+    }
+  };
+
+  const deleteGroupLocally = (clubId, groupId) => {
+    setClubs((prevClubs) => {
+      return prevClubs.map((club) => {
+        if (club.id === clubId) {
+          return {
+            ...club,
+            groups: club.groups.filter((group) => group.id !== groupId),
+          };
+        }
+        return club;
+      });
+    });
+  };
+
   const deleteGroup = async (clubId, groupId) => {
     try {
       // Get reference to the specific group document in the groups collection of a club
@@ -72,8 +114,48 @@ export const useClubActions = (setClubs) => {
       await deleteDoc(groupDocRef);
 
       console.log("Group deleted successfully");
+      deleteGroupLocally(clubId, groupId);
     } catch (error) {
       console.error("Error deleting group:", error);
+    }
+  };
+
+  const updateGroupMembersLocally = (clubId, groupId, newMemberUUIDs) => {
+    setClubs((prevClubs) => {
+      return prevClubs.map((club) => {
+        if (club.id === clubId) {
+          return {
+            ...club,
+            groups: club.groups.map((group) => {
+              if (group.id === groupId) {
+                return {
+                  ...group,
+                  member_uuids: newMemberUUIDs,
+                };
+              }
+              return group;
+            }),
+          };
+        }
+        return club;
+      });
+    });
+  };
+
+  const updateGroupMembers = async (clubId, groupId, newMemberUUIDs) => {
+    try {
+      // Get reference to the specific group document in the groups collection of a club
+      const groupDocRef = doc(db, `clubs/${clubId}/groups/${groupId}`);
+
+      // Update the member_uuids field in the document
+      await updateDoc(groupDocRef, {
+        member_uuids: newMemberUUIDs,
+      });
+
+      console.log("Group members updated successfully");
+      updateGroupMembersLocally(clubId, groupId, newMemberUUIDs);
+    } catch (error) {
+      console.error("Error updating group members:", error);
     }
   };
 
@@ -109,8 +191,8 @@ export const useClubActions = (setClubs) => {
               {
                 id: docRef.id,
                 name: groupName,
-                member_uuids: [],
-                event_ids: [],
+                member_uuids: memberIds,
+                event_ids: groupEvents,
               },
             ];
           }
@@ -316,7 +398,9 @@ export const useClubActions = (setClubs) => {
   return {
     updateUserRole,
     getAllGroupNames,
+    getGroupData,
     deleteGroup,
+    updateGroupMembers,
     createNewGroup,
     getGroupsByEvent,
     recordAttendance,
