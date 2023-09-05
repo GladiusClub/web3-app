@@ -12,11 +12,14 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import useSendTransaction from "./CustomHooks/useSendTransaction";
+import FormHelperText from "@mui/material/FormHelperText";
+
 
 const SendTransactionCard = ({ clubMembers }) => {
   const [selectedAddress, setSelectedAddress] = React.useState("");
   const [amount, setAmount] = React.useState(""); // State for amount
   const { handleSend, isLoading } = useSendTransaction();
+  const [error, setError] = React.useState(false);
 
   return (
     <Card
@@ -37,26 +40,30 @@ const SendTransactionCard = ({ clubMembers }) => {
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
               {" "}
-              {/* Add this Box */}
-              <FormControl fullWidth>
+              <FormControl fullWidth error={error}>
                 <InputLabel id="address-select-label">Select Member</InputLabel>
                 <Select
                   labelId="address-select-label"
                   value={selectedAddress}
-                  onChange={(e) => setSelectedAddress(e.target.value)}
+                  onChange={(e) => {
+                    const selectedValue = e.target.value || "";
+                    setSelectedAddress(selectedValue);
+                    setError(!selectedValue);
+                  }}
                   label="Select Member"
                 >
                   {clubMembers.map((member) => (
-                    <MenuItem key={member.address} value={member.address}>
+                    <MenuItem key={member.id} value={member.address}>
                       {member.name}
                     </MenuItem>
                   ))}
                 </Select>
+                {error && (
+                  <FormHelperText>Error: Address is null</FormHelperText>
+                )}
               </FormControl>
             </Box>
             <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
-              {" "}
-              {/* Add this Box */}
               <FormControl fullWidth>
                 <TextField
                   label="Amount"

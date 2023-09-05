@@ -46,7 +46,7 @@ export const useClubActions = (setClubs) => {
   };
 
   const getAllGroupNames = async (clubId) => {
-    const groupNames = [];
+    const groups = [];
 
     // Get reference to groups collection of a club
     const groupsRef = collection(db, `clubs/${clubId}/groups`);
@@ -54,12 +54,27 @@ export const useClubActions = (setClubs) => {
     // Get all groups in the club
     const groupSnapshots = await getDocs(groupsRef);
 
-    // Iterate over each group and get the group name
+    // Iterate over each group and get the group id and name
     groupSnapshots.forEach((groupDoc) => {
-      groupNames.push(groupDoc.data().name);
+      const groupData = groupDoc.data();
+      groups.push({ id: groupDoc.id, name: groupData.name });
     });
 
-    return groupNames;
+    return groups;
+  };
+
+  const deleteGroup = async (clubId, groupId) => {
+    try {
+      // Get reference to the specific group document in the groups collection of a club
+      const groupDocRef = doc(db, `clubs/${clubId}/groups/${groupId}`);
+
+      // Delete the document
+      await deleteDoc(groupDocRef);
+
+      console.log("Group deleted successfully");
+    } catch (error) {
+      console.error("Error deleting group:", error);
+    }
   };
 
   const createNewGroup = async (
@@ -263,7 +278,6 @@ export const useClubActions = (setClubs) => {
         const memberData = memberDoc.data();
         const memberName = memberData.name;
 
-
         // Get reference to attendance collection of a member
         const attendanceRef = collection(
           db,
@@ -302,6 +316,7 @@ export const useClubActions = (setClubs) => {
   return {
     updateUserRole,
     getAllGroupNames,
+    deleteGroup,
     createNewGroup,
     getGroupsByEvent,
     recordAttendance,

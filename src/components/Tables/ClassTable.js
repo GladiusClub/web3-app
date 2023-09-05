@@ -9,8 +9,9 @@ import {
   TableRow,
   Paper,
   tableCellClasses,
-  Typography,
   IconButton,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
@@ -27,24 +28,42 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const ClassTable = ({ clubGroups }) => {
-  const { clubs, getAllGroupNames } = useClub();
-  const [groupNames, setGroupNames] = useState([]);
+  const { clubs, getAllGroupNames, deleteGroup } = useClub();
+  const [groups, setGroups] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+
+  const fetchGroupData = () => {
+    if (clubs[0]) {
+      const clubId = clubs[0].id;
+      getAllGroupNames(clubId)
+        .then((groupData) => {
+          setGroups(groupData);
+        })
+        .catch((err) => {
+          console.error("Error fetching group names:", err);
+        });
+    }
+  };
+
+  const handleClick = (event, group) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedGroup(group);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
-    // Assume clubId is known
-    const clubId = "1";
-    getAllGroupNames(clubId)
-      .then((names) => {
-        setGroupNames(names);
-      })
-      .catch((err) => {
-        console.error("Error fetching group names:", err);
-      });
+    fetchGroupData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubs]);
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer sx={{ maxWidth: 400 }} component={Paper}>
+      <Table sx={{ maxWidth: 400 }} aria-label="simple table">
         <TableHead
           sx={{
             background: "linear-gradient(45deg, #673ab7 30%, #3f51b5 90%)",
@@ -52,36 +71,52 @@ const ClassTable = ({ clubGroups }) => {
         >
           <TableRow>
             <StyledTableCell>Class</StyledTableCell>
-            <StyledTableCell align="right">Next Event</StyledTableCell>
-            <StyledTableCell align="right">Class Size</StyledTableCell>
             <StyledTableCell align="right">Edit</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {groupNames.map((groupName, index) => (
+          {groups.map((group, index) => (
             <TableRow
               key={index}
               sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}
             >
               <TableCell component="th" scope="row">
-                {groupName}
-              </TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right">
-                <Typography
-                  variant="h6"
-                  component="div"
-                  color="secondary"
-                  sx={{ fontWeight: "bold" }}
-                >
-                  {/* Show class size if available */}
-                </Typography>
+                {group.name}
               </TableCell>
 
               <TableCell align="right">
-                <IconButton>
+                <IconButton onClick={(event) => handleClick(event, group)}>
                   <EditIcon />
                 </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                >
+                  <MenuItem onClick={() => console.log("Add/Remove Members")}>
+                    Add/Remove Members
+                  </MenuItem>
+                  <MenuItem onClick={() => console.log("Add/Remove Events")}>
+                    Add/Remove Events
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      deleteGroup(clubs[0].id, selectedGroup.id)
+                        .then(() => {
+                          console.log(
+                            `Group ${selectedGroup.id} deleted successfully`
+                          );
+                          fetchGroupData();
+                        })
+                        .catch((err) =>
+                          console.error("Error deleting group:", err)
+                        );
+                    }}
+                  >
+                    Delete Group
+                  </MenuItem>
+                </Menu>
               </TableCell>
             </TableRow>
           ))}
