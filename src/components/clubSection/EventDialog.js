@@ -40,6 +40,33 @@ function EventDialog({
 
   const [memberDetails, setMemberDetails] = useState(fetchedMemberDetails);
 
+  const getCurrentEventGroups = () => {
+    if (!selectedEvent || !googleCalendarId) return [];
+
+    const currentEventId = selectedEvent.id.split("_")[0];
+
+    return (
+      clubs?.[0]?.groups
+        ?.filter((group) =>
+          group.event_ids?.some(
+            (event) =>
+              event.calendarId === googleCalendarId &&
+              event.eventId === currentEventId
+          )
+        )
+        ?.map((group) => ({
+          id: group.id,
+          name: group.name,
+          members: group.members?.map((member) =>
+            clubs[0].members.find((m) => m.id === member.id)
+          ),
+        })) || []
+    );
+  };
+
+  const groups = getCurrentEventGroups();
+  
+
   useEffect(() => {
     setMemberDetails(fetchedMemberDetails);
   }, [fetchedMemberDetails]);
@@ -169,6 +196,8 @@ function EventDialog({
             </Select>
           </FormControl>
           <AttendanceTable
+            allMembers={clubs[0].members}
+            groups={groups}
             filteredMembers={memberDetails}
             handleMemberChanged={setMemberChanges}
           ></AttendanceTable>
