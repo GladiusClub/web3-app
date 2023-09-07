@@ -7,6 +7,7 @@ import {
   TableHead,
   Checkbox,
   TextField,
+  Collapse,
 } from "@mui/material";
 
 // This component represents a single row in the member table
@@ -156,30 +157,109 @@ function MemberRow({ member, handleMemberChanged }) {
   );
 }
 
-// This component represents the member table
-function AttendanceTable({ filteredMembers, handleMemberChanged }) {
+function GroupRow({ group, memberDetails, handleMemberChanged }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpansion = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  // Get the additional details for each member in the group
+  const detailedMembers = group.members.map((groupMember) => {
+    const memberDetail = memberDetails.find(
+      (detail) => detail.id === groupMember.id
+    );
+    return {
+      ...groupMember,
+      ...memberDetail,
+    };
+  });
+
+  return (
+    <>
+      <TableRow onClick={toggleExpansion}>
+        <TableCell>
+          {isExpanded ? "▼" : "►"} {group.name}
+        </TableCell>
+        {/* Add other cells for group details here */}
+      </TableRow>
+      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+        <Table size="small" aria-label="purchases">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Attendance</TableCell>
+              <TableCell>Win</TableCell>
+              <TableCell>Scores</TableCell>
+              <TableCell>Coefficient</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {detailedMembers ? (
+              detailedMembers.map((member) => (
+                <MemberRow
+                  key={member.id}
+                  member={member}
+                  handleMemberChanged={handleMemberChanged}
+                />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell>Loading...</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Collapse>
+    </>
+  );
+}
+
+function AttendanceTable({ groups, memberDetails, handleMemberChanged }) {
+  const [isWholeClubExpanded, setIsWholeClubExpanded] = useState(false);
+
+  const toggleWholeClubExpansion = () => {
+    setIsWholeClubExpanded((prev) => !prev);
+  };
+
   return (
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>Name</TableCell>
-          <TableCell>Attendance</TableCell>
+          <TableCell>Group</TableCell>
+          {/*<TableCell>Attendance</TableCell>
           <TableCell>Win</TableCell>
           <TableCell>Scores</TableCell>
-          <TableCell>Coefficient</TableCell>
+          <TableCell>Coefficient</TableCell>*/}
         </TableRow>
       </TableHead>
       <TableBody>
-        {filteredMembers.map((member) => (
-          <MemberRow
-            key={member.name}
-            member={member}
+      {groups.map((group) => (
+          <GroupRow
+            key={group.id}
+            group={group}
+            memberDetails={memberDetails}
             handleMemberChanged={handleMemberChanged}
           />
         ))}
+        {/* Whole Club Section */}
+        <TableRow onClick={toggleWholeClubExpansion}>
+          <TableCell>{isWholeClubExpanded ? "▼" : "►"} Whole Club</TableCell>
+          {/* Other cells for "Whole Club" row */}
+        </TableRow>
+        <Collapse in={isWholeClubExpanded} timeout="auto" unmountOnExit>
+          {memberDetails.map((member) => (
+            <MemberRow
+              key={member.id}
+              member={member}
+              handleMemberChanged={handleMemberChanged}
+            />
+          ))}
+        </Collapse>
       </TableBody>
     </Table>
   );
 }
 
 export default AttendanceTable;
+

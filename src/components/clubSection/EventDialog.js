@@ -57,15 +57,15 @@ function EventDialog({
         ?.map((group) => ({
           id: group.id,
           name: group.name,
-          members: group.members?.map((member) =>
-            clubs[0].members.find((m) => m.id === member.id)
+          members: group.member_uuids?.map((member) =>
+            clubs[0].members.find((m) => m.id === member)
           ),
         })) || []
     );
   };
 
   const groups = getCurrentEventGroups();
-  
+  console.log(groups);
 
   useEffect(() => {
     setMemberDetails(fetchedMemberDetails);
@@ -167,7 +167,6 @@ function EventDialog({
     const eventId = e.target.value;
     const event = calendarRef.current.getApi().getEventById(eventId);
     setSelectedEvent(event);
-    // Reset memberDetails immediately when a new event is selected
   };
 
   if (loading) {
@@ -196,9 +195,8 @@ function EventDialog({
             </Select>
           </FormControl>
           <AttendanceTable
-            allMembers={clubs[0].members}
             groups={groups}
-            filteredMembers={memberDetails}
+            memberDetails={memberDetails}
             handleMemberChanged={setMemberChanges}
           ></AttendanceTable>
         </Box>
