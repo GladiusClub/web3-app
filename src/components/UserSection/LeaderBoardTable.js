@@ -10,13 +10,16 @@ import {
   TableContainer,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useUser } from "../contexts/UserContext";
 
 const LeaderboardTable = () => {
   const { getUserScoresByDate } = useClub();
   const [leaderboardData, setLeaderboardData] = useState([]);
+  const user = useUser();
 
   useEffect(() => {
-    getUserScoresByDate("1")
+    const club_id = user.userData.clubs_roles[0].club_id;
+    getUserScoresByDate(club_id)
       .then((userScores) => {
         const fourWeeksAgo = new Date();
         fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28); // Subtracting 28 days
@@ -45,7 +48,7 @@ const LeaderboardTable = () => {
         setLeaderboardData(sortedTop5Scores);
       })
       .catch((error) => console.error(error));
-  }, [getUserScoresByDate]);
+  }, [user, getUserScoresByDate]);
 
   const theme = useTheme();
 
