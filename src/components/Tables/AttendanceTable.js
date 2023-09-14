@@ -16,8 +16,10 @@ function MemberRow({ member, handleMemberChanged }) {
   const [attended, setAttended] = useState(member.attended || false); //
 
   const [score, setScore] = useState(member.score || ""); // If member.score exists, use it as default, else use empty string
-  const [coefficient, setCoefficient] = useState(member.coefficient || ""); // If member.coefficient exists, use it as default, else use empty string
+  const [coefficient, setCoefficient] = useState(member.coefficient || 1); // If member.coefficient exists, use it as default, else use empty string
   const [win, setWin] = useState(member.win || false); // If member.win exists, use it as default, else use false
+
+  const payout = score !== "" && !isIntError ? score * coefficient : "";
 
   const handleLocalScoreChange = (event) => {
     const val = event.target.value;
@@ -153,6 +155,7 @@ function MemberRow({ member, handleMemberChanged }) {
           disabled={!attended}
         />
       </TableCell>
+      <TableCell>{payout}</TableCell>
     </TableRow>
   );
 }
@@ -192,6 +195,7 @@ function GroupRow({ group, memberDetails, handleMemberChanged }) {
               <TableCell>Win</TableCell>
               <TableCell>Scores</TableCell>
               <TableCell>Coefficient</TableCell>
+              <TableCell>Payout</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -227,14 +231,10 @@ function AttendanceTable({ groups, memberDetails, handleMemberChanged }) {
       <TableHead>
         <TableRow>
           <TableCell>Group</TableCell>
-          {/*<TableCell>Attendance</TableCell>
-          <TableCell>Win</TableCell>
-          <TableCell>Scores</TableCell>
-          <TableCell>Coefficient</TableCell>*/}
         </TableRow>
       </TableHead>
       <TableBody>
-      {groups.map((group) => (
+        {groups.map((group) => (
           <GroupRow
             key={group.id}
             group={group}
