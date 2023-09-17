@@ -5,7 +5,7 @@ const useSendTransaction = () => {
   const { auth } = useFirebase();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = async (addresses, amount) => {
+  const handleSend = async (addresses, amounts) => {
     if (!addresses || (Array.isArray(addresses) && addresses.length === 0)) {
       console.error(
         "Please provide a valid address or addresses before sending."
@@ -13,16 +13,23 @@ const useSendTransaction = () => {
       return;
     }
 
-    // Convert single address to an array for consistency in processing
-    const addressArray = Array.isArray(addresses) ? addresses : [addresses];
+    if (!amounts || (Array.isArray(amounts) && amounts.length === 0)) {
+      console.error("Please provide a valid amount or amounts before sending.");
+      return;
+    }
+
+    if (addresses.length !== amounts.length) {
+      console.error("The number of addresses and amounts should be the same.");
+      return;
+    }
 
     const idToken = await auth.currentUser.getIdToken(true);
 
     try {
       setIsLoading(true);
-      const transactions = addressArray.map((addr) => ({
+      const transactions = addresses.map((addr, index) => ({
         to_address: addr,
-        amount: amount,
+        amount: amounts[index], // Set amount for each address here
       }));
 
       const response = await fetch(
@@ -45,7 +52,7 @@ const useSendTransaction = () => {
       setIsLoading(false);
       console.error("Error sending transaction:", error);
     }
-  };
+  };  
 
   return { handleSend, isLoading };
 };

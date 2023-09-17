@@ -20,13 +20,14 @@ function useEventData(eventId, open, googleCalendarId, setLoading) {
           );
 
           // Merging member attendance details with all members, instead of filtering based on matching groups
-          const tempFilteredMembers = clubs[0].members.map((member) => {
-            const details = fetchedMemberDetails.find(
-              (detail) => detail.id === member.id
-            );
-            return { ...member, ...details };
-          });
-
+          const tempFilteredMembers = clubs[0].members
+            .map((member) => {
+              const details = fetchedMemberDetails.find(
+                (detail) => detail.id === member.id
+              );
+              return { ...member, ...details };
+            })
+            .filter((member) => member.role !== "owner"); // Filtering out members with the role 'owner'
           setMemberDetails(tempFilteredMembers);
           setLoading(false);
         }

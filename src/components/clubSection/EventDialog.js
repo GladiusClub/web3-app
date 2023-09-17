@@ -11,10 +11,8 @@ import {
 } from "@mui/material";
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
-import TransferDialog from "./TransferDialog";
 import useEventData from "../CustomHooks/useEventData";
-
-
+import useSendTransaction from "../CustomHooks/useSendTransaction";
 
 function EventDialog({
   open,
@@ -28,8 +26,8 @@ function EventDialog({
 }) {
   const { clubs, recordAttendance } = useClub();
   const [memberChanges, setMemberChanges] = useState([]);
-  const [transferMode, setTransferMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { handleSend } = useSendTransaction();
 
   const { memberDetails: fetchedMemberDetails } = useEventData(
     selectedEvent?.id,
@@ -65,15 +63,10 @@ function EventDialog({
   };
 
   const groups = getCurrentEventGroups();
-  console.log(groups);
 
   useEffect(() => {
     setMemberDetails(fetchedMemberDetails);
   }, [fetchedMemberDetails]);
-
-  useEffect(() => {
-    console.log("Local member details:", memberDetails);
-  }, [memberDetails]);
 
   const updateLocalMemberDetails = useCallback(() => {
     const updatedMembers = memberDetails.map((member) => {
@@ -150,11 +143,25 @@ function EventDialog({
 
   const handleTransferClick = async () => {
     await recordAttendanceForAllMembers();
-    setTransferMode(true);
-  };
 
-  const handleCloseTransfer = () => {
-    setTransferMode(false);
+    const membersToTransfer = memberDetails
+      .filter(
+        (member) =>
+          member.attended === true &&
+          (member.paid === undefined || member.paid === false)
+      )
+      .map((member) => ({
+        address: member.address,
+        amount: (member.coefficient || 1) * (member.score || 0), // Ensuring that coefficient and score have fallback values
+      }))
+      .filter((member) => member.amount > 0); // Filtering out members with an amount of 0
+
+    const addressesToTransfer = membersToTransfer.map(
+      (member) => member.address
+    );
+    const amountsToTransfer = membersToTransfer.map((member) => member.amount);
+
+    handleSend(addressesToTransfer, amountsToTransfer);
     setOpen(false); // Close the main dialog when transfer is closed
   };
 
@@ -175,7 +182,7 @@ function EventDialog({
 
   return (
     <div>
-      <Dialog open={open && !transferMode} onClose={handleClose} maxWidth="md">
+      <Dialog open={open} onClose={handleClose} maxWidth="md">
         <Box sx={{ p: 5 }}>
           <DialogTitle>
             Select Event for {selectedDate ? selectedDate : ""}
@@ -216,11 +223,6 @@ function EventDialog({
           </Button>
         </DialogActions>
       </Dialog>
-      <TransferDialog
-        open={open && transferMode}
-        onClose={handleCloseTransfer}
-        filteredMembers={memberDetails}
-      />
     </div>
   );
 }
