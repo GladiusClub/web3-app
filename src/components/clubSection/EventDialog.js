@@ -11,8 +11,11 @@ import {
 } from "@mui/material";
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
-import useEventData from "../CustomHooks/useEventData";
+//import useEventData from "../CustomHooks/useEventData";
 import useSendTransaction from "../CustomHooks/useSendTransaction";
+import { useRecordAttendance } from "../CustomHooks/useRecordAttendance";
+import useMemberDetails from "../CustomHooks/useMemberDetails";
+import useAutoSave from "../CustomHooks/useAutoSave";
 
 function EventDialog({
   open,
@@ -24,21 +27,30 @@ function EventDialog({
   calendarRef,
   googleCalendarId,
 }) {
-  const { clubs, recordAttendance } = useClub();
+  const { clubs } = useClub();
   const [memberChanges, setMemberChanges] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { handleSend } = useSendTransaction();
+  const { handleSend, isTransactionLoading } = useSendTransaction();
   const [isTransferring, setIsTransferring] = useState(false);
+  const { recordAttendanceForAllMembers } = useRecordAttendance();
 
-  const { memberDetails: fetchedMemberDetails } = useEventData(
-    selectedEvent?.id,
-    open,
+  const resetStateVariables = useCallback(() => {
+    setMemberChanges([]);
+  }, []);
+
+  const { loading, memberDetails, setMemberDetails, updateMemberDetails } =
+    useMemberDetails(selectedEvent, open, googleCalendarId);
+
+  useAutoSave({
+    memberChanges,
+    recordAttendanceForAllMembers,
+    updateMemberDetails,
+    resetStateVariables,
     googleCalendarId,
-    setLoading
-  );
+    selectedDate,
+    selectedEvent,
+  });
 
-  const [memberDetails, setMemberDetails] = useState(fetchedMemberDetails);
-
+    
   const getCurrentEventGroups = () => {
     if (!selectedEvent || !googleCalendarId) return [];
 
@@ -65,80 +77,19 @@ function EventDialog({
 
   const groups = getCurrentEventGroups();
 
-  useEffect(() => {
-    setMemberDetails(fetchedMemberDetails);
-  }, [fetchedMemberDetails]);
-
-  const updateLocalMemberDetails = useCallback(() => {
-    const updatedMembers = memberDetails.map((member) => {
-      const change = memberChanges.find((change) => change.id === member.id);
-      if (change) {
-        return { ...member, ...change };
-      }
-      return member;
-    });
-    setMemberDetails(updatedMembers);
-  }, [memberDetails, memberChanges]);
-
-  const resetStateVariables = useCallback(() => {
-    setMemberChanges([]);
-  }, []);
-
-  const recordAttendanceForAllMembers = useCallback(async () => {
-    const eventParentId = selectedEvent?.id.split("_")[0]; // Use optional chaining
-    const eventId = selectedEvent?.id;
-
-    for (let member of memberChanges) {
-      const {
-        id: memberId,
-        attended,
-        win: memberWin,
-        score: memberScore,
-        coefficient: memberCoefficient,
-      } = member;
-
-      await recordAttendance(
-        clubs[0].id,
-        memberId,
-        googleCalendarId,
-        selectedDate,
-        eventParentId,
-        eventId,
-        attended,
-        memberWin,
-        memberScore,
-        memberCoefficient
-      );
-    }
-    updateLocalMemberDetails();
-    resetStateVariables();
-  }, [
-    selectedEvent,
-    memberChanges,
-    recordAttendance,
-    selectedDate,
-    resetStateVariables,
-    updateLocalMemberDetails,
-    googleCalendarId,
-    clubs,
-  ]);
-
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      if (memberChanges.length > 0) {
-        recordAttendanceForAllMembers();
-      }
-    }, 5000); // Auto-save every 5 seconds
-
-    return () => clearInterval(autoSaveInterval);
-  }, [memberChanges, recordAttendanceForAllMembers]);
-
   const handleClose = () => {
     setOpen(false);
   };
 
   const recordAttendanceAndClose = async () => {
-    await recordAttendanceForAllMembers();
+    await recordAttendanceForAllMembers({
+      memberChanges,
+      selectedEvent,
+      googleCalendarId,
+      selectedDate,
+    });
+    updateMemberDetails(memberChanges);
+    resetStateVariables();
     handleClose();
   };
 
@@ -166,13 +117,19 @@ function EventDialog({
       handleSend(addressesToTransfer, amountsToTransfer);
 
       setIsTransferring(false);
-      setOpen(false); // Close the main dialog when transfer is closed
+      //setOpen(false);
     }
   }, [memberDetails, isTransferring, setOpen, handleSend]);
 
   const handleTransferClick = async () => {
-    await recordAttendanceForAllMembers();
-    updateLocalMemberDetails();
+    await recordAttendanceForAllMembers({
+      memberChanges,
+      selectedEvent,
+      googleCalendarId,
+      selectedDate,
+    });
+    updateMemberDetails(memberChanges);
+    resetStateVariables();
     setIsTransferring(true);
   };
 
@@ -216,6 +173,7 @@ function EventDialog({
             groups={groups}
             memberDetails={memberDetails}
             handleMemberChanged={setMemberChanges}
+            isTransactionLoading={isTransactionLoading}
           ></AttendanceTable>
         </Box>
         <DialogActions>

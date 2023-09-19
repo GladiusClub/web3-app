@@ -219,7 +219,12 @@ function GroupRow({ group, memberDetails, handleMemberChanged }) {
   );
 }
 
-function AttendanceTable({ groups, memberDetails, handleMemberChanged }) {
+function AttendanceTable({
+  groups,
+  memberDetails,
+  handleMemberChanged,
+  isTransactionLoading, // Added isTransactionLoading prop
+}) {
   const [isWholeClubExpanded, setIsWholeClubExpanded] = useState(false);
 
   const toggleWholeClubExpansion = () => {
@@ -245,21 +250,36 @@ function AttendanceTable({ groups, memberDetails, handleMemberChanged }) {
         {/* Whole Club Section */}
         <TableRow onClick={toggleWholeClubExpansion}>
           <TableCell>{isWholeClubExpanded ? "▼" : "►"} Whole Club</TableCell>
-          {/* Other cells for "Whole Club" row */}
         </TableRow>
         <Collapse in={isWholeClubExpanded} timeout="auto" unmountOnExit>
-          {memberDetails.map((member) => (
-            <MemberRow
-              key={member.id}
-              member={member}
-              handleMemberChanged={handleMemberChanged}
-            />
-          ))}
+          {/* Nested Table for Whole Club with Headers */}
+          <Table size="small" aria-label="whole club">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Attendance</TableCell>
+                <TableCell>Win</TableCell>
+                <TableCell>Scores</TableCell>
+                <TableCell>Coefficient</TableCell>
+                <TableCell>Payout</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {memberDetails.map((member) => (
+                <MemberRow
+                  key={member.id}
+                  member={member}
+                  handleMemberChanged={handleMemberChanged}
+                />
+              ))}
+            </TableBody>
+          </Table>
         </Collapse>
       </TableBody>
     </Table>
   );
 }
+
 
 export default AttendanceTable;
 

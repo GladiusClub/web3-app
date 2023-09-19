@@ -12,33 +12,14 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
+//import { useFirebase } from "../contexts/firebaseContext";
 
-const clubNames = [
-  "Tallinn Titans",
-  "Narva Ninjas",
-  "Pärnu Panthers",
-  "Tartu Tornadoes",
-  "Saaremaa Sharks",
-  "Hiiumaa Hawks",
-  "Viljandi Vipers",
-  "Rakvere Raiders",
-  "Kohtla-Järve Jaguars",
-  "Võru Vikings",
-  "Jõhvi Jackals",
-  "Kuressaare Koalas",
-  "Valga Vultures",
-  "Haapsalu Hurricanes",
-  "Sillamäe Stallions",
-  "Paide Pythons",
-  "Elva Eagles",
-  "Rapla Raptors",
-  "Põlva Panthers",
-  "Jõgeva Jokers",
-];
+const clubNames = ["Tallinn Titans"];
 
 export default function ClubSelect() {
   const [role, setRole] = useState(new Array(clubNames.length).fill(null));
   const navigate = useNavigate();
+  //const { db } = useFirebase();
 
   const handleRoleChange = (index) => (event, newRole) => {
     if (newRole !== null) {
@@ -51,12 +32,21 @@ export default function ClubSelect() {
   };
 
   const cardStyle = {
-    maxWidth: 200,
-    maxHeight: 200,
+    width: 200,
+    height: 200,
+    position: "relative",
     margin: 16,
+  };
+
+  const innerContentStyle = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "space-between", // Change to 'space-between' to push the button to the bottom
     alignItems: "center",
   };
 
@@ -71,7 +61,7 @@ export default function ClubSelect() {
   };
 
   return (
-    <div style={{ marginTop: "1100px", minHeight: "auto" }}>
+    <div>
       <Box display="flex" justifyContent="center" marginBottom="1em">
         <Button variant="contained" color="secondary" onClick={handleSignIn}>
           Enter Gladius
@@ -80,55 +70,45 @@ export default function ClubSelect() {
 
       <Grid container justifyContent="center" spacing={4}>
         {clubNames.map((name, index) => (
-          <Grid key={index} item xs={12} sm={6} md={4}>
+          <Grid key={index} item xs={12} sm={12} md={12}>
             <Card style={cardStyle}>
-              <SportsSoccerIcon style={{ fontSize: 80 }} />
-              <CardContent>
-                <Typography
-                  gutterBottom
-                  variant="h6"
-                  component="div"
-                  align="center"
-                  style={textStyle}
-                >
-                  {name}
-                </Typography>
-              </CardContent>
-              <CardActions style={{ width: "100%" }}>
-                <ToggleButtonGroup
-                  color="secondary"
-                  exclusive
-                  aria-label="Platform"
-                  onChange={handleRoleChange(index)}
-                  value={role[index]}
-                  fullWidth
-                >
-                  <ToggleButton
-                    value="Fan"
-                    sx={{
-                      flexGrow: 1,
-                      borderRadius: "0 0 4px 4px",
-                      border: "none",
-                      borderTop: "0.4px solid",
-                      borderRight: "0.2px solid",
-                    }}
+              <div style={innerContentStyle}>
+                <SportsSoccerIcon style={{ fontSize: 80 }} />
+                <CardContent style={{ flex: 1, marginBottom: "auto" }}>
+                  <Typography
+                    gutterBottom
+                    variant="h6"
+                    component="div"
+                    align="center"
+                    style={textStyle}
                   >
-                    Fan
-                  </ToggleButton>
-                  <ToggleButton
-                    value="Athlete"
-                    sx={{
-                      flexGrow: 1,
-                      borderRadius: "0 0 4px 4px",
-                      border: "none",
-                      borderTop: "0.4px solid",
-                      borderLeft: "0.2px solid",
-                    }}
+                    {name}
+                  </Typography>
+                </CardContent>
+
+                <CardActions style={{ width: "100%" }}>
+                  <ToggleButtonGroup
+                    color="secondary"
+                    exclusive
+                    aria-label="Platform"
+                    onChange={handleRoleChange(index)}
+                    value={role[index]}
+                    fullWidth
                   >
-                    Athlete
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </CardActions>
+                    <ToggleButton
+                      value="Athlete"
+                      sx={{
+                        flex: 1,
+                        borderRadius: "0 0 4px 4px",
+                        border: "none",
+                        borderTop: "0.4px solid",
+                      }}
+                    >
+                      Join
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </CardActions>
+              </div>
             </Card>
           </Grid>
         ))}
