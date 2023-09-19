@@ -58,7 +58,11 @@ const BalanceCard = ({ address }) => {
             Your Balance
           </Typography>
           <Typography variant="h5" component="div">
-            {balance ? `${balance} GLC` : "No Balance Detected"}
+            <Typography variant="h5" component="div">
+              {balance !== null
+                ? `${parseFloat(balance).toFixed(2)} GLC`
+                : "No Balance Detected"}
+            </Typography>
           </Typography>
         </CardContent>
         <CardActions sx={{ justifyContent: "space-between" }}>
