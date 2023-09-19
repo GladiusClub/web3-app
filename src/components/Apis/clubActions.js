@@ -350,50 +350,52 @@ export const useClubActions = (setClubs) => {
     try {
       // Get reference to members collection of a club
       const membersRef = collection(db, `clubs/${clubId}/members`);
-
+  
       // Get all members in the club
       const memberSnapshots = await getDocs(membersRef);
-
+  
       // Use Promise.all to make sure we have all the attendance data before returning the result
       const userScoresPromises = memberSnapshots.docs.map(async (memberDoc) => {
         const memberId = memberDoc.id;
         const memberData = memberDoc.data();
         const memberName = memberData.name;
-
+  
         // Get reference to attendance collection of a member
         const attendanceRef = collection(
           db,
           `clubs/${clubId}/members/${memberId}/attendance`
         );
-
+  
         // Get all attendance records of a member
         const attendanceSnapshots = await getDocs(attendanceRef);
-
-        // Map each attendance record to an object containing the date (extracted from eventId) and the score
+  
+        // Map each attendance record to an object containing the date (extracted from eventId), score, and win
         const scoresByDate = attendanceSnapshots.docs.map((attendanceDoc) => {
           const attendanceData = attendanceDoc.data();
           const date = attendanceData.date;
           return {
             date,
             score: attendanceData.score,
+            win: attendanceData.win, // Add win property
           };
         });
-
-        // Return an object containing the member id and their scores by date
+  
+        // Return an object containing the member id, name, and their scores by date
         return {
           id: memberId,
           name: memberName,
           scoresByDate,
         };
       });
-
+  
       const userScoresByDate = await Promise.all(userScoresPromises);
-
+  
       return userScoresByDate;
     } catch (error) {
       console.error("Error getting user scores by date: ", error);
     }
   };
+  
 
   return {
     updateUserRole,
