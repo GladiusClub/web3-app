@@ -28,6 +28,7 @@ function EventDialog({
   const [memberChanges, setMemberChanges] = useState([]);
   const [loading, setLoading] = useState(true);
   const { handleSend } = useSendTransaction();
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const { memberDetails: fetchedMemberDetails } = useEventData(
     selectedEvent?.id,
@@ -141,28 +142,38 @@ function EventDialog({
     handleClose();
   };
 
+  useEffect(() => {
+    if (isTransferring) {
+      const membersToTransfer = memberDetails
+        .filter(
+          (member) =>
+            member.attended === true &&
+            (member.paid === undefined || member.paid === false)
+        )
+        .map((member) => ({
+          address: member.address,
+          amount: (member.coefficient || 1) * (member.score || 0),
+        }))
+        .filter((member) => member.amount > 0);
+
+      const addressesToTransfer = membersToTransfer.map(
+        (member) => member.address
+      );
+      const amountsToTransfer = membersToTransfer.map(
+        (member) => member.amount
+      );
+
+      handleSend(addressesToTransfer, amountsToTransfer);
+
+      setIsTransferring(false);
+      setOpen(false); // Close the main dialog when transfer is closed
+    }
+  }, [memberDetails, isTransferring, setOpen, handleSend]);
+
   const handleTransferClick = async () => {
     await recordAttendanceForAllMembers();
-
-    const membersToTransfer = memberDetails
-      .filter(
-        (member) =>
-          member.attended === true &&
-          (member.paid === undefined || member.paid === false)
-      )
-      .map((member) => ({
-        address: member.address,
-        amount: (member.coefficient || 1) * (member.score || 0), // Ensuring that coefficient and score have fallback values
-      }))
-      .filter((member) => member.amount > 0); // Filtering out members with an amount of 0
-
-    const addressesToTransfer = membersToTransfer.map(
-      (member) => member.address
-    );
-    const amountsToTransfer = membersToTransfer.map((member) => member.amount);
-
-    handleSend(addressesToTransfer, amountsToTransfer);
-    setOpen(false); // Close the main dialog when transfer is closed
+    updateLocalMemberDetails();
+    setIsTransferring(true);
   };
 
   if (loading) {

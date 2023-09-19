@@ -17,8 +17,8 @@ import FormHelperText from "@mui/material/FormHelperText";
 
 const SendTransactionCard = ({ clubMembers }) => {
   const [selectedAddress, setSelectedAddress] = React.useState("");
-  const [amount, setAmount] = React.useState(""); // State for amount
-  const { handleSend, isLoading } = useSendTransaction();
+  const [amount, setAmount] = React.useState([""]);
+  const { handleSend, isTransactionLoading } = useSendTransaction();
   const [error, setError] = React.useState(false);
 
   return (
@@ -68,14 +68,14 @@ const SendTransactionCard = ({ clubMembers }) => {
                 <TextField
                   label="Amount"
                   type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  value={amount[0]}
+                  onChange={(e) => setAmount([e.target.value])}
                 />
               </FormControl>
             </Box>
           </Box>
         </CardContent>
-        {isLoading ? (
+        {isTransactionLoading ? (
           <Box
             sx={{
               display: "flex",
@@ -89,7 +89,13 @@ const SendTransactionCard = ({ clubMembers }) => {
           <CardActions sx={{ justifyContent: "flex-end" }}>
             <Button
               color="secondary"
-              onClick={() => handleSend(selectedAddress, amount)}
+              onClick={() => {
+                if (selectedAddress && amount[0] > 0) {
+                  handleSend([selectedAddress], amount);
+                } else {
+                  setError(true);
+                }
+              }}
             >
               Send
             </Button>

@@ -3,7 +3,7 @@ import { useFirebase } from "../contexts/firebaseContext";
 
 const useSendTransaction = () => {
   const { auth } = useFirebase();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isTransactionLoading, setTransactionLoading] = useState(false);
 
   const handleSend = async (addresses, amounts) => {
     if (!addresses || (Array.isArray(addresses) && addresses.length === 0)) {
@@ -26,7 +26,7 @@ const useSendTransaction = () => {
     const idToken = await auth.currentUser.getIdToken(true);
 
     try {
-      setIsLoading(true);
+      setTransactionLoading(true);
       const transactions = addresses.map((addr, index) => ({
         to_address: addr,
         amount: amounts[index], // Set amount for each address here
@@ -46,15 +46,15 @@ const useSendTransaction = () => {
         }
       );
       const data = await response.json();
-      setIsLoading(false);
+      setTransactionLoading(false);
       console.log(data);
     } catch (error) {
-      setIsLoading(false);
+      setTransactionLoading(false);
       console.error("Error sending transaction:", error);
     }
-  };  
+  };
 
-  return { handleSend, isLoading };
+  return { handleSend, isTransactionLoading };
 };
 
 export default useSendTransaction;
