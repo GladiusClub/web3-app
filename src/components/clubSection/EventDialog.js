@@ -11,11 +11,18 @@ import {
 } from "@mui/material";
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
-//import useEventData from "../CustomHooks/useEventData";
 import useSendTransaction from "../CustomHooks/useSendTransaction";
 import { useRecordAttendance } from "../CustomHooks/useRecordAttendance";
 import useMemberDetails from "../CustomHooks/useMemberDetails";
 import useAutoSave from "../CustomHooks/useAutoSave";
+import PaymentTable from "../Tables/PaymentTable";
+
+const PaymentStatus = {
+  PENDING: "payment pending",
+  IN_PROGRESS: "payment in progress",
+  FAILED: "payment failed",
+  SUCCESS: "payment success",
+};
 
 function EventDialog({
   open,
@@ -27,11 +34,21 @@ function EventDialog({
   calendarRef,
   googleCalendarId,
 }) {
-  const { clubs } = useClub();
+  const { clubs, recordPayment } = useClub();
   const [memberChanges, setMemberChanges] = useState([]);
   const { handleSend, isTransactionLoading } = useSendTransaction();
   const [isTransferring, setIsTransferring] = useState(false);
   const { recordAttendanceForAllMembers } = useRecordAttendance();
+  const [isPaymentTableVisible, setIsPaymentTableVisible] = useState(false);
+  const [membersToPay, setMembersToPay] = useState({});
+
+  useEffect(() => {
+    console.log("Members to pay", membersToPay);
+  }, [membersToPay]);
+
+  const handlePaymentMembers = (newMembersToPay) => {
+    setMembersToPay(newMembersToPay);
+  };
 
   const resetStateVariables = useCallback(() => {
     setMemberChanges([]);
@@ -50,7 +67,6 @@ function EventDialog({
     selectedEvent,
   });
 
-    
   const getCurrentEventGroups = () => {
     if (!selectedEvent || !googleCalendarId) return [];
 
@@ -78,6 +94,8 @@ function EventDialog({
   const groups = getCurrentEventGroups();
 
   const handleClose = () => {
+    setIsPaymentTableVisible(false);
+    setMembersToPay({});
     setOpen(false);
   };
 
@@ -114,7 +132,9 @@ function EventDialog({
         (member) => member.amount
       );
 
-      handleSend(addressesToTransfer, amountsToTransfer);
+      setIsPaymentTableVisible(true);
+
+      //handleSend(addressesToTransfer, amountsToTransfer);
 
       setIsTransferring(false);
       //setOpen(false);
@@ -130,9 +150,54 @@ function EventDialog({
     });
     updateMemberDetails(memberChanges);
     resetStateVariables();
+
+    if (isPaymentTableVisible) {
+      setMembersToPay((prevState) => {
+        const updatedMembers = { ...prevState };
+        for (const memberId in updatedMembers) {
+          if (updatedMembers[memberId].toPay) {
+            updatedMembers[memberId].status = PaymentStatus.IN_PROGRESS;
+          }
+        }
+        return updatedMembers;
+      });
+
+      setTimeout(() => {
+        setMembersToPay((prevState) => {
+          const updatedMembers = { ...prevState };
+          const currentDate = new Date().toISOString(); // Get the current date
+          for (const memberId in updatedMembers) {
+            if (updatedMembers[memberId].toPay) {
+              updatedMembers[memberId].status = PaymentStatus.SUCCESS;
+
+              // Update the memberDetails state
+              setMemberDetails((prevMemberDetails) => {
+                return prevMemberDetails.map((member) => {
+                  if (member.id === memberId) {
+                    return {
+                      ...member,
+                      paid: currentDate, // Update the paid field to the current date
+                    };
+                  }
+                  return member;
+                });
+              });
+
+              recordPayment(
+                clubs[0].id,
+                memberId,
+                googleCalendarId,
+                selectedEvent?.id
+              );
+            }
+          }
+          return updatedMembers;
+        });
+      }, 1000);
+    }
+
     setIsTransferring(true);
   };
-
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -169,12 +234,21 @@ function EventDialog({
                 ))}
             </Select>
           </FormControl>
-          <AttendanceTable
-            groups={groups}
-            memberDetails={memberDetails}
-            handleMemberChanged={setMemberChanges}
-            isTransactionLoading={isTransactionLoading}
-          ></AttendanceTable>
+          {isPaymentTableVisible ? (
+            <PaymentTable
+              memberDetails={memberDetails}
+              handlePaymentMembers={handlePaymentMembers}
+              membersToPay={membersToPay}
+              setMembersToPay={setMembersToPay}
+            />
+          ) : (
+            <AttendanceTable
+              groups={groups}
+              memberDetails={memberDetails}
+              handleMemberChanged={setMemberChanges}
+              isTransactionLoading={isTransactionLoading}
+            />
+          )}
         </Box>
         <DialogActions>
           <Button onClick={recordAttendanceAndClose}>Close & Save</Button>
@@ -188,7 +262,7 @@ function EventDialog({
             }}
             onClick={handleTransferClick}
           >
-            Transfer
+            {isPaymentTableVisible ? "Pay" : "Transfer"}
           </Button>
         </DialogActions>
       </Dialog>
