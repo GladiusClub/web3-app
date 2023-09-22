@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useClub } from "../contexts/clubContext";
+import { useUser } from "../contexts/UserContext";
 import {
   LineChart,
   Line,
@@ -12,9 +13,13 @@ import {
 const CustomLineChart = () => {
   const { getUserScoresByDate } = useClub();
   const [chartData, setChartData] = useState([]);
+  const user = useUser();
+
+  console.log(chartData);
 
   useEffect(() => {
-    getUserScoresByDate("1")
+    const club_id = user.userData.clubs_roles[0].club_id;
+    getUserScoresByDate(club_id)
       .then((userScores) => {
         // Create an object to hold running totals for each user
         const userTotals = userScores.reduce(

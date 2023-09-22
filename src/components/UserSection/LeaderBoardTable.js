@@ -34,9 +34,14 @@ const LeaderboardTable = () => {
             0
           );
 
+          const winCount = fourWeekScores.filter(
+            (scoreByDate) => scoreByDate.win === true
+          ).length;
+
           return {
             name: userScore.name,
             score: sum,
+            winCount: winCount, // Add win count
           };
         });
 
@@ -68,6 +73,12 @@ const LeaderboardTable = () => {
             >
               Score
             </TableCell>
+            <TableCell
+              sx={{ fontWeight: "bold", color: theme.palette.common.white }}
+              align="right"
+            >
+              Win Count
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -77,6 +88,7 @@ const LeaderboardTable = () => {
                 {row.name}
               </TableCell>
               <TableCell align="right">{row.score}</TableCell>
+              <TableCell align="right">{row.winCount}</TableCell> {/* Display win count */}
             </TableRow>
           ))}
         </TableBody>
