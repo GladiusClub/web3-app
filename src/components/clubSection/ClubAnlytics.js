@@ -14,11 +14,11 @@ const CustomLineChart = () => {
   const { getUserScoresByDate } = useClub();
   const [chartData, setChartData] = useState([]);
   const user = useUser();
+  const club_id = user.userData.clubs_roles[0].club_id;
 
   console.log(chartData);
 
   useEffect(() => {
-    const club_id = user.userData.clubs_roles[0].club_id;
     getUserScoresByDate(club_id)
       .then((userScores) => {
         // Create an object to hold running totals for each user
@@ -66,7 +66,7 @@ const CustomLineChart = () => {
         setChartData(transformedData);
       })
       .catch((error) => console.error(error));
-  }, [getUserScoresByDate]);
+  }, [getUserScoresByDate, club_id]);
   const colors = ["#8884d8", "#82ca9d", "#ffc658", "#FF8042", "#00C49F"]; // Add more colors if you have more users
 
   return (
