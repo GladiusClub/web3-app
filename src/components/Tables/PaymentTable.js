@@ -10,28 +10,13 @@ import {
 } from "@mui/material";
 import { CheckCircle } from "@mui/icons-material";
 
-function MemberRow({ member, onToPayChange, toPayStatus, paymentStatus }) {
+function MemberRow({ member, onToPayChange, membersToPay }) {
+  const [toPay, setToPay] = useState(membersToPay[member.id]?.toPay || false); // corrected line
+
+  const paymentStatus = membersToPay[member.id]?.status;
+
   const payout =
     member.score && member.coefficient ? member.score * member.coefficient : 0;
-
-  const [toPay, setToPay] = useState(() => {
-    if (payout === 0) {
-      return false;
-    }
-    return toPayStatus !== undefined ? toPayStatus : !member.paid;
-  });
-
-  useEffect(() => {
-    if (payout !== 0) {
-      setToPay(toPayStatus !== undefined ? toPayStatus : !member.paid);
-    }
-  }, [toPayStatus, member.paid, payout]);
-
-  const handleLocalToPayChange = (event) => {
-    const newToPayStatus = event.target.checked;
-    setToPay(newToPayStatus);
-    onToPayChange(member.id, newToPayStatus); // calling the prop function here
-  };
 
   const isDisabled = Boolean(member.paid) || payout === 0;
 
@@ -44,8 +29,7 @@ function MemberRow({ member, onToPayChange, toPayStatus, paymentStatus }) {
       <TableCell>{payout}</TableCell>
       <TableCell>
         <Checkbox
-          checked={toPay}
-          onChange={handleLocalToPayChange}
+          checked={toPay} // This will use the local state now.
           disabled={isDisabled}
         />
       </TableCell>
@@ -67,42 +51,42 @@ const PaymentStatus = {
   IN_PROGRESS: "payment in progress",
   FAILED: "payment failed",
   SUCCESS: "payment success",
+  DONE: "No payment",
 };
 
-function PaymentTable({
-  memberDetails,
-  handlePaymentMembers,
-  membersToPay,
-  setMembersToPay,
-}) {
-  const handleToPayChange = (memberId, toPay) => {
-    setMembersToPay((prevState) => ({
-      ...prevState,
-      [memberId]: {
-        ...prevState[memberId],
-        toPay,
-        status: PaymentStatus.PENDING,
-      },
-    }));
-  };
+function PaymentTable({ memberDetails, membersToPay, setMembersToPay }) {
+  const [isLoading, setIsLoading] = useState(true);
 
-  const updatePaymentStatus = (memberId, status) => {
-    if (!Object.values(PaymentStatus).includes(status)) {
-      throw new Error(`Invalid payment status: ${status}`);
-    }
-
-    setMembersToPay((prevState) => ({
-      ...prevState,
-      [memberId]: {
-        ...prevState[memberId],
-        status,
-      },
-    }));
-  };
+  console.log("membersToPay:", membersToPay); // log the member object
 
   useEffect(() => {
-    handlePaymentMembers(membersToPay);
-  }, [membersToPay, handlePaymentMembers]);
+    const initialMembersToPay = {};
+    memberDetails.forEach((member) => {
+      if (member.attended) {
+        const isPaid = Boolean(member.paid);
+        const payout =
+          member.score && member.coefficient
+            ? member.score * member.coefficient
+            : 0;
+        initialMembersToPay[member.id] = {
+          toPay: !isPaid && payout !== 0,
+          status:
+            isPaid || payout === 0 ? PaymentStatus.DONE : PaymentStatus.PENDING,
+        };
+      }
+    });
+    console.log("initialMembersToPay:", initialMembersToPay); // Log here
+
+    setMembersToPay(initialMembersToPay);
+
+    setIsLoading(false);
+  }, [memberDetails]);
+
+  useEffect(() => {
+    console.log("membersToPay after set:", membersToPay);
+  }, [membersToPay]);
+
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <Table>
@@ -116,15 +100,14 @@ function PaymentTable({
         </TableRow>
       </TableHead>
       <TableBody>
+        {console.log("Rendering with membersToPay:", membersToPay)}
         {memberDetails
           .filter((member) => member.attended === true)
           .map((member) => (
             <MemberRow
               key={member.id}
               member={member}
-              onToPayChange={handleToPayChange}
-              toPayStatus={membersToPay[member.id]?.toPay}
-              paymentStatus={membersToPay[member.id]?.status}
+              membersToPay={membersToPay}
             />
           ))}
       </TableBody>

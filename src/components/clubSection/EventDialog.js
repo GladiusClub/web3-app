@@ -42,14 +42,6 @@ function EventDialog({
   const [isPaymentTableVisible, setIsPaymentTableVisible] = useState(false);
   const [membersToPay, setMembersToPay] = useState({});
 
-  useEffect(() => {
-    console.log("Members to pay", membersToPay);
-  }, [membersToPay]);
-
-  const handlePaymentMembers = (newMembersToPay) => {
-    setMembersToPay(newMembersToPay);
-  };
-
   const resetStateVariables = useCallback(() => {
     setMemberChanges([]);
   }, []);
@@ -237,7 +229,6 @@ function EventDialog({
           {isPaymentTableVisible ? (
             <PaymentTable
               memberDetails={memberDetails}
-              handlePaymentMembers={handlePaymentMembers}
               membersToPay={membersToPay}
               setMembersToPay={setMembersToPay}
             />
