@@ -134,8 +134,6 @@ function EventDialog({
   }, [memberDetails, isTransferring, setOpen, handleSend]);
 
   const handleTransferClick = async () => {
-    console.log("membersToPay before transaction:", membersToPay);
-
     await recordAttendanceForAllMembers({
       memberChanges,
       selectedEvent,
@@ -156,23 +154,12 @@ function EventDialog({
         return updatedMembers;
       });
 
-      console.log("membersToPay before timeout:", membersToPay);
-
       setTimeout(() => {
-        console.log("membersToPay after timeout:", membersToPay);
         setMembersToPay((prevState) => {
           const updatedMembers = { ...membersToPay }; // Use the closed-over value
-          console.log("updatedMembers after timeout:", updatedMembers);
           const currentDate = new Date().toISOString(); // Get the current date
           for (const memberId in updatedMembers) {
-            console.log(
-              "MemberId: ",
-              memberId,
-              "toPay:",
-              updatedMembers[memberId].toPay
-            ); // Add this line
             if (updatedMembers[memberId].toPay) {
-              console.log("Setting to SUCCESS: ", memberId); // And this line
               updatedMembers[memberId].status = PaymentStatus.SUCCESS;
 
               // Update the memberDetails state
