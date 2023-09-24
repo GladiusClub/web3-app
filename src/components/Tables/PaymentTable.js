@@ -11,6 +11,12 @@ import {
 import { CheckCircle } from "@mui/icons-material";
 
 function MemberRow({ member, membersToPay, setMembersToPay }) {
+  useEffect(() => {
+    if (membersToPay[member.id]) {
+      setToPay(membersToPay[member.id].toPay);
+    }
+  }, [membersToPay, member.id]);
+
   const paymentStatus = membersToPay[member.id]?.status;
 
   const payout =
@@ -58,7 +64,7 @@ function MemberRow({ member, membersToPay, setMembersToPay }) {
       <TableCell>
         {member.paid ? new Date(member.paid).toLocaleDateString() : "Not Paid"}
       </TableCell>
-      <TableCell>{payout}</TableCell>
+      <TableCell>{membersToPay[member.id]?.payout || 0}</TableCell>
       <TableCell>
         <Checkbox
           checked={toPay} // This will use the local state now.
@@ -101,19 +107,17 @@ function PaymentTable({ memberDetails, membersToPay, setMembersToPay }) {
           toPay: !isPaid && payout !== 0,
           status:
             isPaid || payout === 0 ? PaymentStatus.DONE : PaymentStatus.PENDING,
+          payout, // Adding payout here
         };
       }
     });
 
     setMembersToPay((prev) => {
-      // Merge existing membersToPay with initialMembersToPay,
-      // preserving existing statuses
       const updatedMembersToPay = { ...prev };
       for (const [id, member] of Object.entries(initialMembersToPay)) {
         if (!updatedMembersToPay[id]) {
           updatedMembersToPay[id] = member;
         } else {
-          // Preserve the existing status
           updatedMembersToPay[id] = {
             ...member,
             status: updatedMembersToPay[id].status,
@@ -124,9 +128,7 @@ function PaymentTable({ memberDetails, membersToPay, setMembersToPay }) {
     });
 
     setIsLoading(false);
-  }, [memberDetails]);
-
-  useEffect(() => {}, [membersToPay]);
+  }, [memberDetails, setMembersToPay]);
 
   if (isLoading) return <p>Loading...</p>;
 

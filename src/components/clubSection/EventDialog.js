@@ -105,33 +105,10 @@ function EventDialog({
 
   useEffect(() => {
     if (isTransferring) {
-      const membersToTransfer = memberDetails
-        .filter(
-          (member) =>
-            member.attended === true &&
-            (member.paid === undefined || member.paid === false)
-        )
-        .map((member) => ({
-          address: member.address,
-          amount: (member.coefficient || 1) * (member.score || 0),
-        }))
-        .filter((member) => member.amount > 0);
-
-      const addressesToTransfer = membersToTransfer.map(
-        (member) => member.address
-      );
-      const amountsToTransfer = membersToTransfer.map(
-        (member) => member.amount
-      );
-
       setIsPaymentTableVisible(true);
-
-      //handleSend(addressesToTransfer, amountsToTransfer);
-
       setIsTransferring(false);
-      //setOpen(false);
     }
-  }, [memberDetails, isTransferring, setOpen, handleSend]);
+  }, [memberDetails, isTransferring, setOpen, handleSend, membersToPay]); // Added membersToPay as a dependency
 
   const handleTransferClick = async () => {
     await recordAttendanceForAllMembers({
@@ -153,6 +130,31 @@ function EventDialog({
         }
         return updatedMembers;
       });
+
+      const membersToTransfer = memberDetails
+        .filter(
+          (member) =>
+            member.attended === true &&
+            membersToPay[member.id] && // Check if member id is in membersToPay
+            !member.paid && // Simplified way to check if member is not paid
+            membersToPay[member.id].toPay === true // Check if toPay is true in membersToPay
+        )
+        .map((member) => ({
+          address: member.address,
+          amount: membersToPay[member.id].payout || 0, // Grab the payout value from membersToPay
+        }))
+        .filter((member) => member.amount > 0);
+
+      const addressesToTransfer = membersToTransfer.map(
+        (member) => member.address
+      );
+      const amountsToTransfer = membersToTransfer.map(
+        (member) => member.amount
+      );
+
+      console.log(addressesToTransfer, amountsToTransfer);
+
+      // handleSend(addressesToTransfer, amountsToTransfer);
 
       setTimeout(() => {
         setMembersToPay((prevState) => {
@@ -243,18 +245,37 @@ function EventDialog({
         </Box>
         <DialogActions>
           <Button onClick={recordAttendanceAndClose}>Close & Save</Button>
-          <Button
-            sx={{
-              backgroundColor: "darkmagenta",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "purple",
-              },
-            }}
-            onClick={handleTransferClick}
-          >
-            {isPaymentTableVisible ? "Pay" : "Transfer"}
-          </Button>
+          {!isPaymentTableVisible ? (
+            <Button
+              sx={{
+                backgroundColor: "darkmagenta",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "purple",
+                },
+              }}
+              onClick={handleTransferClick}
+            >
+              Transfer
+            </Button>
+          ) : isPaymentTableVisible &&
+            (Object.keys(membersToPay).length === 0 ||
+              Object.values(membersToPay).every(
+                (member) => !member.toPay
+              )) ? null : (
+            <Button
+              sx={{
+                backgroundColor: "darkmagenta",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "purple",
+                },
+              }}
+              onClick={handleTransferClick}
+            >
+              Pay
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>
