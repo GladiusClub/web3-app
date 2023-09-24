@@ -16,7 +16,7 @@ function MemberRow({ member, handleMemberChanged }) {
   const [attended, setAttended] = useState(member.attended || false); //
 
   const [score, setScore] = useState(member.score || ""); // If member.score exists, use it as default, else use empty string
-  const [coefficient, setCoefficient] = useState(member.coefficient || 1); // If member.coefficient exists, use it as default, else use empty string
+  const [coefficient, setCoefficient] = useState(member.coefficient || 1.0); // If member.coefficient exists, use it as default, else use empty string
   const [win, setWin] = useState(member.win || false); // If member.win exists, use it as default, else use false
 
   const payout = score !== "" && !isIntError ? score * coefficient : "";
