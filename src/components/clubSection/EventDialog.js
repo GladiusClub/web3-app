@@ -154,7 +154,7 @@ function EventDialog({
 
       console.log(addressesToTransfer, amountsToTransfer);
 
-      // handleSend(addressesToTransfer, amountsToTransfer);
+      handleSend(addressesToTransfer, amountsToTransfer);
 
       setTimeout(() => {
         setMembersToPay((prevState) => {
