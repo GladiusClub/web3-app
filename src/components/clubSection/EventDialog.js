@@ -11,11 +11,18 @@ import {
 } from "@mui/material";
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
-//import useEventData from "../CustomHooks/useEventData";
 import useSendTransaction from "../CustomHooks/useSendTransaction";
 import { useRecordAttendance } from "../CustomHooks/useRecordAttendance";
 import useMemberDetails from "../CustomHooks/useMemberDetails";
 import useAutoSave from "../CustomHooks/useAutoSave";
+import PaymentTable from "../Tables/PaymentTable";
+
+const PaymentStatus = {
+  PENDING: "payment pending",
+  IN_PROGRESS: "payment in progress",
+  FAILED: "payment failed",
+  SUCCESS: "payment success",
+};
 
 function EventDialog({
   open,
@@ -27,11 +34,13 @@ function EventDialog({
   calendarRef,
   googleCalendarId,
 }) {
-  const { clubs } = useClub();
+  const { clubs, recordPayment } = useClub();
   const [memberChanges, setMemberChanges] = useState([]);
   const { handleSend, isTransactionLoading } = useSendTransaction();
   const [isTransferring, setIsTransferring] = useState(false);
   const { recordAttendanceForAllMembers } = useRecordAttendance();
+  const [isPaymentTableVisible, setIsPaymentTableVisible] = useState(false);
+  const [membersToPay, setMembersToPay] = useState({});
 
   const resetStateVariables = useCallback(() => {
     setMemberChanges([]);
@@ -50,7 +59,6 @@ function EventDialog({
     selectedEvent,
   });
 
-    
   const getCurrentEventGroups = () => {
     if (!selectedEvent || !googleCalendarId) return [];
 
@@ -78,6 +86,8 @@ function EventDialog({
   const groups = getCurrentEventGroups();
 
   const handleClose = () => {
+    setIsPaymentTableVisible(false);
+    setMembersToPay({});
     setOpen(false);
   };
 
@@ -95,31 +105,10 @@ function EventDialog({
 
   useEffect(() => {
     if (isTransferring) {
-      const membersToTransfer = memberDetails
-        .filter(
-          (member) =>
-            member.attended === true &&
-            (member.paid === undefined || member.paid === false)
-        )
-        .map((member) => ({
-          address: member.address,
-          amount: (member.coefficient || 1) * (member.score || 0),
-        }))
-        .filter((member) => member.amount > 0);
-
-      const addressesToTransfer = membersToTransfer.map(
-        (member) => member.address
-      );
-      const amountsToTransfer = membersToTransfer.map(
-        (member) => member.amount
-      );
-
-      handleSend(addressesToTransfer, amountsToTransfer);
-
+      setIsPaymentTableVisible(true);
       setIsTransferring(false);
-      //setOpen(false);
     }
-  }, [memberDetails, isTransferring, setOpen, handleSend]);
+  }, [memberDetails, isTransferring, setOpen, handleSend, membersToPay]); // Added membersToPay as a dependency
 
   const handleTransferClick = async () => {
     await recordAttendanceForAllMembers({
@@ -130,9 +119,79 @@ function EventDialog({
     });
     updateMemberDetails(memberChanges);
     resetStateVariables();
+
+    if (isPaymentTableVisible) {
+      setMembersToPay((prevState) => {
+        const updatedMembers = { ...prevState };
+        for (const memberId in updatedMembers) {
+          if (updatedMembers[memberId].toPay) {
+            updatedMembers[memberId].status = PaymentStatus.IN_PROGRESS;
+          }
+        }
+        return updatedMembers;
+      });
+
+      const membersToTransfer = memberDetails
+        .filter(
+          (member) =>
+            member.attended === true &&
+            membersToPay[member.id] && // Check if member id is in membersToPay
+            !member.paid && // Simplified way to check if member is not paid
+            membersToPay[member.id].toPay === true // Check if toPay is true in membersToPay
+        )
+        .map((member) => ({
+          address: member.address,
+          amount: membersToPay[member.id].payout || 0, // Grab the payout value from membersToPay
+        }))
+        .filter((member) => member.amount > 0);
+
+      const addressesToTransfer = membersToTransfer.map(
+        (member) => member.address
+      );
+      const amountsToTransfer = membersToTransfer.map(
+        (member) => member.amount
+      );
+
+      console.log(addressesToTransfer, amountsToTransfer);
+
+      handleSend(addressesToTransfer, amountsToTransfer);
+
+      setTimeout(() => {
+        setMembersToPay((prevState) => {
+          const updatedMembers = { ...membersToPay }; // Use the closed-over value
+          const currentDate = new Date().toISOString(); // Get the current date
+          for (const memberId in updatedMembers) {
+            if (updatedMembers[memberId].toPay) {
+              updatedMembers[memberId].status = PaymentStatus.SUCCESS;
+
+              // Update the memberDetails state
+              setMemberDetails((prevMemberDetails) => {
+                return prevMemberDetails.map((member) => {
+                  if (member.id === memberId) {
+                    return {
+                      ...member,
+                      paid: currentDate, // Update the paid field to the current date
+                    };
+                  }
+                  return member;
+                });
+              });
+
+              recordPayment(
+                clubs[0].id,
+                memberId,
+                googleCalendarId,
+                selectedEvent?.id
+              );
+            }
+          }
+          return updatedMembers;
+        });
+      }, 5000);
+    }
+
     setIsTransferring(true);
   };
-
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -169,27 +228,54 @@ function EventDialog({
                 ))}
             </Select>
           </FormControl>
-          <AttendanceTable
-            groups={groups}
-            memberDetails={memberDetails}
-            handleMemberChanged={setMemberChanges}
-            isTransactionLoading={isTransactionLoading}
-          ></AttendanceTable>
+          {isPaymentTableVisible ? (
+            <PaymentTable
+              memberDetails={memberDetails}
+              membersToPay={membersToPay}
+              setMembersToPay={setMembersToPay}
+            />
+          ) : (
+            <AttendanceTable
+              groups={groups}
+              memberDetails={memberDetails}
+              handleMemberChanged={setMemberChanges}
+              isTransactionLoading={isTransactionLoading}
+            />
+          )}
         </Box>
         <DialogActions>
           <Button onClick={recordAttendanceAndClose}>Close & Save</Button>
-          <Button
-            sx={{
-              backgroundColor: "darkmagenta",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "purple",
-              },
-            }}
-            onClick={handleTransferClick}
-          >
-            Transfer
-          </Button>
+          {!isPaymentTableVisible ? (
+            <Button
+              sx={{
+                backgroundColor: "darkmagenta",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "purple",
+                },
+              }}
+              onClick={handleTransferClick}
+            >
+              Transfer
+            </Button>
+          ) : isPaymentTableVisible &&
+            (Object.keys(membersToPay).length === 0 ||
+              Object.values(membersToPay).every(
+                (member) => !member.toPay
+              )) ? null : (
+            <Button
+              sx={{
+                backgroundColor: "darkmagenta",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "purple",
+                },
+              }}
+              onClick={handleTransferClick}
+            >
+              Pay
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>

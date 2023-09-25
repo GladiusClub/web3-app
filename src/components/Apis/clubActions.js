@@ -397,6 +397,38 @@ export const useClubActions = (setClubs) => {
   };
   
 
+  const recordPayment = async (clubId, userId, calendarId, eventId) => {
+    try {
+      const docId = `${calendarId}_${eventId}`;
+
+      // Get reference to attendance collection of a member in a club
+      const attendanceRef = collection(
+        db,
+        `clubs/${clubId}/members/${userId}/attendance`
+      );
+
+      const docRef = doc(attendanceRef, docId);
+
+      // Get the current date
+      const currentDate = new Date().toISOString();
+
+      // Update the paid date in the document
+      await updateDoc(docRef, {
+        paid: currentDate,
+      });
+
+      console.log(
+        "Payment recorded with ID: ",
+        docRef.id,
+        " on date: ",
+        currentDate
+      );
+    } catch (error) {
+      console.error("Error updating payment: ", error);
+    }
+  };
+  
+
   return {
     updateUserRole,
     getAllGroupNames,
@@ -408,5 +440,6 @@ export const useClubActions = (setClubs) => {
     recordAttendance,
     getMemberAttendanceDetails,
     getUserScoresByDate,
+    recordPayment,
   };
 };
