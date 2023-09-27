@@ -8,6 +8,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Legend, 
+  ReferenceLine
 } from "recharts";
 
 const CustomLineChart = () => {
@@ -71,11 +73,12 @@ const CustomLineChart = () => {
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <LineChart width={600} height={300} data={chartData}>
+      <LineChart width={640} height={480} data={chartData}>
         <XAxis dataKey="date" />
         <YAxis />
         <CartesianGrid stroke="#ccc" />
         <Tooltip />
+        <Legend />
 
         {/* Render a Line for each user */}
         {chartData.length > 0 &&
@@ -91,6 +94,7 @@ const CustomLineChart = () => {
                 connectNulls={true}
               />
             ))}
+            <ReferenceLine y={10} stroke="red" label="Level 1" position="left" strokeDasharray="3 3"  />
       </LineChart>
     </div>
   );
