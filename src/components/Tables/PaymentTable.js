@@ -105,12 +105,16 @@ function PaymentTable({ memberDetails, membersToPay, setMembersToPay }) {
 
         initialMembersToPay[member.id] = {
           toPay: !isPaid && payout !== 0,
-          status:
-            isPaid || payout === 0 ? PaymentStatus.DONE : PaymentStatus.PENDING,
+          status: isPaid
+            ? PaymentStatus.SUCCESS
+            : payout === 0
+            ? PaymentStatus.DONE
+            : PaymentStatus.PENDING,
           payout, // Adding payout here
         };
       }
     });
+    
 
     setMembersToPay((prev) => {
       const updatedMembersToPay = { ...prev };
