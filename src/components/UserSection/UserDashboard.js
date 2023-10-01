@@ -8,7 +8,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import { useUser } from "../contexts/UserContext";
 import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
-import LeaderboardTable from "./LeaderBoardTable";
+import Podium from "./Podium";
+//import LeaderboardTable from "./LeaderBoardTable";
 
 const listItems = [
   { icon: <PeopleIcon />, name: "People" },
@@ -31,12 +32,12 @@ export default function UserDashboard() {
       <DrawerComponent handleIconClick={() => {}} listItems={listItems} />
 
       <Box sx={{ display: "flex", flexDirection: "column", p: 3 }}>
+        <Podium />
+
         <H2 sx={{ mt: 0 }}>Assets</H2>
         <Balance address={userData?.address || ""} />
         <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
-        <Box sx={{ width: "50vw" }}>
-          <LeaderboardTable />
-        </Box>
+        <Box sx={{ width: "50vw" }}>{/* <LeaderboardTable /> */}</Box>
       </Box>
     </Box>
   );
