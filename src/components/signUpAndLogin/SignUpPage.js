@@ -46,6 +46,10 @@ function SignUp() {
     />,
     <UserSignUpForm
       userType={userType}
+      /*onSubmit={(details) => {
+        setStep(step + 1);
+      }}*/
+
       onSubmit={(details) => {
         createUserWithEmailAndPassword(auth, details.email, details.password)
           .then((userCredential) => {

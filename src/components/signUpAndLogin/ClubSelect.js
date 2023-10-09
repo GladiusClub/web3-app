@@ -12,14 +12,13 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
-//import { useFirebase } from "../contexts/firebaseContext";
-
-const clubNames = ["Tallinn Titans"];
+import { usePublicClubs } from "../CustomHooks/usePublicClubs";
 
 export default function ClubSelect() {
+  const clubs = usePublicClubs();
+  const clubNames = Object.values(clubs);
   const [role, setRole] = useState(new Array(clubNames.length).fill(null));
   const navigate = useNavigate();
-  //const { db } = useFirebase();
 
   const handleRoleChange = (index) => (event, newRole) => {
     if (newRole !== null) {
@@ -34,12 +33,9 @@ export default function ClubSelect() {
   const cardStyle = {
     width: 200,
     height: 200,
-    position: "relative",
-    margin: 16,
   };
 
   const innerContentStyle = {
-    position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
@@ -67,52 +63,53 @@ export default function ClubSelect() {
           Enter Gladius
         </Button>
       </Box>
-
-      <Grid container justifyContent="center" spacing={4}>
-        {clubNames.map((name, index) => (
-          <Grid key={index} item xs={12} sm={12} md={12}>
-            <Card style={cardStyle}>
-              <div style={innerContentStyle}>
-                <SportsSoccerIcon style={{ fontSize: 80 }} />
-                <CardContent style={{ flex: 1, marginBottom: "auto" }}>
-                  <Typography
-                    gutterBottom
-                    variant="h6"
-                    component="div"
-                    align="center"
-                    style={textStyle}
-                  >
-                    {name}
-                  </Typography>
-                </CardContent>
-
-                <CardActions style={{ width: "100%" }}>
-                  <ToggleButtonGroup
-                    color="secondary"
-                    exclusive
-                    aria-label="Platform"
-                    onChange={handleRoleChange(index)}
-                    value={role[index]}
-                    fullWidth
-                  >
-                    <ToggleButton
-                      value="Athlete"
-                      sx={{
-                        flex: 1,
-                        borderRadius: "0 0 4px 4px",
-                        border: "none",
-                        borderTop: "0.4px solid",
-                      }}
+      {clubNames.length > 0 ? (
+        <Grid container justifyContent="center" spacing={14}>
+          {clubNames.map((name, index) => (
+            <Grid key={index} item sm={6}>
+              <Card style={cardStyle}>
+                <div style={innerContentStyle}>
+                  <SportsSoccerIcon style={{ fontSize: 80 }} />
+                  <CardContent style={{ flex: 1, marginBottom: "auto" }}>
+                    <Typography
+                      gutterBottom
+                      variant="h6"
+                      component="div"
+                      align="center"
+                      style={textStyle}
                     >
-                      Join
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </CardActions>
-              </div>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                      {name}
+                    </Typography>
+                  </CardContent>
+
+                  <CardActions style={{ width: "100%" }}>
+                    <ToggleButtonGroup
+                      color="secondary"
+                      exclusive
+                      aria-label="Platform"
+                      onChange={handleRoleChange(index)}
+                      value={role[index]}
+                      fullWidth
+                    >
+                      <ToggleButton
+                        value="Athlete"
+                        sx={{
+                          flex: 1,
+                          borderRadius: "0 0 4px 4px",
+                          border: "none",
+                          borderTop: "0.4px solid",
+                        }}
+                      >
+                        Join
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </CardActions>
+                </div>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      ) : null}
     </div>
   );
 }

@@ -4,12 +4,10 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableRow,
   Paper,
   TableContainer,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useUser } from "../contexts/UserContext";
 
 const LeaderboardTable = () => {
@@ -55,32 +53,9 @@ const LeaderboardTable = () => {
       .catch((error) => console.error(error));
   }, [user, getUserScoresByDate]);
 
-  const theme = useTheme();
-
   return (
     <TableContainer component={Paper}>
       <Table>
-        <TableHead>
-          <TableRow sx={{ backgroundColor: theme.palette.secondary.main }}>
-            <TableCell
-              sx={{ fontWeight: "bold", color: theme.palette.common.white }}
-            >
-              Name
-            </TableCell>
-            <TableCell
-              sx={{ fontWeight: "bold", color: theme.palette.common.white }}
-              align="right"
-            >
-              Score
-            </TableCell>
-            <TableCell
-              sx={{ fontWeight: "bold", color: theme.palette.common.white }}
-              align="right"
-            >
-              Win Count
-            </TableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           {leaderboardData.map((row, index) => (
             <TableRow key={index}>
@@ -88,7 +63,8 @@ const LeaderboardTable = () => {
                 {row.name}
               </TableCell>
               <TableCell align="right">{row.score}</TableCell>
-              <TableCell align="right">{row.winCount}</TableCell> {/* Display win count */}
+              <TableCell align="right">{row.winCount}</TableCell>{" "}
+              {/* Display win count */}
             </TableRow>
           ))}
         </TableBody>

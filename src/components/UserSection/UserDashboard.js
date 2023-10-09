@@ -9,7 +9,7 @@ import { useUser } from "../contexts/UserContext";
 import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
 import Podium from "./Podium";
-//import LeaderboardTable from "./LeaderBoardTable";
+import LeaderboardTable from "./LeaderBoardTable";
 
 const listItems = [
   { icon: <PeopleIcon />, name: "People" },
@@ -33,11 +33,12 @@ export default function UserDashboard() {
 
       <Box sx={{ display: "flex", flexDirection: "column", p: 3 }}>
         <Podium />
+        <LeaderboardTable />
 
         <H2 sx={{ mt: 0 }}>Assets</H2>
         <Balance address={userData?.address || ""} />
         <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
-        <Box sx={{ width: "50vw" }}>{/* <LeaderboardTable /> */}</Box>
+        <Box sx={{ width: "50vw" }}></Box>
       </Box>
     </Box>
   );
