@@ -34,7 +34,6 @@ export default function UserDashboard() {
       <Box sx={{ display: "flex", flexDirection: "column", p: 3 }}>
         <Podium />
         <LeaderboardTable />
-
         <H2 sx={{ mt: 0 }}>Assets</H2>
         <Balance address={userData?.address || ""} />
         <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />

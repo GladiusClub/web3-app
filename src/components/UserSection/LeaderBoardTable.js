@@ -63,7 +63,7 @@ const LeaderboardTable = () => {
                 {row.name}
               </TableCell>
               <TableCell align="right">{row.score}</TableCell>
-              <TableCell align="right">{row.winCount}</TableCell>{" "}
+              <TableCell align="right">{row.winCount}</TableCell>
               {/* Display win count */}
             </TableRow>
           ))}
