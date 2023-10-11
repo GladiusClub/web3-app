@@ -16,6 +16,10 @@ const LeaderboardTable = () => {
   const user = useUser();
 
   useEffect(() => {
+    if (!user.userData.clubs_roles || user.userData.clubs_roles.length === 0) {
+      return;
+    }
+    
     const club_id = user.userData.clubs_roles[0].club_id;
     getUserScoresByDate(club_id)
       .then((userScores) => {

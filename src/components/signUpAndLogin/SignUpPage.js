@@ -17,6 +17,7 @@ function SignUp() {
   const [userType, setUserType] = useState("");
   const [userDetails, setUserDetails] = useState({});
   const { auth } = useFirebase();
+  const [firebaseUser, setFirebaseUser] = useState(null);
 
   console.log(userDetails);
 
@@ -45,8 +46,8 @@ function SignUp() {
       }}
     />,
     <UserSignUpForm
-      userType={userType}
-      /*onSubmit={(details) => {
+      /*userType={userType}
+      onSubmit={(details) => {
         setStep(step + 1);
       }}*/
 
@@ -55,7 +56,7 @@ function SignUp() {
           .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
-            console.log(userCredential);
+            setFirebaseUser(user);
 
             // Set the name as the username
             return updateProfile(user, { displayName: details.userName }).then(
@@ -73,7 +74,7 @@ function SignUp() {
       }}
     />,
 
-    <ClubSelect></ClubSelect>,
+    <ClubSelect firebaseUser={firebaseUser} />,
   ];
 
   const steps = userType === "club" ? clubSteps : athleteSteps;

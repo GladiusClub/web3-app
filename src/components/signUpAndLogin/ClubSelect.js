@@ -13,21 +13,25 @@ import {
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { usePublicClubs } from "../CustomHooks/usePublicClubs";
+import { useFirebase } from "../contexts/firebaseContext";
+import { doc, setDoc, arrayUnion } from "firebase/firestore";
 
-export default function ClubSelect() {
+export default function ClubSelect({ firebaseUser }) {
   const clubs = usePublicClubs();
   const clubNames = Object.values(clubs);
-  const [role, setRole] = useState(new Array(clubNames.length).fill(null));
   const navigate = useNavigate();
+  const [joinedClubs, setJoinedClubs] = useState([]);
+  const { db } = useFirebase();
 
-  const handleRoleChange = (index) => (event, newRole) => {
-    if (newRole !== null) {
-      setRole((prevState) => {
-        const newRoles = [...prevState];
-        newRoles[index] = newRole;
-        return newRoles;
-      });
-    }
+  const handleClubSelect = (clubId) => (event, newRole) => {
+    setJoinedClubs((prevClubs) => {
+      if (newRole === clubId && !prevClubs.includes(clubId)) {
+        return [...prevClubs, clubId];
+      } else if (!newRole && prevClubs.includes(clubId)) {
+        return prevClubs.filter((id) => id !== clubId);
+      }
+      return prevClubs;
+    });
   };
 
   const cardStyle = {
@@ -52,8 +56,25 @@ export default function ClubSelect() {
     textOverflow: "ellipsis",
   };
 
-  const handleSignIn = () => {
-    navigate("/userdashboard");
+  const handleSignIn = async () => {
+    if (firebaseUser) {
+      // Prepare club_roles data
+      const clubRoles = joinedClubs.map((clubId) => ({
+        club_id: clubId,
+        role: "athlete",
+      }));
+
+      // Reference to the user's document in Firestore
+      const userDocRef = doc(db, "users", firebaseUser.uid);
+
+      // Update the user's document with the club_roles
+      await setDoc(
+        userDocRef,
+        { clubs_roles: arrayUnion(...clubRoles) },
+        { merge: true }
+      );
+      navigate("/userdashboard");
+    }
   };
 
   return (
@@ -87,17 +108,26 @@ export default function ClubSelect() {
                       color="secondary"
                       exclusive
                       aria-label="Platform"
-                      onChange={handleRoleChange(index)}
-                      value={role[index]}
+                      onChange={handleClubSelect(Object.keys(clubs)[index])}
+                      value={
+                        joinedClubs.includes(Object.keys(clubs)[index])
+                          ? Object.keys(clubs)[index]
+                          : null
+                      }
                       fullWidth
                     >
                       <ToggleButton
-                        value="Athlete"
+                        value={Object.keys(clubs)[index]}
                         sx={{
                           flex: 1,
                           borderRadius: "0 0 4px 4px",
                           border: "none",
                           borderTop: "0.4px solid",
+                          backgroundColor: joinedClubs.includes(
+                            Object.keys(clubs)[index]
+                          )
+                            ? "grey"
+                            : "white", // color the button based on whether the club id is in the state
                         }}
                       >
                         Join
