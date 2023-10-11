@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { usePublicClubs } from "../CustomHooks/usePublicClubs";
 import { useFirebase } from "../contexts/firebaseContext";
-import { doc, setDoc, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function ClubSelect({ firebaseUser }) {
   const clubs = usePublicClubs();
@@ -23,15 +23,40 @@ export default function ClubSelect({ firebaseUser }) {
   const [joinedClubs, setJoinedClubs] = useState([]);
   const { db } = useFirebase();
 
-  const handleClubSelect = (clubId) => (event, newRole) => {
+  const handleClubSelect = (clubId) => async (event, newRole) => {
+    let updatedClubs = [];
+
     setJoinedClubs((prevClubs) => {
       if (newRole === clubId && !prevClubs.includes(clubId)) {
-        return [...prevClubs, clubId];
+        updatedClubs = [...prevClubs, clubId];
       } else if (!newRole && prevClubs.includes(clubId)) {
-        return prevClubs.filter((id) => id !== clubId);
+        updatedClubs = prevClubs.filter((id) => id !== clubId);
+      } else {
+        updatedClubs = prevClubs;
       }
-      return prevClubs;
+      return updatedClubs;
     });
+
+    // Once state is updated, make call to Firebase to update the clubs
+    if (firebaseUser) {
+      const userDocRef = doc(db, "users", firebaseUser.uid);
+
+      if (newRole === clubId) {
+        // If club is added
+        await setDoc(
+          userDocRef,
+          { clubs_roles: arrayUnion({ club_id: clubId, role: "athlete" }) },
+          { merge: true }
+        );
+      } else {
+        // If club is removed
+        await setDoc(
+          userDocRef,
+          { clubs_roles: arrayRemove({ club_id: clubId, role: "athlete" }) },
+          { merge: true }
+        );
+      }
+    }
   };
 
   const cardStyle = {
@@ -57,24 +82,7 @@ export default function ClubSelect({ firebaseUser }) {
   };
 
   const handleSignIn = async () => {
-    if (firebaseUser) {
-      // Prepare club_roles data
-      const clubRoles = joinedClubs.map((clubId) => ({
-        club_id: clubId,
-        role: "athlete",
-      }));
-
-      // Reference to the user's document in Firestore
-      const userDocRef = doc(db, "users", firebaseUser.uid);
-
-      // Update the user's document with the club_roles
-      await setDoc(
-        userDocRef,
-        { clubs_roles: arrayUnion(...clubRoles) },
-        { merge: true }
-      );
-      navigate("/userdashboard");
-    }
+    navigate("/userdashboard");
   };
 
   return (
