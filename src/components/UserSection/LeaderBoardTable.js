@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useClub } from "../contexts/clubContext";
+import { Avatar, Box, Typography } from "@mui/material";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
   TableContainer,
 } from "@mui/material";
 import { useUser } from "../contexts/UserContext";
+import { styled } from "@mui/material/styles";
 
 const LeaderboardTable = () => {
   const { getUserScoresByDate } = useClub();
@@ -19,7 +21,7 @@ const LeaderboardTable = () => {
     if (!user.userData.clubs_roles || user.userData.clubs_roles.length === 0) {
       return;
     }
-    
+
     const club_id = user.userData.clubs_roles[0].club_id;
     getUserScoresByDate(club_id)
       .then((userScores) => {
@@ -57,19 +59,45 @@ const LeaderboardTable = () => {
       .catch((error) => console.error(error));
   }, [user, getUserScoresByDate]);
 
+  // ... (rest of your imports and other code)
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    padding: theme.spacing(1, 2), // Adjust padding as needed
+    borderBottom: "none",
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    "&:not(:last-child)": {
+      marginBottom: theme.spacing(1), // This creates space between rows
+    },
+    borderRadius: theme.spacing(2), // This makes the ends rounded
+    boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)",
+  }));
+
+  // in your component
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableBody>
           {leaderboardData.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.score}</TableCell>
-              <TableCell align="right">{row.winCount}</TableCell>
-              {/* Display win count */}
-            </TableRow>
+            <StyledTableRow key={index}>
+              <StyledTableCell component="th" scope="row">
+                {index + 1}
+              </StyledTableCell>
+              <StyledTableCell>
+                <Box display="flex" alignItems="center">
+                  <Avatar>
+                    {/* You can put user image or default icon here */}
+                  </Avatar>
+                  <Typography style={{ marginLeft: 10 }}>{row.name}</Typography>
+                </Box>
+              </StyledTableCell>
+              <StyledTableCell align="right">{row.score} pts.</StyledTableCell>
+              <StyledTableCell align="right">
+                {row.winCount} wins
+              </StyledTableCell>
+            </StyledTableRow>
           ))}
         </TableBody>
       </Table>

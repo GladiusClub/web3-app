@@ -9,7 +9,7 @@ import { useUser } from "../contexts/UserContext";
 import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
 import Podium from "./Podium";
-import LeaderboardTable from "./LeaderBoardTable";
+import Leaderboard from "./LeaderBoard";
 
 const listItems = [
   { icon: <PeopleIcon />, name: "People" },
@@ -32,8 +32,16 @@ export default function UserDashboard() {
       <DrawerComponent handleIconClick={() => {}} listItems={listItems} />
 
       <Box sx={{ display: "flex", flexDirection: "column", p: 3 }}>
-        <Podium />
-        <LeaderboardTable />
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Podium />
+          <Leaderboard />
+        </Box>
+
         <H2 sx={{ mt: 0 }}>Assets</H2>
         <Balance address={userData?.address || ""} />
         <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
@@ -41,5 +49,4 @@ export default function UserDashboard() {
       </Box>
     </Box>
   );
-  
 }
