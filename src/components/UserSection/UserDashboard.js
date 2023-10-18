@@ -5,18 +5,25 @@ import { Box } from "@mui/system";
 import DrawerComponent from "../navigation/Drawer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useUser } from "../contexts/UserContext";
 import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
 import Podium from "./Podium";
 import Leaderboard from "./LeaderBoard";
+import Profile from "./ProfileView"; 
 
-const listItems = [
-  { icon: <PeopleIcon />, name: "People" },
-  { icon: <CalendarMonthIcon />, name: "Calendar" },
-];
 
 export default function UserDashboard() {
+  // Initialize state from localStorage or use default
+  const [selectedIcon, setSelectedIcon] = useState(
+    localStorage.getItem("selectedIcon") || "People"
+  );
+  
+  useEffect(() => {
+    localStorage.setItem("selectedIcon", selectedIcon);
+  }, [selectedIcon]);
+
   const { userData } = useUser();
   const { clubs } = useClub();
   const [clubMembers, setClubMembers] = useState();
@@ -27,9 +34,22 @@ export default function UserDashboard() {
     }
   }, [clubs]);
 
+  const handleIconClick = (iconName) => {
+    setSelectedIcon(iconName);
+  };
+
+  const listItems = [
+    { icon: <PeopleIcon />, name: "People" },
+    { icon: <CalendarMonthIcon />, name: "Calendar" },
+    { icon: <AccountCircleIcon />, name: "Profile" },
+  ];
+
   return (
     <Box sx={{ display: "flex" }}>
-      <DrawerComponent handleIconClick={() => {}} listItems={listItems} />
+      <DrawerComponent
+        handleIconClick={handleIconClick}
+        listItems={listItems}
+      />
 
       <Box sx={{ display: "flex", flexDirection: "column", p: 3 }}>
         <Box
@@ -41,6 +61,9 @@ export default function UserDashboard() {
           <Podium />
           <Leaderboard />
         </Box>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {selectedIcon === "Profile" && <Profile />}
+      </Box>
 
         <H2 sx={{ mt: 0 }}>Assets</H2>
         <Balance address={userData?.address || ""} />
