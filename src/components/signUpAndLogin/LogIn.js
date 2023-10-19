@@ -97,7 +97,7 @@ function LogIn() {
           const errorMessage = error.message;
           console.log(errorCode + errorMessage);
         });
-    }, 1000);
+    }, 2000);
   };
 
   return (
