@@ -11,7 +11,7 @@ import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
 import Podium from "./Podium";
 import Leaderboard from "./LeaderBoard";
-import Profile from "./ProfileView"; 
+import UpLoadImage from "./UpLoadImage"; 
 
 
 export default function UserDashboard() {
@@ -62,8 +62,8 @@ export default function UserDashboard() {
           <Leaderboard />
         </Box>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {selectedIcon === "Profile" && <Profile />}
-      </Box>
+          {selectedIcon === "Profile" && <UpLoadImage />}
+        </Box>
 
         <H2 sx={{ mt: 0 }}>Assets</H2>
         <Balance address={userData?.address || ""} />
