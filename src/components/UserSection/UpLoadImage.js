@@ -9,6 +9,9 @@ const UpLoadImage = () => {
   const { user } = useUser();
   const { storage } = useFirebase();
   const [randomAvatar, setRandomAvatar] = useState("");
+  useEffect(() => {
+    console.log("Updated random avatar:", randomAvatar);
+  }, [randomAvatar]);
 
   useEffect(() => {
     if (user) {
@@ -20,9 +23,17 @@ const UpLoadImage = () => {
       console.log("randomAvatarURL: ", randomAvatarURL);
 
       // Fetch the image and upload to Firebase Storage
-      fetch(`https://cors-anywhere.herokuapp.com/${randomAvatarURL}`)
-        .then((response) => response.blob())
+      fetch(
+        `/proxyAvatar${new URL(randomAvatarURL).pathname}${
+          new URL(randomAvatarURL).search
+        }`
+      )
+        .then((response) => {
+          console.log("Fetch response:", response); // This line logs the fetch response
+          return response.blob();
+        })
         .then((blob) => {
+          console.log(blob);
           // Upload the blob to Firebase Storage
           return uploadBytes(avatarRef, blob);
         })
