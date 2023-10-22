@@ -21,38 +21,27 @@ const ProfileView = () => {
       console.log('UID: ', user.uid);
       console.log('randomAvatarURL: ' , randomAvatarURL);
 
-      const avatarURL = randomAvatarURL;
+      // Convert the data URL to base64
+      const dataURL = randomAvatarURL.split(',')[1]; // Remove the 'data:image/jpeg;base64,' prefix
+      const base64Data = atob(dataURL);
 
-      // Create a function to download the image
-      function downloadImage(url) {
-        return fetch(url)
-          .then((response) => response.blob())
-          .then((blob) => {
-            return new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = reject;
-              reader.readAsArrayBuffer(blob);
-            });
-          });
-      }
+      // Upload the avatar image to Firebase Storage
+      uploadString(avatarRef, base64Data, 'base64', { contentType: 'image/jpeg' })
+        .then(() => {
+          console.log('Uploaded the avatar image');
 
-      downloadImage(avatarURL)
-        .then((imageData) => {
-          // Upload the image to Firebase Storage
-          avatarRef.put(imageData)
-            .then((snapshot) => {
-              console.log('Uploaded the avatar image');
+          // Now, get the download URL for the uploaded avatar
+          getDownloadURL(avatarRef)
+            .then((downloadURL) => {
+              setRandomAvatar(downloadURL);
             })
             .catch((error) => {
-              console.error('Error uploading the avatar image', error);
+              console.error('Error getting download URL', error);
             });
         })
         .catch((error) => {
-          console.error('Error downloading the avatar image', error);
+          console.error('Error uploading the avatar image', error);
         });
-
-      
     }
   }, [user, storage]);
 
