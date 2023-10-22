@@ -5,7 +5,7 @@ import { useUser } from "../contexts/UserContext";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const UpLoadImage = () => {
-  const avatarGenerator = new AvatarGenerator();
+  
   const { user } = useUser();
   const { storage } = useFirebase();
   const [randomAvatar, setRandomAvatar] = useState("");
@@ -15,6 +15,7 @@ const UpLoadImage = () => {
     if (user) {
       const userUID = user.uid;
       const avatarRef = ref(storage, `avatars/${userUID}.jpg`);
+      const avatarGenerator = new AvatarGenerator();
 
       // Check if the user already has an avatar in Firebase Storage
       getDownloadURL(avatarRef)
