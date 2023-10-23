@@ -41,11 +41,21 @@ const UpLoadImage = () => {
             }`
           )
             .then((response) => {
-              console.log("Fetch response:", response); // This line logs the fetch response
-              return response.blob();
+              if (!response.ok) {
+                // First, check if the response is successful
+                throw new Error("Network response was not ok");
+              }
+              return response.clone().text(); // Return the response as text
+            })
+            .then((text) => {
+              console.log("Response Text:", text); // This line will log the text content
+
+              // Now, convert the response back to blob
+              return new Blob([text], { type: "text/html" });
             })
             .then((blob) => {
               console.log(blob);
+
               // Upload the blob to Firebase Storage
               return uploadBytes(avatarRef, blob);
             })

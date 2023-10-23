@@ -2,8 +2,3 @@
   from = "/proxyAvatar/*"
   to = "https://avataaars.io/:splat"
   status = 200
-
-[[headers]]
-  for = "/proxyAvatar/*"
-  [headers.values]
-    Content-Type = "image/png"
