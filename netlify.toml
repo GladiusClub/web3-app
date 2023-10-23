@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/proxyAvatar/*"
+  to = "https://avataaars.io/:splat"
+  status = 200
