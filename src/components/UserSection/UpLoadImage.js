@@ -9,7 +9,6 @@ const UpLoadImage = () => {
   const { user } = useUser();
   const { storage } = useFirebase();
   const [randomAvatar, setRandomAvatar] = useState("");
-  const [savedAvatar, setSavedAvatar] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -20,16 +19,15 @@ const UpLoadImage = () => {
       // Check if the user already has an avatar in Firebase Storage
       getDownloadURL(avatarRef)
         .then((downloadURL) => {
-          setSavedAvatar(downloadURL);
-          console.log('avatar already exist')
-          console.log('Avatar URL: ' , downloadURL);
-
+          setRandomAvatar(downloadURL);
+          console.log("avatar already exist");
+          console.log("Avatar URL: ", downloadURL);
         })
         .catch(() => {
           // If the user doesn't have a saved avatar, generate and upload a random one
           const randomAvatarURL = avatarGenerator.generateRandomAvatar();
           setRandomAvatar(randomAvatarURL);
-          console.log('avatar doesnˇt exist')
+          console.log("avatar doesnˇt exist");
 
           // Fetch the image and upload to Firebase Storage
           fetch(
@@ -51,10 +49,13 @@ const UpLoadImage = () => {
             })
             .then((downloadURL) => {
               setRandomAvatar(downloadURL);
-              console.log('New URL: ' , downloadURL);
+              console.log("New URL: ", downloadURL);
             })
             .catch((error) => {
-              console.error("Error uploading avatar to Firebase Storage:", error);
+              console.error(
+                "Error uploading avatar to Firebase Storage:",
+                error
+              );
             });
         });
     }
@@ -64,7 +65,6 @@ const UpLoadImage = () => {
     <div>
       <h1>Your Profile</h1>
       {randomAvatar && <img src={randomAvatar} alt="Random Avatar" />}
-      {savedAvatar && <img src={savedAvatar} alt="Saved Avatar" />}
     </div>
   );
 };
