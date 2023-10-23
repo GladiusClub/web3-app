@@ -11,6 +11,11 @@ const UpLoadImage = () => {
   const [randomAvatar, setRandomAvatar] = useState("");
 
   useEffect(() => {
+    console.log("randomAvatar changed:", randomAvatar);
+  }, [randomAvatar]);
+
+
+  useEffect(() => {
     if (user) {
       const userUID = user.uid;
       const avatarRef = ref(storage, `avatars/${userUID}.jpg`);
