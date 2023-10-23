@@ -51,7 +51,7 @@ function Leaderboard() {
       })
       .catch((error) => console.error(error));
   }, [user, getUserScoresByDate]);
-
+  //push
   return (
     <List>
       {leaderboardData.map((user, index) => (
