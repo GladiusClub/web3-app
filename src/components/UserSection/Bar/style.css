@@ -1,0 +1,13 @@
+.bar {
+  border-radius: 10px;
+  height: 5px;
+  width: 134px;
+}
+
+.bar.light-content {
+  background-color: #ffffff;
+}
+
+.bar.dark-content {
+  background-color: #000000;
+}

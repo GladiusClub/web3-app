@@ -1,0 +1,422 @@
+.gladius-profile {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.gladius-profile .div {
+  background-color: var(--lightgray-0);
+  height: 844px;
+  position: relative;
+  width: 390px;
+}
+
+.gladius-profile .overlap {
+  height: 362px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 390px;
+}
+
+
+.gladius-profile .profile-box {
+  height: 184px;
+  left: 58px;
+  position: absolute;
+  top: 178px;
+  width: 278px;
+}
+
+.gladius-profile .avatar {
+  height: 130px;
+  left: 74px;
+  position: absolute;
+  top: 0;
+  width: 127px;
+}
+
+.gladius-profile .overlap-group {
+  height: 130px;
+  position: relative;
+}
+
+.gladius-profile .component-1 {
+  background-image: url('../../img/rectangle-6-1.png')  !important;
+  height: 120px !important;
+  left: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  width: 120px !important;
+}
+
+.gladius-profile .group {
+  background-color: var(--lightgray-2);
+  border: 5px solid;
+  border-color: var(--lightgray-0);
+  border-radius: 23px;
+  height: 46px;
+  left: 81px;
+  position: absolute;
+  top: 84px;
+  width: 46px;
+}
+
+.gladius-profile .line-design-edit {
+  height: 24px !important;
+  left: 6px !important;
+  position: absolute !important;
+  top: 6px !important;
+  width: 24px !important;
+}
+
+.gladius-profile .text-wrapper {
+  color: var(--lightgray-11);
+  font-family: var(--title-poppins-large-font-family);
+  font-size: var(--title-poppins-large-font-size);
+  font-style: var(--title-poppins-large-font-style);
+  font-weight: var(--title-poppins-large-font-weight);
+  left: 40px;
+  letter-spacing: var(--title-poppins-large-letter-spacing);
+  line-height: var(--title-poppins-large-line-height);
+  position: absolute;
+  text-align: center;
+  top: 135px;
+  width: 194px;
+}
+
+.gladius-profile .level {
+  color: var(--lightgray-11);
+  font-family: var(--body-medium-font-family);
+  font-size: var(--body-medium-font-size);
+  font-style: var(--body-medium-font-style);
+  font-weight: var(--body-medium-font-weight);
+  left: 0;
+  letter-spacing: var(--body-medium-letter-spacing);
+  line-height: var(--body-medium-line-height);
+  position: absolute;
+  text-align: center;
+  top: 164px;
+  width: 274px;
+}
+
+.gladius-profile .group-2 {
+  height: 161px;
+  left: 19px;
+  position: absolute;
+  top: 385px;
+  width: 358px;
+}
+
+.gladius-profile .stats-box {
+  height: 124px;
+  left: 7px;
+  position: absolute;
+  top: 37px;
+  width: 349px;
+}
+
+.gladius-profile .overlap-group-wrapper {
+  height: 51px;
+  left: 0;
+  position: absolute;
+  top: 73px;
+  width: 169px;
+}
+
+.gladius-profile .overlap-group-2 {
+  height: 51px;
+  position: relative;
+  width: 165px;
+}
+
+.gladius-profile .rectangle-2 {
+  background-color: var(--lightgray-0);
+  border-radius: 8px;
+  box-shadow: 0px 1px 4px #00000040;
+  height: 51px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 158px;
+}
+
+.gladius-profile .text-wrapper-2 {
+  color: var(--lightgray-11);
+  font-family: var(--body-medium-font-family);
+  font-size: var(--body-medium-font-size);
+  font-style: var(--body-medium-font-style);
+  font-weight: var(--body-medium-font-weight);
+  left: 39px;
+  letter-spacing: var(--body-medium-letter-spacing);
+  line-height: var(--body-medium-line-height);
+  position: absolute;
+  top: 26px;
+  white-space: nowrap;
+  width: 126px;
+}
+
+.gladius-profile .points {
+  color: var(--lightgray-11);
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  font-weight: 700;
+  left: 39px;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+  position: absolute;
+  top: 5px;
+  white-space: nowrap;
+  width: 126px;
+}
+
+.gladius-profile .star-half-empty {
+  height: 29px;
+  left: 3px;
+  position: absolute;
+  top: 1px;
+  width: 29px;
+}
+
+.gladius-profile .total-wins {
+  height: 51px;
+  left: 182px;
+  position: absolute;
+  top: 0;
+  width: 163px;
+}
+
+.gladius-profile .overlap-2 {
+  background-color: var(--lightgray-0);
+  border-radius: 8px;
+  box-shadow: 0px 1px 4px #00000040;
+  height: 51px;
+  position: relative;
+  width: 159px;
+}
+
+.gladius-profile .level-2 {
+  color: var(--lightgray-11);
+  font-family: var(--body-medium-font-family);
+  font-size: var(--body-medium-font-size);
+  font-style: var(--body-medium-font-style);
+  font-weight: var(--body-medium-font-weight);
+  left: 48px;
+  letter-spacing: var(--body-medium-letter-spacing);
+  line-height: var(--body-medium-line-height);
+  position: absolute;
+  top: 26px;
+  white-space: nowrap;
+  width: 87px;
+}
+
+.gladius-profile .level-3 {
+  color: var(--lightgray-11);
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  font-weight: 700;
+  left: 48px;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+  position: absolute;
+  top: 4px;
+  white-space: nowrap;
+  width: 87px;
+}
+
+.gladius-profile .first-place-ribbon {
+  height: 29px;
+  left: 8px;
+  position: absolute;
+  top: 4px;
+  width: 29px;
+}
+
+.gladius-profile .overlap-wrapper {
+  height: 51px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 162px;
+}
+
+.gladius-profile .overlap-3 {
+  background-color: var(--lightgray-0);
+  border-radius: 8px;
+  box-shadow: 0px 1px 4px #00000040;
+  height: 51px;
+  position: relative;
+  width: 158px;
+}
+
+.gladius-profile .overlap-group-3 {
+  height: 47px;
+  left: 39px;
+  position: absolute;
+  top: 4px;
+  width: 104px;
+}
+
+.gladius-profile .level-4 {
+  color: var(--lightgray-11);
+  font-family: var(--body-medium-font-family);
+  font-size: var(--body-medium-font-size);
+  font-style: var(--body-medium-font-style);
+  font-weight: var(--body-medium-font-weight);
+  left: 0;
+  letter-spacing: var(--body-medium-letter-spacing);
+  line-height: var(--body-medium-line-height);
+  position: absolute;
+  top: 22px;
+  width: 104px;
+}
+
+.gladius-profile .level-5 {
+  color: var(--lightgray-11);
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+  position: absolute;
+  top: 0;
+  width: 104px;
+}
+
+.gladius-profile .cent {
+  height: 29px;
+  left: 3px;
+  position: absolute;
+  top: 4px;
+  width: 29px;
+}
+
+.gladius-profile .div-wrapper {
+  height: 51px;
+  left: 182px;
+  position: absolute;
+  top: 73px;
+  width: 171px;
+}
+
+.gladius-profile .overlap-4 {
+  height: 51px;
+  position: relative;
+  width: 167px;
+}
+
+.gladius-profile .rectangle-3 {
+  background-color: var(--lightgray-0);
+  border-radius: 8px;
+  box-shadow: 0px 1px 4px #00000040;
+  height: 51px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 159px;
+}
+
+.gladius-profile .level-6 {
+  color: var(--lightgray-11);
+  font-family: var(--body-medium-font-family);
+  font-size: var(--body-medium-font-size);
+  font-style: var(--body-medium-font-style);
+  font-weight: var(--body-medium-font-weight);
+  left: 41px;
+  letter-spacing: var(--body-medium-letter-spacing);
+  line-height: var(--body-medium-line-height);
+  position: absolute;
+  top: 26px;
+  white-space: nowrap;
+  width: 126px;
+}
+
+.gladius-profile .level-7 {
+  color: var(--lightgray-11);
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  font-weight: 700;
+  left: 41px;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+  position: absolute;
+  top: 5px;
+  white-space: nowrap;
+  width: 126px;
+}
+
+.gladius-profile .calendar {
+  height: 29px;
+  left: 8px;
+  position: absolute;
+  top: 1px;
+  width: 29px;
+}
+
+.gladius-profile .text-wrapper-3 {
+  color: var(--lightgray-11);
+  font-family: var(--title-poppins-large-font-family);
+  font-size: var(--title-poppins-large-font-size);
+  font-style: var(--title-poppins-large-font-style);
+  font-weight: var(--title-poppins-large-font-weight);
+  left: 0;
+  letter-spacing: var(--title-poppins-large-letter-spacing);
+  line-height: var(--title-poppins-large-line-height);
+  position: absolute;
+  text-align: center;
+  top: 0;
+  white-space: nowrap;
+  width: 120px;
+}
+
+.gladius-profile .transfer-button {
+  height: 49px;
+  left: 26px;
+  position: absolute;
+  top: 587px;
+  width: 343px;
+}
+
+.gladius-profile .overlap-5 {
+  background-color: var(--call-to-action);
+  border-radius: 8px;
+  box-shadow: 0px 1px 4px #00000040;
+  height: 49px;
+  position: relative;
+  width: 341px;
+}
+
+.gladius-profile .text-wrapper-4 {
+  color: var(--text);
+  font-family: var(--title-poppins-large-font-family);
+  font-size: var(--title-poppins-large-font-size);
+  font-style: var(--title-poppins-large-font-style);
+  font-weight: var(--title-poppins-large-font-weight);
+  left: 74px;
+  letter-spacing: var(--title-poppins-large-letter-spacing);
+  line-height: var(--title-poppins-large-line-height);
+  position: absolute;
+  text-align: center;
+  top: 11px;
+  width: 194px;
+}
+
+.gladius-profile .top {
+  height: 34px;
+  left: 0;
+  position: absolute;
+  top: 810px;
+  width: 390px;
+}
+
+
+.gladius-profile .design-component-instance-node {
+  background-color: var(--lightgray-11) !important;
+  left: 120px !important;
+  position: relative !important;
+  top: 21px !important;
+  width: 149px !important;
+}
