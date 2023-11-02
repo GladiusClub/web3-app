@@ -8,54 +8,34 @@ import {
   CardContent,
   CardActions,
   Typography,
-  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
+import { doc, setDoc } from "firebase/firestore";
+
 import { usePublicClubs } from "../CustomHooks/usePublicClubs";
 import { useFirebase } from "../contexts/firebaseContext";
-import { doc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function ClubSelect({ firebaseUser }) {
   const clubs = usePublicClubs();
   const clubNames = Object.values(clubs);
   const navigate = useNavigate();
-  const [joinedClubs, setJoinedClubs] = useState([]);
+  const [joinedClub, setJoinedClub] = useState(null); // State for the currently joined club
+
   const { db } = useFirebase();
 
-  const handleClubSelect = (clubId) => async (event, newRole) => {
-    let updatedClubs = [];
-
-    setJoinedClubs((prevClubs) => {
-      if (newRole === clubId && !prevClubs.includes(clubId)) {
-        updatedClubs = [...prevClubs, clubId];
-      } else if (!newRole && prevClubs.includes(clubId)) {
-        updatedClubs = prevClubs.filter((id) => id !== clubId);
-      } else {
-        updatedClubs = prevClubs;
-      }
-      return updatedClubs;
-    });
+  const handleClubSelect = (clubId) => async () => {
+    setJoinedClub(clubId); // Set the joined club
 
     // Once state is updated, make call to Firebase to update the clubs
     if (firebaseUser) {
       const userDocRef = doc(db, "users", firebaseUser.uid);
+      await setDoc(
+        userDocRef,
+        { clubs_roles: [{ club_id: clubId, role: "athlete" }] }, // Set the club_roles to the selected club
+        { merge: true }
+      );
 
-      if (newRole === clubId) {
-        // If club is added
-        await setDoc(
-          userDocRef,
-          { clubs_roles: arrayUnion({ club_id: clubId, role: "athlete" }) },
-          { merge: true }
-        );
-      } else {
-        // If club is removed
-        await setDoc(
-          userDocRef,
-          { clubs_roles: arrayRemove({ club_id: clubId, role: "athlete" }) },
-          { merge: true }
-        );
-      }
+      navigate("/userdashboard"); // Navigate to the user dashboard
     }
   };
 
@@ -81,17 +61,8 @@ export default function ClubSelect({ firebaseUser }) {
     textOverflow: "ellipsis",
   };
 
-  const handleSignIn = async () => {
-    navigate("/userdashboard");
-  };
-
   return (
     <div>
-      <Box display="flex" justifyContent="center" marginBottom="1em">
-        <Button variant="contained" color="secondary" onClick={handleSignIn}>
-          Enter Gladius
-        </Button>
-      </Box>
       {clubNames.length > 0 ? (
         <Grid container justifyContent="center" spacing={14}>
           {clubNames.map((name, index) => (
@@ -118,7 +89,7 @@ export default function ClubSelect({ firebaseUser }) {
                       aria-label="Platform"
                       onChange={handleClubSelect(Object.keys(clubs)[index])}
                       value={
-                        joinedClubs.includes(Object.keys(clubs)[index])
+                        joinedClub === Object.keys(clubs)[index]
                           ? Object.keys(clubs)[index]
                           : null
                       }
@@ -131,11 +102,10 @@ export default function ClubSelect({ firebaseUser }) {
                           borderRadius: "0 0 4px 4px",
                           border: "none",
                           borderTop: "0.4px solid",
-                          backgroundColor: joinedClubs.includes(
-                            Object.keys(clubs)[index]
-                          )
-                            ? "grey"
-                            : "white", // color the button based on whether the club id is in the state
+                          backgroundColor:
+                            joinedClub === Object.keys(clubs)[index]
+                              ? "grey"
+                              : "white",
                         }}
                       >
                         Join
