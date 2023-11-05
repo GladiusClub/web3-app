@@ -9,6 +9,7 @@ import styled from "styled-components";
 import SignUp from "./components/signUpAndLogin/SignUpPage";
 import AuthLoading from "./components/AuthLoading";
 import UserDashboard from "./components/UserSection/UserDashboard";
+import { GladiusProfile } from "./components/UserSection/GladiusProfile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/test" element={<GladiusProfile />} />
             <Route
               path="/userdashboard"
               element={

@@ -1,0 +1,30 @@
+.component {
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 150px;
+  width: 150px;
+}
+
+.component.avatar-3 {
+  background-image: url(../../../img/rectangle-3.png);
+}
+
+.component.avatar-4 {
+  background-image: url(../../../img/rectangle-4.png);
+}
+
+.component.avatar-2 {
+  background-image: url(../../../img/rectangle-2.png);
+}
+
+.component.avatar-6 {
+  background-image: url(../../../img/rectangle-6-1.png);
+}
+
+.component.avatar-1 {
+  background-image: url(../../../img/rectangle-1.png);
+}
+
+.component.avatar-5 {
+  background-image: url(../../../img/rectangle-5.png);
+}
