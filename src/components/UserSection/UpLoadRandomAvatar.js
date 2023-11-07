@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-//import { AvatarGenerator } from "random-avatar-generator";
+import { AvatarGenerator } from "random-avatar-generator";
 import { useFirebase } from "../contexts/firebaseContext";
 import { useUser } from "../contexts/UserContext";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import OpenAI from 'openai'
 
 const UpLoadImage = () => {
   
   const { user } = useUser();
   const { storage } = useFirebase();
   const [randomAvatar, setRandomAvatar] = useState("");
-
 
   useEffect(() => {
     console.log("randomAvatar changed:", randomAvatar);
@@ -21,16 +19,7 @@ const UpLoadImage = () => {
     if (user) {
       const userUID = user.uid;
       const avatarRef = ref(storage, `avatars/${userUID}.jpg`);
-      //const avatarGenerator = new AvatarGenerator();
-      const openai = new OpenAI({ apiKey: 'OPENAI_API_KEY', dangerouslyAllowBrowser: true});
-      const avatarGenerator = openai.createImage({
-        model: "dall-e-3",
-        prompt: "a white siamese cat",
-        n: 1,
-        size: "1024x1024",
-      });
-      console.log("openai.createImage");
-      //image_url = response.data.data[0].url;
+      const avatarGenerator = new AvatarGenerator();
 
       // Check if the user already has an avatar in Firebase Storage
       getDownloadURL(avatarRef)
@@ -41,9 +30,7 @@ const UpLoadImage = () => {
         })
         .catch(() => {
           // If the user doesn't have a saved avatar, generate and upload a random one
-          // const randomAvatarURL = avatarGenerator.generateRandomAvatar();
-          const randomAvatarURL = avatarGenerator.data.data[0].url;
-          console.log("AvatarURL assigned");
+          const randomAvatarURL = avatarGenerator.generateRandomAvatar();
           setRandomAvatar(randomAvatarURL);
           console.log("avatar doesnˇt exist");
 
