@@ -3,17 +3,21 @@ import React, { useEffect, useState } from "react";
 import { useFirebase } from "../contexts/firebaseContext";
 import { useUser } from "../contexts/UserContext";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import OpenAI from 'openai'
+import OpenAI from 'openai';
 
 const UpLoadImage = () => {
   
   const { user } = useUser();
   const { storage } = useFirebase();
   const [randomAvatar, setRandomAvatar] = useState("");
+ 
+
 
 
   useEffect(() => {
     console.log("randomAvatar changed:", randomAvatar);
+    console.log("OPENAI_API_KEY:",  process.env.OPENAI_API_KEY)
+
   }, [randomAvatar]);
 
 
@@ -22,14 +26,17 @@ const UpLoadImage = () => {
       const userUID = user.uid;
       const avatarRef = ref(storage, `avatars/${userUID}.jpg`);
       //const avatarGenerator = new AvatarGenerator();
-      const openai = new OpenAI({ apiKey: 'OPENAI_API_KEY', dangerouslyAllowBrowser: true});
-      const avatarGenerator = openai.createImage({
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY 
+      });
+      const avatarGenerator = openai.images.generate({
         model: "dall-e-3",
         prompt: "a white siamese cat",
         n: 1,
         size: "1024x1024",
       });
-      console.log("openai.createImage");
+      console.log("revised_prompt: ", avatarGenerator.data[0].revised_prompt);
+      console.log("url: " , avatarGenerator.data[0].url);
       //image_url = response.data.data[0].url;
 
       // Check if the user already has an avatar in Firebase Storage
@@ -42,7 +49,7 @@ const UpLoadImage = () => {
         .catch(() => {
           // If the user doesn't have a saved avatar, generate and upload a random one
           // const randomAvatarURL = avatarGenerator.generateRandomAvatar();
-          const randomAvatarURL = avatarGenerator.data.data[0].url;
+          const randomAvatarURL = avatarGenerator.data[0].url;
           console.log("AvatarURL assigned");
           setRandomAvatar(randomAvatarURL);
           console.log("avatar doesnˇt exist");

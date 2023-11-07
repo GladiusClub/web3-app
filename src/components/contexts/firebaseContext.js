@@ -6,6 +6,7 @@ import { getStorage } from "firebase/storage"; // 1. Import method for Firebase 
 
 const FirebaseContext = React.createContext(null);
 
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
   authDomain: process.env.REACT_APP_AUTHDOMAIN,
@@ -13,8 +14,11 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_STORAGEBUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGINGSENDERID,
   appId: process.env.REACT_APP_APPID,
-  measurementId: process.env.REACT_APP_MEASURMENTID,
+  measurementId: process.env.REACT_APP_MEASURMENTID,  
+  OPENAI_API_KEY:process.env.OPENAI_API_KEY,
 };
+
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
