@@ -15,7 +15,7 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_MESSAGINGSENDERID,
   appId: process.env.REACT_APP_APPID,
   measurementId: process.env.REACT_APP_MEASURMENTID,  
-  OPENAI_API_KEY:process.env.OPENAI_API_KEY,
+  OPENAI_API_KEY:process.env.REACT_APP_OPENAI_API_KEY,
 };
 
 

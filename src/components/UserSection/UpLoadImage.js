@@ -5,6 +5,24 @@ import { useUser } from "../contexts/UserContext";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import OpenAI from 'openai';
 
+const openai = new OpenAI({
+  apiKey:process.env.REACT_APP_OPENAI_API_KEY
+  ,dangerouslyAllowBrowser: true });
+
+async function openai_generate() {
+  const prompt_txt = "warrior with sword avatar"
+  const image = await openai.images.generate({
+    model: "dall-e-3",
+    prompt: prompt_txt,
+    n: 1,
+    size: "1024x1024",
+  });
+  
+  console.log("revised_prompt: ", image.data[0].revised_prompt);
+  console.log("url: " , image.data[0].url);
+}
+//openai_generate();
+
 const UpLoadImage = () => {
   
   const { user } = useUser();
@@ -12,12 +30,8 @@ const UpLoadImage = () => {
   const [randomAvatar, setRandomAvatar] = useState("");
  
 
-
-
   useEffect(() => {
     console.log("randomAvatar changed:", randomAvatar);
-    console.log("OPENAI_API_KEY:",  process.env.OPENAI_API_KEY)
-
   }, [randomAvatar]);
 
 
@@ -26,17 +40,11 @@ const UpLoadImage = () => {
       const userUID = user.uid;
       const avatarRef = ref(storage, `avatars/${userUID}.jpg`);
       //const avatarGenerator = new AvatarGenerator();
-      const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY 
-      });
-      const avatarGenerator = openai.images.generate({
-        model: "dall-e-3",
-        prompt: "a white siamese cat",
-        n: 1,
-        size: "1024x1024",
-      });
-      console.log("revised_prompt: ", avatarGenerator.data[0].revised_prompt);
-      console.log("url: " , avatarGenerator.data[0].url);
+     
+      const avatarGenerator = openai_generate();
+      //console.log("avatarGenerator: ", avatarGenerator.data); 
+      console.log("avatar_revised_prompt: ", avatarGenerator.data[0].revised_prompt);
+      console.log("avatar_url: " , avatarGenerator.data[0].url);
       //image_url = response.data.data[0].url;
 
       // Check if the user already has an avatar in Firebase Storage
