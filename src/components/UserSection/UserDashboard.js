@@ -28,6 +28,8 @@ export default function UserDashboard() {
   const { clubs } = useClub();
   const [clubMembers, setClubMembers] = useState();
 
+  console.log(userData);
+
   useEffect(() => {
     if (clubs[0]) {
       setClubMembers(clubs[0].members);
