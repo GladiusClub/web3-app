@@ -24,11 +24,18 @@ export default function UserDashboard() {
     localStorage.setItem("selectedIcon", selectedIcon);
   }, [selectedIcon]);
 
-  const { userData } = useUser();
+  const { user, userData } = useUser();
   const { clubs } = useClub();
   const [clubMembers, setClubMembers] = useState();
 
-  console.log(userData);
+
+  console.log(
+    user.getIdToken(/* forceRefresh */ true).then((idToken) => {
+      console.log("Token: ", idToken);
+    })
+  );
+  
+
 
   useEffect(() => {
     if (clubs[0]) {
