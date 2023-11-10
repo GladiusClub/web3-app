@@ -24,6 +24,7 @@
     "http-proxy-middleware": "^2.0.6",
     "ipfs-http-client": "^60.0.0",
     "moment": "^2.29.4",
+    "openai": "^4.17.0",
     "random-avatar-generator": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
