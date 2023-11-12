@@ -35,6 +35,12 @@ export default function UserDashboard() {
   }, []);
 
   useEffect(() => {
+    console.log("avatar data generated:", avatarData);
+  }, [avatarData]);
+
+
+
+  useEffect(() => {
     if (clubs[0]) {
       setClubMembers(clubs[0].members);
     }

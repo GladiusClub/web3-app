@@ -6,13 +6,16 @@ const useGenerateAvatar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [avatarData, setAvatarData] = useState(null);
 
-  const generateAvatar = async (prompt) => {
-    if (!prompt) {
-      console.error("Please provide a valid prompt.");
-      return;
-    }
+  const generateAvatar = async () => {
+    const prompt =
+      "make avatar of white siamese cat with long sword no background";
 
-    const idToken = await auth.currentUser.getIdToken(true);
+    //if (!prompt) {
+    //console.error("Please provide a valid prompt.");
+    //return;
+    //}
+
+    //const idToken = await auth.currentUser.getIdToken(true);
 
     try {
       setIsLoading(true);
@@ -20,10 +23,9 @@ const useGenerateAvatar = () => {
       const response = await fetch("/proxyAvatar", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${idToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: prompt }),
+        body: JSON.stringify({ prompt }),
       });
 
       // Check if the response is JSON
