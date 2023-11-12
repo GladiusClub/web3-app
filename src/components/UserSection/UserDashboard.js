@@ -11,15 +11,15 @@ import { useClub } from "../contexts/clubContext";
 import SendTransactionCard from "../SendTransactionCard";
 import Podium from "./Podium";
 import Leaderboard from "./LeaderBoard";
-import UpLoadImage from "./UpLoadImage"; 
-
+//import UpLoadImage from "./UpLoadImage";
+import useGenerateAvatar from "../CustomHooks/useGenerateAvatar";
 
 export default function UserDashboard() {
   // Initialize state from localStorage or use default
   const [selectedIcon, setSelectedIcon] = useState(
     localStorage.getItem("selectedIcon") || "People"
   );
-  
+
   useEffect(() => {
     localStorage.setItem("selectedIcon", selectedIcon);
   }, [selectedIcon]);
@@ -27,15 +27,12 @@ export default function UserDashboard() {
   const { user, userData } = useUser();
   const { clubs } = useClub();
   const [clubMembers, setClubMembers] = useState();
+  const { generateAvatar, isLoading, avatarData } = useGenerateAvatar();
 
-
-  console.log(
-    user.getIdToken(/* forceRefresh */ true).then((idToken) => {
-      console.log("Token: ", idToken);
-    })
-  );
-  
-
+  useEffect(() => {
+    console.log("Generating avatar on component mount");
+    generateAvatar("A red hat"); // This will only run once, when the component mounts
+  }, []);
 
   useEffect(() => {
     if (clubs[0]) {
@@ -71,7 +68,7 @@ export default function UserDashboard() {
           <Leaderboard />
         </Box>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {selectedIcon === "Profile" && <UpLoadImage />}
+          {selectedIcon === "Profile"}
         </Box>
 
         <H2 sx={{ mt: 0 }}>Assets</H2>
