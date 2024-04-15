@@ -17,6 +17,13 @@ function Calendar() {
   const [clubCalendar, setClubCalendar] = useState();
   const { clubs } = useClub();
 
+  console.log(events);
+
+  useEffect(() => {
+    console.log("events changed", events);
+  }, [events]);
+
+
   useEffect(() => {
     if (clubs[0]) {
       setClubCalendar(clubs[0].calendars[0]);
