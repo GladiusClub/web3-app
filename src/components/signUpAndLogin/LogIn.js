@@ -57,11 +57,9 @@ function LogIn() {
 
             if (userRole === "owner") {
               navigate("/clubdashboard");
-            } else {
-              navigate("/userdashboard");
             }
           } else {
-            navigate("/userdashboard"); // Default navigation if club_roles does not exist or is empty
+            navigate("/home"); // Default navigation if club_roles does not exist or is empty
           }
         } else {
           console.error("User document does not exist!");
