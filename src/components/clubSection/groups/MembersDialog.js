@@ -9,21 +9,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
-import Button from "@mui/material/Button"; // Import Button component
+import Button from "@mui/material/Button";
 import { useClub } from "../../contexts/clubContext";
 
 const MembersDialog = ({ isOpen, handleClose, selectedGroup }) => {
   const { clubs, updateGroupMembers } = useClub();
-  const members = clubs[0]?.members || [];
-
   const [selectedMemberUUIDs, setSelectedMemberUUIDs] = useState([]);
 
   useEffect(() => {
-    const group = clubs[0]?.groups.find(
-      (group) => group.id === selectedGroup?.id
-    );
-    const groupMembers = group?.member_uuids || [];
-    setSelectedMemberUUIDs(groupMembers);
+    if (clubs.length > 0 && selectedGroup) {
+      const group = clubs[0].groups.find(
+        (group) => group.id === selectedGroup.id
+      );
+      const groupMembers = group?.member_uuids || [];
+      setSelectedMemberUUIDs(groupMembers);
+    }
   }, [clubs, selectedGroup]);
 
   const handleToggleMemberSelection = (memberId) => {
@@ -38,11 +38,8 @@ const MembersDialog = ({ isOpen, handleClose, selectedGroup }) => {
 
   const handleSave = async () => {
     console.log("Save button clicked");
-
-    // Assuming you have clubId and groupId, update them with actual values
     const groupId = selectedGroup?.id;
-
-    if (clubs[0].id && groupId) {
+    if (clubs.length > 0 && groupId) {
       try {
         await updateGroupMembers(clubs[0].id, groupId, selectedMemberUUIDs);
         console.log("Group members updated successfully");
@@ -50,7 +47,6 @@ const MembersDialog = ({ isOpen, handleClose, selectedGroup }) => {
         console.error("Error updating group members:", error);
       }
     }
-
     handleClose();
   };
 
@@ -67,20 +63,25 @@ const MembersDialog = ({ isOpen, handleClose, selectedGroup }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {members.map((member, index) => {
-                const isMemberInGroup = selectedMemberUUIDs.includes(member.id);
-                return (
-                  <TableRow key={index}>
-                    <TableCell>{member.name}</TableCell>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isMemberInGroup}
-                        onChange={() => handleToggleMemberSelection(member.id)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {clubs.length > 0 &&
+                clubs[0].members.map((member, index) => {
+                  const isMemberInGroup = selectedMemberUUIDs.includes(
+                    member.id
+                  );
+                  return (
+                    <TableRow key={index}>
+                      <TableCell>{member.name}</TableCell>
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isMemberInGroup}
+                          onChange={() =>
+                            handleToggleMemberSelection(member.id)
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>

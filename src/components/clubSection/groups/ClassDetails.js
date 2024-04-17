@@ -22,7 +22,7 @@ export default function ClassDetails({ clubGroups }) {
         sx={{ marginBottom: 2 }}
         onClick={handleOpenDialog}
       >
-        Add Class +
+        Add Course
       </Button>
       <ClassTable clubGroups={clubGroups}></ClassTable>
       <AddClassDialog open={openDialog} handleClose={handleCloseDialog} />

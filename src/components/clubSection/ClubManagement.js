@@ -25,15 +25,18 @@ function ClubManagement() {
   const [clubGroups, setClubGroups] = useState();
   const [value, setValue] = React.useState(0);
   const [images, setImages] = useState([]);
-  const { clubs, updateUserRole } = useClub();
+  const { clubs, updateUserRole, refreshClubs } = useClub();
 
   useEffect(() => {
-    if (clubs[0]) {
-      setClubMembers(clubs[0].members);
-      setClubGroups(clubs[0].groups);
-      console.log(clubs[0]);
+    if (!clubs || clubs.length === 0) {
+      console.log("No clubs loaded, refreshing clubs data...");
+      refreshClubs();
+    } else {
+      setClubMembers(clubs[0].members || []);
+      setClubGroups(clubs[0].groups || []);
+      console.log("Club data loaded:", clubs[0]);
     }
-  }, [clubs]);
+  }, [clubs, refreshClubs]);
 
   useEffect(() => {
     async function loadImages() {
@@ -93,7 +96,7 @@ function ClubManagement() {
       {/*userData.address && <AccountBalance myAddress={userData.address} />*/}
       <Box paddingTop="20px">
         <Typography variant="h5" gutterBottom>
-          Class Managment
+          Course Managment
         </Typography>
         <ClassDetails clubGroups={clubGroups}></ClassDetails>
       </Box>

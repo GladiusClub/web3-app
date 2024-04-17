@@ -12,8 +12,9 @@ import { Link } from "react-router-dom";
 
 const SignUpCard = styled(Card)(({ theme }) => ({
   position: "absolute",
-  top: "50%",
-  transform: "translateY(-50%)",
+  top: "calc(50% + 50px)", // Adjust the 50px to however tall your top bar is
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   padding: theme.spacing(2),
   width: "30%",
   minWidth: "300px",
@@ -60,7 +61,7 @@ function ClubSignUpForm({ onSubmit }) {
   const handleSignUp = () => {
     onSubmit({
       clubName: clubName,
-      name: name,
+      googleCalendar: name,
       email: email,
       password: password,
     });
@@ -92,9 +93,10 @@ function ClubSignUpForm({ onSubmit }) {
               sx={{
                 marginBottom: "10px",
               }}
+              required // Ensuring field must be filled
             />
             <TextField
-              label="Name"
+              label="Public Google Calendar URL"
               type="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -137,6 +139,7 @@ function ClubSignUpForm({ onSubmit }) {
             variant="contained"
             color="secondary"
             onClick={handleSignUp}
+            disabled={!clubName.trim()} // Button is disabled unless a club name is entered
             sx={{ marginBottom: "10px" }}
           >
             Create Club
@@ -147,83 +150,4 @@ function ClubSignUpForm({ onSubmit }) {
   );
 }
 
-function UserSignUpForm({ onSubmit }) {
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSignUp = () => {
-    onSubmit({
-      userName: userName,
-      email: email,
-      password: password,
-    });
-  };
-
-  return (
-    <SignUpCard>
-      <CardContent>
-        <form>
-          <SignUpFields>
-            <Typography
-              variant="h5"
-              sx={{ marginBottom: "10px" }}
-              align="center"
-            >
-              Create a new User Account
-            </Typography>
-            <TextField
-              label="User Name"
-              type="name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
-            />
-            <TextField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
-            />
-          </SignUpFields>
-          <Typography variant="body2" sx={{ marginBottom: "10px" }}>
-            Already a member?{" "}
-            <Link
-              to="/login"
-              style={{ textDecoration: "none", color: "#8A2BE2" }}
-            >
-              log in
-            </Link>{" "}
-          </Typography>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleSignUp}
-            sx={{ marginBottom: "10px" }}
-          >
-            Create User
-          </Button>
-        </form>
-      </CardContent>
-    </SignUpCard>
-  );
-}
-
-export { ClubSignUpForm, UserSignUpForm };
+export { ClubSignUpForm };

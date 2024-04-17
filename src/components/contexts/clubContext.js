@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { useFirebase } from "./firebaseContext";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, getDocs, collection } from "firebase/firestore";
@@ -15,15 +21,14 @@ export const ClubProvider = ({ children }) => {
   const [clubs, setClubs] = useState([]);
   const clubActions = useClubActions(setClubs);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (userCredential) => {
-      if (userCredential) {
-        const uid = userCredential.uid;
-        const userDocRef = doc(db, "users", uid);
-        getDoc(userDocRef).then((docSnapshot) => {
+  const fetchClubsForUser = useCallback(
+    (uid) => {
+      const userDocRef = doc(db, "users", uid);
+      getDoc(userDocRef)
+        .then((docSnapshot) => {
           if (docSnapshot.exists()) {
+            console.log("User document found, fetching club data...");
             const userData = docSnapshot.data();
-
             const memberClubIds = userData.clubs_roles.map(
               (club) => club.club_id
             );
@@ -37,61 +42,57 @@ export const ClubProvider = ({ children }) => {
 
                 const memberCollectionRef = collection(clubDocRef, "members");
                 const memberQuerySnapshot = await getDocs(memberCollectionRef);
-
-                const memberDataPromises = memberQuerySnapshot.docs.map(
-                  async (doc) => {
-                    const memberData = doc.data();
-                    return {
-                      id: doc.id,
-                      email: memberData.email,
-                      name: memberData.name,
-                      role: memberData.role,
-                      address: memberData.address,
-                    };
-                  }
+                const members = await Promise.all(
+                  memberQuerySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }))
                 );
 
-                const memberData = await Promise.all(memberDataPromises);
-                clubData.members = memberData;
-
-                // Add this section to fetch groups data
-                const groupsCollectionRef = collection(clubDocRef, "groups");
-                const groupsQuerySnapshot = await getDocs(groupsCollectionRef);
-
-                const groupsDataPromises = groupsQuerySnapshot.docs.map(
-                  async (doc) => {
-                    const groupData = doc.data();
-                    return {
-                      id: doc.id,
-                      name: groupData.name,
-                      member_uuids: groupData.member_uuids || [],
-                      event_ids: groupData.event_ids || [],
-                    };
-                  }
-                );
-
-                const groupsData = await Promise.all(groupsDataPromises);
-                clubData.groups = groupsData;
-
+                clubData.members = members;
                 return clubData;
               })
-            ).then((clubsData) => {
-              setClubs(clubsData);
-            });
+            )
+              .then((clubsData) => {
+                console.log("Clubs data loaded and set.");
+                setClubs(clubsData);
+              })
+              .catch((error) =>
+                console.error("Error loading club data:", error)
+              );
+          } else {
+            console.log("No user document found, setting clubs to empty.");
+            setClubs([]);
           }
-        });
+        })
+        .catch((error) =>
+          console.error("Error fetching user document:", error)
+        );
+    },
+    [db]
+  );
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchClubsForUser(user.uid);
       } else {
+        console.log("No user logged in, clearing clubs data.");
         setClubs([]);
       }
     });
 
-    // Clean up the onAuthStateChanged listener
-    return unsubscribe;
-  }, [db, auth]);
+    return () => {
+      unsubscribe();
+    };
+  }, [auth, fetchClubsForUser]);
 
-  return (
-    <ClubContext.Provider value={{ clubs, ...clubActions }}>
-      {children}
-    </ClubContext.Provider>
-  );
+  const value = {
+    clubs,
+    refreshClubs: () =>
+      auth.currentUser && fetchClubsForUser(auth.currentUser.uid),
+    ...clubActions,
+  };
+
+  return <ClubContext.Provider value={value}>{children}</ClubContext.Provider>;
 };

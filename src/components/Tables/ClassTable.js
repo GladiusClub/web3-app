@@ -80,7 +80,7 @@ const ClassTable = ({ clubGroups }) => {
           }}
         >
           <TableRow>
-            <StyledTableCell>Class</StyledTableCell>
+            <StyledTableCell>Course</StyledTableCell>
             <StyledTableCell align="right">Edit</StyledTableCell>
           </TableRow>
         </TableHead>

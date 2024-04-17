@@ -122,12 +122,11 @@ function LogIn() {
             />
           </LogInFields>
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
-            Not a member,{" "}
             <Link
               to="/signup"
               style={{ textDecoration: "none", color: "#8A2BE2" }}
             >
-              sign up
+              create new club
             </Link>{" "}
             today
           </Typography>

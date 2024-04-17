@@ -21,7 +21,7 @@ function AddClassDialog({ open, handleClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Add Class</DialogTitle>
+      <DialogTitle>Add Course</DialogTitle>
       <Box sx={{ margin: "16px" }}>
         <HorizontalLinearStepper handleSubmit={handleSubmit} />
       </Box>

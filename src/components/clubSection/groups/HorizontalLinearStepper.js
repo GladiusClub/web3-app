@@ -2,31 +2,29 @@ import React, { useState } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { Button, Box, Typography } from "@mui/material";
-import CreateClassTable from "../../Tables/CreateClassTable";
+import { Button, Box, Typography, TextField } from "@mui/material";
 import EventsTable from "../../Tables/EventsTable";
 
-const steps = [
-  "Pick Class Name",
-  "Add Members to Class",
-  "Add Events to Class",
-];
+const steps = ["Pick Course Name", "Set Course Fees", "Add Events to Course"];
 
 function HorizontalLinearStepper({ handleSubmit }) {
   const [activeStep, setActiveStep] = useState(0);
   const [className, setClassName] = useState("");
+  const [subscriptionFee, setSubscriptionFee] = useState("");
+  const [incentiveAmount, setIncentiveAmount] = useState("");
   const [selectedEvents, setSelectedEvents] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState([]);
-
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {
       if (prevActiveStep === steps.length - 1) {
-        handleSubmit(className, selectedMembers, selectedEvents);
+        handleSubmit(
+          className,
+          selectedEvents,
+          subscriptionFee,
+          incentiveAmount
+        );
       }
-      const nextStep = prevActiveStep + 1;
-
-      return nextStep;
+      return prevActiveStep + 1;
     });
   };
 
@@ -38,16 +36,19 @@ function HorizontalLinearStepper({ handleSubmit }) {
     setClassName(event.target.value);
   };
 
-  const handleCheckboxChange = (event, member) => {
-    const isChecked = event.target.checked;
+  const handleSubscriptionFeeChange = (event) => {
+    const newFee = event.target.value;
+    setSubscriptionFee(newFee);
+    if (parseFloat(newFee) < parseFloat(incentiveAmount)) {
+      setIncentiveAmount(newFee);
+    }
+  };
 
-    setSelectedMembers((prevSelectedMembers) => {
-      if (isChecked) {
-        return [...prevSelectedMembers, member];
-      } else {
-        return prevSelectedMembers.filter((m) => m !== member);
-      }
-    });
+  const handleIncentiveAmountChange = (event) => {
+    const newAmount = event.target.value;
+    if (parseFloat(newAmount) < parseFloat(subscriptionFee)) {
+      setIncentiveAmount(newAmount);
+    }
   };
 
   const renderStepContent = () => {
@@ -66,10 +67,26 @@ function HorizontalLinearStepper({ handleSubmit }) {
       case 1:
         return (
           <div>
-            <Typography>Members:</Typography>
-            <CreateClassTable
-              handleCheckboxChange={handleCheckboxChange}
-            ></CreateClassTable>
+            <TextField
+              type="number"
+              value={subscriptionFee}
+              onChange={handleSubscriptionFeeChange}
+              variant="outlined"
+              label="Subscription Fee"
+            />
+            <TextField
+              type="number"
+              value={incentiveAmount}
+              onChange={handleIncentiveAmountChange}
+              variant="outlined"
+              label="Incentive Amount"
+              error={parseFloat(incentiveAmount) >= parseFloat(subscriptionFee)}
+              helperText={
+                parseFloat(incentiveAmount) >= parseFloat(subscriptionFee)
+                  ? "Must be less than Subscription Fee"
+                  : ""
+              }
+            />
           </div>
         );
       case 2:
@@ -108,7 +125,7 @@ function HorizontalLinearStepper({ handleSubmit }) {
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />
               <Button onClick={handleNext}>
-                {activeStep >= steps.length - 1 ? "Submit" : "Next"}
+                {activeStep === steps.length - 1 ? "Submit" : "Next"}
               </Button>
             </Box>
           </div>
