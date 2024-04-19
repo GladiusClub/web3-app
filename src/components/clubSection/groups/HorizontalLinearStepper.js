@@ -19,9 +19,9 @@ function HorizontalLinearStepper({ handleSubmit }) {
       if (prevActiveStep === steps.length - 1) {
         handleSubmit(
           className,
-          selectedEvents,
           subscriptionFee,
-          incentiveAmount
+          incentiveAmount,
+          selectedEvents
         );
       }
       return prevActiveStep + 1;

@@ -1,10 +1,20 @@
-import React from "react";
-import { Dialog, DialogTitle, Box } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  Box,
+  CircularProgress,
+  Typography,
+  Button,
+  Link,
+} from "@mui/material";
 import HorizontalLinearStepper from "./HorizontalLinearStepper";
 import { useClub } from "../../contexts/clubContext";
 
 function AddClassDialog({ open, handleClose }) {
   const { clubs, createNewGroup } = useClub();
+  const [isLoading, setIsLoading] = useState(false);
+  const [clubPublicKey, setClubPublicKey] = useState(null); // State to hold the public key
 
   const handleSubmit = async (
     className,
@@ -14,12 +24,9 @@ function AddClassDialog({ open, handleClose }) {
   ) => {
     const clubId = clubs[0].id;
     const ownerId = clubs[0].members[0].id;
+    setIsLoading(true);
     try {
-      // Call the createGroup action.
-      // Assumed structure of createGroup function: createGroup(clubId, groupName, subscriptionFee, incentiveAmount)
-      // Close the dialog
-      handleClose();
-      await createNewGroup(
+      const response = await createNewGroup(
         clubId,
         ownerId,
         className,
@@ -27,16 +34,58 @@ function AddClassDialog({ open, handleClose }) {
         incentiveAmount,
         selectedEvents
       );
+      setClubPublicKey(response.apiResponse.club_public_key); // Store the public key from the response
     } catch (error) {
       console.error(`Error creating group: `, error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={() => {}} disableEscapeKeyDown>
       <DialogTitle>Add Course</DialogTitle>
       <Box sx={{ margin: "16px" }}>
-        <HorizontalLinearStepper handleSubmit={handleSubmit} />
+        {isLoading ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 200,
+            }}
+          >
+            <CircularProgress />
+            <Typography sx={{ mt: 2 }}>Creating course...</Typography>
+          </Box>
+        ) : clubPublicKey ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 200,
+            }}
+          >
+            <Typography sx={{ mb: 2 }}>Course created on Stellar:</Typography>
+            <Link
+              href={`https://stellar.expert/explorer/testnet/account/${clubPublicKey}`}
+              target="_blank"
+              rel="noopener"
+            >
+              View on Stellar Explorer
+            </Link>
+          </Box>
+        ) : (
+          <HorizontalLinearStepper handleSubmit={handleSubmit} />
+        )}
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", padding: "8px" }}>
+        <Button onClick={handleClose} disabled={isLoading} color="primary">
+          Close
+        </Button>
       </Box>
     </Dialog>
   );

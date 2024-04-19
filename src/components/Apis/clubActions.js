@@ -1,4 +1,5 @@
 import { useFirebase } from "../contexts/firebaseContext";
+
 import {
   doc,
   updateDoc,
@@ -13,7 +14,7 @@ import {
 } from "firebase/firestore";
 
 export const useClubActions = (setClubs) => {
-  const { db } = useFirebase();
+  const { db, auth } = useFirebase();
 
   const updateUserRole = async (userId, role, clubId) => {
     console.log("Updating role", userId, role, clubId);
@@ -168,21 +169,9 @@ export const useClubActions = (setClubs) => {
     groupEvents = []
   ) => {
     try {
-      // Get reference to groups collection of a club
-      const groupsRef = collection(db, `clubs/${clubId}/groups`);
-      console.log(groupEvents);
+      const idToken = await auth.currentUser.getIdToken(true);
 
-      // Create a new document in groups collection
-      const docRef = await addDoc(groupsRef, {
-        name: groupName,
-        subscriptionFee: subscriptionFee,
-        incentiveAmount: incentiveAmount,
-        event_ids: groupEvents,
-      });
-
-      console.log("Document written with ID: ", docRef.id);
-
-      // Call external API after group creation
+      // Call external API first to ensure it succeeds before creating the Firestore document
       const apiResponse = await fetch(
         "https://europe-west1-wallet-login-45c1c.cloudfunctions.net/testSignupGladiusClubCourse",
         {
@@ -201,7 +190,25 @@ export const useClubActions = (setClubs) => {
       );
 
       const apiData = await apiResponse.json();
-      console.log("Function response:", apiData);
+      console.log("Function response from API:", apiData);
+
+      // Proceed only if the API call was successful
+      if (!apiResponse.ok) {
+        throw new Error("API call failed: " + apiData.message);
+      }
+
+      // Create a new document in the groups collection if the API call succeeds
+      const groupsRef = collection(db, `clubs/${clubId}/groups`);
+      const docRef = await addDoc(groupsRef, {
+        name: groupName,
+        subscriptionFee: subscriptionFee,
+        incentiveAmount: incentiveAmount,
+        event_ids: groupEvents,
+        courseIndex: apiData.courseIndex, // Storing the course index from the API
+        gladiusSubscriptionsId: apiData.gladius_subscriptions_id, // Storing the subscription ID from the API
+      });
+
+      console.log("Document written with ID: ", docRef.id);
 
       // Update the local clubs state
       setClubs((prevClubs) => {
@@ -216,6 +223,8 @@ export const useClubActions = (setClubs) => {
                 subscriptionFee: subscriptionFee,
                 incentiveAmount: incentiveAmount,
                 event_ids: groupEvents,
+                courseIndex: apiData.courseIndex,
+                gladiusSubscriptionsId: apiData.gladius_subscriptions_id,
               },
             ];
           }
@@ -229,7 +238,6 @@ export const useClubActions = (setClubs) => {
       throw error; // Rethrow to handle the error externally if needed
     }
   };
-  
 
   const getGroupsByEvent = async (clubId, calendarId, eventId) => {
     // Define an array to store matching group and member IDs
@@ -377,25 +385,25 @@ export const useClubActions = (setClubs) => {
     try {
       // Get reference to members collection of a club
       const membersRef = collection(db, `clubs/${clubId}/members`);
-  
+
       // Get all members in the club
       const memberSnapshots = await getDocs(membersRef);
-  
+
       // Use Promise.all to make sure we have all the attendance data before returning the result
       const userScoresPromises = memberSnapshots.docs.map(async (memberDoc) => {
         const memberId = memberDoc.id;
         const memberData = memberDoc.data();
         const memberName = memberData.name;
-  
+
         // Get reference to attendance collection of a member
         const attendanceRef = collection(
           db,
           `clubs/${clubId}/members/${memberId}/attendance`
         );
-  
+
         // Get all attendance records of a member
         const attendanceSnapshots = await getDocs(attendanceRef);
-  
+
         // Map each attendance record to an object containing the date (extracted from eventId), score, and win
         const scoresByDate = attendanceSnapshots.docs.map((attendanceDoc) => {
           const attendanceData = attendanceDoc.data();
@@ -406,7 +414,7 @@ export const useClubActions = (setClubs) => {
             win: attendanceData.win, // Add win property
           };
         });
-  
+
         // Return an object containing the member id, name, and their scores by date
         return {
           id: memberId,
@@ -414,15 +422,14 @@ export const useClubActions = (setClubs) => {
           scoresByDate,
         };
       });
-  
+
       const userScoresByDate = await Promise.all(userScoresPromises);
-  
+
       return userScoresByDate;
     } catch (error) {
       console.error("Error getting user scores by date: ", error);
     }
   };
-  
 
   const recordPayment = async (clubId, userId, calendarId, eventId) => {
     try {
@@ -454,7 +461,6 @@ export const useClubActions = (setClubs) => {
       console.error("Error updating payment: ", error);
     }
   };
-  
 
   return {
     updateUserRole,
