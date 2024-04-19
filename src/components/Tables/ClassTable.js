@@ -16,7 +16,6 @@ import {
 import { styled } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
 import { useClub } from "../contexts/clubContext";
-import MembersDialog from "../clubSection/groups/MembersDialog";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,15 +33,6 @@ const ClassTable = ({ clubGroups }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [selectedGroup, setSelectedGroup] = useState(null);
-  const [isMembersDialogOpen, setIsMembersDialogOpen] = useState(false);
-
-  const handleMembersDialogOpen = () => {
-    setIsMembersDialogOpen(true);
-  };
-
-  const handleMembersDialogClose = () => {
-    setIsMembersDialogOpen(false);
-  };
 
   const fetchGroupData = () => {
     if (clubs[0]) {
@@ -118,10 +108,6 @@ const ClassTable = ({ clubGroups }) => {
                     Add/Remove Events
                   </MenuItem>
 
-                  <MenuItem onClick={handleMembersDialogOpen}>
-                    Add/Remove Members
-                  </MenuItem>
-
                   <MenuItem
                     onClick={() => {
                       deleteGroup(clubs[0].id, selectedGroup.id)
@@ -144,11 +130,6 @@ const ClassTable = ({ clubGroups }) => {
           ))}
         </TableBody>
       </Table>
-      <MembersDialog
-        isOpen={isMembersDialogOpen}
-        handleClose={handleMembersDialogClose}
-        selectedGroup={selectedGroup}
-      />
     </TableContainer>
   );
 };

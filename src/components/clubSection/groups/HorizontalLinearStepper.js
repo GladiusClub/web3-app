@@ -37,16 +37,12 @@ function HorizontalLinearStepper({ handleSubmit }) {
   };
 
   const handleSubscriptionFeeChange = (event) => {
-    const newFee = event.target.value;
-    setSubscriptionFee(newFee);
-    if (parseFloat(newFee) < parseFloat(incentiveAmount)) {
-      setIncentiveAmount(newFee);
-    }
+    setSubscriptionFee(event.target.value);
   };
 
   const handleIncentiveAmountChange = (event) => {
     const newAmount = event.target.value;
-    if (parseFloat(newAmount) < parseFloat(subscriptionFee)) {
+    if (newAmount >= 0 && newAmount <= 100) {
       setIncentiveAmount(newAmount);
     }
   };
@@ -56,7 +52,7 @@ function HorizontalLinearStepper({ handleSubmit }) {
       case 0:
         return (
           <div>
-            <Typography>Class Name:</Typography>
+            <Typography>Course Name:</Typography>
             <input
               type="text"
               value={className}
@@ -79,11 +75,11 @@ function HorizontalLinearStepper({ handleSubmit }) {
               value={incentiveAmount}
               onChange={handleIncentiveAmountChange}
               variant="outlined"
-              label="Incentive Amount"
-              error={parseFloat(incentiveAmount) >= parseFloat(subscriptionFee)}
+              label="Incentive Amount (%)"
+              error={incentiveAmount < 0 || incentiveAmount > 100}
               helperText={
-                parseFloat(incentiveAmount) >= parseFloat(subscriptionFee)
-                  ? "Must be less than Subscription Fee"
+                incentiveAmount < 0 || incentiveAmount > 100
+                  ? "Must be a percentage between 0 and 100"
                   : ""
               }
             />

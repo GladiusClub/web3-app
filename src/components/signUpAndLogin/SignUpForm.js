@@ -55,15 +55,15 @@ function UploadLogoButton({ onClick }) {
 function ClubSignUpForm({ onSubmit }) {
   const [clubName, setClubName] = useState("");
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [calendarUrl, setCalendarUrl] = useState("gladiuscalendar@gmail.com");
   const [password, setPassword] = useState("");
 
   const handleSignUp = () => {
     onSubmit({
-      clubName: clubName,
-      googleCalendar: name,
-      email: email,
-      password: password,
+      clubName,
+      googleCalendar: calendarUrl,
+      email,
+      password,
     });
   };
 
@@ -90,20 +90,16 @@ function ClubSignUpForm({ onSubmit }) {
               value={clubName}
               onChange={(e) => setClubName(e.target.value)}
               color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
+              sx={{ marginBottom: "10px" }}
               required // Ensuring field must be filled
             />
             <TextField
               label="Public Google Calendar URL"
               type="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={calendarUrl}
+              onChange={(e) => setCalendarUrl(e.target.value)}
               color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
+              sx={{ marginBottom: "10px" }}
             />
             <TextField
               label="Email"
@@ -111,9 +107,7 @@ function ClubSignUpForm({ onSubmit }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
+              sx={{ marginBottom: "10px" }}
             />
             <TextField
               label="Password"
@@ -121,9 +115,7 @@ function ClubSignUpForm({ onSubmit }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               color="secondary"
-              sx={{
-                marginBottom: "10px",
-              }}
+              sx={{ marginBottom: "10px" }}
             />
           </SignUpFields>
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
@@ -133,7 +125,7 @@ function ClubSignUpForm({ onSubmit }) {
               style={{ textDecoration: "none", color: "#8A2BE2" }}
             >
               log in
-            </Link>{" "}
+            </Link>
           </Typography>
           <Button
             variant="contained"

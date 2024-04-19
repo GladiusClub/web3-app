@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Box, Button, CircularProgress, Typography, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useFirebase } from "../contexts/firebaseContext";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function ClubStep2({ clubName, calendar }) {
   const navigate = useNavigate();
@@ -12,6 +12,47 @@ export default function ClubStep2({ clubName, calendar }) {
   const [stellarWallet, setStellarWallet] = useState("");
   const [clubCreated, setClubCreated] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState("");
+
+  const fetchClubCreationAPI = useCallback(
+    (uid, clubName) => {
+      setCreatingClub(true); // Start loading for club creation
+      fetch(
+        "https://europe-west1-wallet-login-45c1c.cloudfunctions.net/SignupGladiusClub",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ClubOwnerUID: uid,
+            ClubName: clubName,
+          }),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Club creation response:", data);
+          if (data.data.club_uid && calendar) {
+            const clubDocRef = doc(db, "clubs", data.data.club_uid);
+            setDoc(clubDocRef, { calendars: [calendar] }, { merge: true })
+              .then(() => {
+                console.log("Calendar added to club document");
+                setSubscriptionId(data.data.gladius_subscriptions_id);
+                setCreatingClub(false);
+                setClubCreated(true);
+              })
+              .catch((error) => {
+                console.error("Error adding calendar to club:", error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating club:", error);
+          setCreatingClub(false);
+        });
+    },
+    [db, calendar]
+  );
 
   useEffect(() => {
     let intervalId;
@@ -46,38 +87,7 @@ export default function ClubStep2({ clubName, calendar }) {
 
     intervalId = setInterval(checkUserDocument, 500);
     return () => clearInterval(intervalId);
-  }, [auth, db, navigate, clubName]);
-
-  const fetchClubCreationAPI = (uid, clubName) => {
-    setCreatingClub(true); // Start loading for club creation
-    fetch(
-      "https://europe-west1-wallet-login-45c1c.cloudfunctions.net/SignupGladiusClub",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ClubOwnerUID: uid,
-          ClubName: clubName,
-        }),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Club creation response:", data);
-        console.log(data.data.gladius_subscriptions_id);
-        if (data.data.gladius_subscriptions_id) {
-          setSubscriptionId(data.data.gladius_subscriptions_id);
-        }
-        setCreatingClub(false);
-        setClubCreated(true);
-      })
-      .catch((error) => {
-        console.error("Error creating club:", error);
-        setCreatingClub(false);
-      });
-  };
+  }, [auth, db, navigate, clubName, fetchClubCreationAPI]);
 
   const handleSignIn = () => {
     navigate("/clubdashboard");

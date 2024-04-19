@@ -33,7 +33,10 @@ function SignUp() {
   const clubSteps = [
     <ClubSignUpForm onSubmit={handleSignUp} />,
     details.clubName ? (
-      <ClubStep2 clubName={details.clubName} calendar={details.name} />
+      <ClubStep2
+        clubName={details.clubName}
+        calendar={details.googleCalendar}
+      />
     ) : null, // Ensure ClubStep2 is only rendered if clubName exists
   ];
 

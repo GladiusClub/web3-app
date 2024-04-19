@@ -161,8 +161,10 @@ export const useClubActions = (setClubs) => {
 
   const createNewGroup = async (
     clubId,
+    ownerId,
     groupName,
-    groupMembers = [],
+    subscriptionFee,
+    incentiveAmount,
     groupEvents = []
   ) => {
     try {
@@ -170,18 +172,38 @@ export const useClubActions = (setClubs) => {
       const groupsRef = collection(db, `clubs/${clubId}/groups`);
       console.log(groupEvents);
 
-      const memberIds = groupMembers.map((member) => member.id);
-
-      // Create a new document in groups collection with members as an empty array
+      // Create a new document in groups collection
       const docRef = await addDoc(groupsRef, {
         name: groupName,
-        member_uuids: memberIds,
+        subscriptionFee: subscriptionFee,
+        incentiveAmount: incentiveAmount,
         event_ids: groupEvents,
       });
 
       console.log("Document written with ID: ", docRef.id);
 
-      // Also update the local clubs state
+      // Call external API after group creation
+      const apiResponse = await fetch(
+        "https://europe-west1-wallet-login-45c1c.cloudfunctions.net/testSignupGladiusClubCourse",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ClubOwnerUID: ownerId,
+            ClubUID: clubId,
+            CourseName: groupName,
+            CoursePrice: subscriptionFee,
+            Courseincentive: incentiveAmount,
+          }),
+        }
+      );
+
+      const apiData = await apiResponse.json();
+      console.log("Function response:", apiData);
+
+      // Update the local clubs state
       setClubs((prevClubs) => {
         return prevClubs.map((club) => {
           if (club.id === clubId) {
@@ -191,7 +213,8 @@ export const useClubActions = (setClubs) => {
               {
                 id: docRef.id,
                 name: groupName,
-                member_uuids: memberIds,
+                subscriptionFee: subscriptionFee,
+                incentiveAmount: incentiveAmount,
                 event_ids: groupEvents,
               },
             ];
@@ -199,10 +222,14 @@ export const useClubActions = (setClubs) => {
           return club;
         });
       });
+
+      return { newGroup: docRef.id, apiResponse: apiData };
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error in group creation or API call:", error);
+      throw error; // Rethrow to handle the error externally if needed
     }
   };
+  
 
   const getGroupsByEvent = async (clubId, calendarId, eventId) => {
     // Define an array to store matching group and member IDs
