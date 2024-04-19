@@ -14,7 +14,8 @@ import { useClub } from "../../contexts/clubContext";
 function AddClassDialog({ open, handleClose }) {
   const { clubs, createNewGroup } = useClub();
   const [isLoading, setIsLoading] = useState(false);
-  const [clubPublicKey, setClubPublicKey] = useState(null); // State to hold the public key
+  const [clubPublicKey, setClubPublicKey] = useState(null);
+  const [gladiusSubscriptionsId, setGladiusSubscriptionsId] = useState(null);
 
   const handleSubmit = async (
     className,
@@ -34,7 +35,8 @@ function AddClassDialog({ open, handleClose }) {
         incentiveAmount,
         selectedEvents
       );
-      setClubPublicKey(response.apiResponse.club_public_key); // Store the public key from the response
+      setClubPublicKey(response.apiResponse.club_public_key);
+      setGladiusSubscriptionsId(response.apiResponse.gladius_subscriptions_id);
     } catch (error) {
       console.error(`Error creating group: `, error);
     } finally {
@@ -66,7 +68,6 @@ function AddClassDialog({ open, handleClose }) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              height: 200,
             }}
           >
             <Typography sx={{ mb: 2 }}>Course created on Stellar:</Typography>
@@ -75,7 +76,17 @@ function AddClassDialog({ open, handleClose }) {
               target="_blank"
               rel="noopener"
             >
-              View on Stellar Explorer
+              View on Club Wallet:
+            </Link>
+            <Typography sx={{ mt: 2, mb: 2 }}>
+              Stellar Course Contract:
+            </Typography>
+            <Link
+              href={`https://testnet.stellarchain.io/contracts/${gladiusSubscriptionsId}`}
+              target="_blank"
+              rel="noopener"
+            >
+              View Contract
             </Link>
           </Box>
         ) : (
@@ -83,7 +94,7 @@ function AddClassDialog({ open, handleClose }) {
         )}
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end", padding: "8px" }}>
-        <Button onClick={handleClose} disabled={isLoading} color="primary">
+        <Button onClick={handleClose} color="primary">
           Close
         </Button>
       </Box>

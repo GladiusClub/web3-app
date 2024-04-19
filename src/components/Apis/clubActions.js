@@ -224,7 +224,7 @@ export const useClubActions = (setClubs) => {
                 incentiveAmount: incentiveAmount,
                 event_ids: groupEvents,
                 courseIndex: apiData.courseIndex,
-                gladiusSubscriptionsId: apiData.gladius_subscriptions_id,
+                gladius_subscriptions_id: apiData.gladius_subscriptions_id,
               },
             ];
           }
