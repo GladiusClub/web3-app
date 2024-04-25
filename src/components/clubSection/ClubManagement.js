@@ -89,7 +89,7 @@ function ClubManagement() {
           Club Summary
         </Typography>
         <Box display="flex" justifyContent="space-between">
-          <BalanceCard address={clubs[0]?.club_stellar_wallet || ""} />
+          <BalanceCard address={clubs[0]?.club_stellar_wallet} />
           <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
         </Box>
       </Box>

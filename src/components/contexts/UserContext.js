@@ -18,6 +18,7 @@ export const UserProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
+        console.log("ID token: ", auth.currentUser.getIdToken(true));
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {

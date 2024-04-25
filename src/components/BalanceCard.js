@@ -14,14 +14,20 @@ const BalanceCard = ({ address }) => {
   const [balance, setBalance] = useState(null); // Initially no balance
 
   const fetchBalance = useCallback(async () => {
-    try {
-      const fetchedBalance = await getBalance(address);
-      setBalance(fetchedBalance);
-    } catch (error) {
-      console.error("Failed to fetch balance:", error);
-      setBalance("Error");
+    if (address) {
+      // Only fetch balance if address is provided
+      try {
+        const fetchedBalance = await getBalance(address);
+        setBalance(fetchedBalance);
+      } catch (error) {
+        console.error("Failed to fetch balance:", error);
+        setBalance("Error");
+      }
+    } else {
+      console.log("No address provided, skipping fetch"); // Log or handle as needed
     }
   }, [address]);
+  
 
   useEffect(() => {
     fetchBalance();
