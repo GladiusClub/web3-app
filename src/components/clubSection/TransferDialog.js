@@ -23,6 +23,7 @@ function TransferDialog({ open, onClose, filteredMembers }) {
         transfer: !member.paid,
       }))
     );
+    console.log("membersToTransfer", membersToTransfer);
   }, [filteredMembers]);
 
   useEffect(() => {

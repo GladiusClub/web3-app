@@ -20,7 +20,6 @@ const SendTransactionCard = ({ clubMembers }) => {
   const [amount, setAmount] = React.useState([""]);
   const { handleSend, isTransactionLoading } = useSendTransaction();
   const [error, setError] = React.useState(false);
-  console.log("clubMembers", clubMembers);
 
   return (
     <Card

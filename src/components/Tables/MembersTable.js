@@ -55,7 +55,7 @@ function RoleSelect({ member, onRoleChange }) {
         >
           <MenuItem value="coach">Coach</MenuItem>
           <MenuItem value="athlete">Athlete</MenuItem>
-          <MenuItem value="fan">Fan</MenuItem>
+          <MenuItem value="parent">Parent</MenuItem>
           <MenuItem value="owner">Owner</MenuItem>
         </Select>
       </FormControl>
@@ -146,7 +146,7 @@ export default function MembersTable({ members, value, onRoleChange }) {
                   case 2:
                     return member.role === "athlete";
                   case 3:
-                    return member.role === "fan";
+                    return member.role === "parent";
                   case 4:
                     return member.role === "owner";
                   default:

@@ -116,7 +116,7 @@ function ClubManagement() {
             <Tab icon={<GroupWorkIcon />} label="All" />
             <Tab icon={<SportsIcon />} label="Coaches" />
             <Tab icon={<SportsHandballIcon />} label="Athletes" />
-            <Tab icon={<CelebrationIcon />} label="Fans" />
+            <Tab icon={<CelebrationIcon />} label="Parents" />
             <Tab icon={<LockOpenIcon />} label="Owners" />
           </Tabs>
         </Box>

@@ -32,8 +32,6 @@ const useSendTransaction = () => {
         amount: amounts[index], // Set amount for each address here
       }));
 
-      const payload = JSON.stringify({ transactions });
-
       const response = await fetch(
         "https://europe-west1-wallet-login-45c1c.cloudfunctions.net/transferGLCauth",
         {

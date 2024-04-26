@@ -59,7 +59,7 @@ function useHandleTransfer({
               membersToPay[member.id].toPay === true // Check if toPay is true in membersToPay
           )
           .map((member) => ({
-            address: member.address,
+            address: member.stellar_wallet,
             amount: membersToPay[member.id].payout || 0, // Grab the payout value from membersToPay
           }))
           .filter((member) => member.amount > 0);
