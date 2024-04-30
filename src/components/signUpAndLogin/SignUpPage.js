@@ -6,7 +6,7 @@ import { useFirebase } from "../contexts/firebaseContext";
 
 function SignUp() {
   const [step, setStep] = useState(0);
-  const [details, setDetails] = useState({ clubName: "" }); // Initialize with default empty string for clubName
+  const [details, setDetails] = useState({ clubName: "" }); 
   const { auth } = useFirebase();
 
   const handleSignUp = (details) => {

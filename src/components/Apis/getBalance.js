@@ -15,7 +15,15 @@ const getBalance = async (address) => {
     const result = await response.json();
     console.log("Response received:", result);
 
-    return result.balance;
+    // Assuming the response JSON structure includes 'balanceEURC' and 'balanceGLC'
+    const balances = {
+      balanceEURC: result.balanceEURC,
+      balanceGLC: result.balanceGLC,
+    };
+
+    console.log("balances to return", balances);
+
+    return balances;
   } catch (error) {
     console.error("Error fetching balance:", error);
     throw error; // Rethrow or handle as needed

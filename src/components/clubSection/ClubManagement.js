@@ -19,6 +19,7 @@ import { useClub } from "../contexts/clubContext";
 import MembersTable from "../Tables/MembersTable";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import SendTransactionCard from "../SendTransactionCard";
+import BurnGlcCard from "../BurnGlcCard";
 
 function ClubManagement() {
   const [clubMembers, setClubMembers] = useState();
@@ -90,6 +91,7 @@ function ClubManagement() {
         </Typography>
         <Box display="flex" justifyContent="space-between">
           <BalanceCard address={clubs[0]?.club_stellar_wallet} />
+          <BurnGlcCard></BurnGlcCard>
           <SendTransactionCard clubMembers={clubMembers ? clubMembers : []} />
         </Box>
       </Box>

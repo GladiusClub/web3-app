@@ -13,11 +13,11 @@ import {
 // This component represents a single row in the member table
 function MemberRow({ member, handleMemberChanged }) {
   const [isIntError, setIsIntError] = useState(false);
-  const [attended, setAttended] = useState(member.attended || false); //
+  const [attended, setAttended] = useState(member.attended || false);
 
-  const [score, setScore] = useState(member.score || ""); // If member.score exists, use it as default, else use empty string
-  const [coefficient, setCoefficient] = useState(member.coefficient || 1.0); // If member.coefficient exists, use it as default, else use empty string
-  const [win, setWin] = useState(member.win || false); // If member.win exists, use it as default, else use false
+  const [score, setScore] = useState(member.score || "");
+  const [coefficient, setCoefficient] = useState(member.coefficient || 1.0);
+  const [win, setWin] = useState(member.win || false);
 
   const payout = score !== "" && !isIntError ? score * coefficient : "";
 
@@ -178,43 +178,42 @@ function GroupRow({ group, memberDetails, handleMemberChanged }) {
     };
   });
 
+  console.log("detailedMembers", detailedMembers);
+
   return (
     <>
       <TableRow onClick={toggleExpansion}>
-        <TableCell>
+        <TableCell colSpan={6}>
           {isExpanded ? "▼" : "►"} {group.name}
         </TableCell>
-        {/* Add other cells for group details here */}
       </TableRow>
-      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-        <Table size="small" aria-label="purchases">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Attendance</TableCell>
-              <TableCell>Win</TableCell>
-              <TableCell>Scores</TableCell>
-              <TableCell>Coefficient</TableCell>
-              <TableCell>Payout</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {detailedMembers ? (
-              detailedMembers.map((member) => (
-                <MemberRow
-                  key={member.id}
-                  member={member}
-                  handleMemberChanged={handleMemberChanged}
-                />
-              ))
-            ) : (
-              <TableRow>
-                <TableCell>Loading...</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </Collapse>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <Table size="small" aria-label="purchases">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Attendance</TableCell>
+                  <TableCell>Win</TableCell>
+                  <TableCell>Scores</TableCell>
+                  <TableCell>Coefficient</TableCell>
+                  <TableCell>Payout</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {detailedMembers.map((member) => (
+                  <MemberRow
+                    key={member.id}
+                    member={member}
+                    handleMemberChanged={handleMemberChanged}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Collapse>
+        </TableCell>
+      </TableRow>
     </>
   );
 }
@@ -223,13 +222,28 @@ function AttendanceTable({
   groups,
   memberDetails,
   handleMemberChanged,
-  isTransactionLoading, // Added isTransactionLoading prop
+  isTransactionLoading,
 }) {
-  const [isWholeClubExpanded, setIsWholeClubExpanded] = useState(false);
-
-  const toggleWholeClubExpansion = () => {
-    setIsWholeClubExpanded((prev) => !prev);
+  const updateMemberDetailsWithCourseIndex = (groups, memberDetails) => {
+    groups.forEach((group) => {
+      group.members.forEach((groupMember) => {
+        const memberDetail = memberDetails.find(
+          (detail) => detail.id === groupMember.id
+        );
+        if (memberDetail) {
+          if (!memberDetail.courseIndex) {
+            memberDetail.courseIndex = [];
+          }
+          if (!memberDetail.courseIndex.includes(group.courseIndex)) {
+            memberDetail.courseIndex.push(group.courseIndex);
+          }
+        }
+      });
+    });
   };
+
+  // Update memberDetails array with course indices from each group
+  updateMemberDetailsWithCourseIndex(groups, memberDetails);
 
   return (
     <Table>
@@ -247,39 +261,10 @@ function AttendanceTable({
             handleMemberChanged={handleMemberChanged}
           />
         ))}
-        {/* Whole Club Section */}
-        <TableRow onClick={toggleWholeClubExpansion}>
-          <TableCell>{isWholeClubExpanded ? "▼" : "►"} Whole Club</TableCell>
-        </TableRow>
-        <Collapse in={isWholeClubExpanded} timeout="auto" unmountOnExit>
-          {/* Nested Table for Whole Club with Headers */}
-          <Table size="small" aria-label="whole club">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Attendance</TableCell>
-                <TableCell>Win</TableCell>
-                <TableCell>Scores</TableCell>
-                <TableCell>Coefficient</TableCell>
-                <TableCell>Payout</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {memberDetails.map((member) => (
-                <MemberRow
-                  key={member.id}
-                  member={member}
-                  handleMemberChanged={handleMemberChanged}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </Collapse>
       </TableBody>
     </Table>
   );
 }
-
 
 export default AttendanceTable;
 

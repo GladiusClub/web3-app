@@ -114,7 +114,6 @@ function PaymentTable({ memberDetails, membersToPay, setMembersToPay }) {
         };
       }
     });
-    
 
     setMembersToPay((prev) => {
       const updatedMembersToPay = { ...prev };

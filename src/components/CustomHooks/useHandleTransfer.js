@@ -60,7 +60,8 @@ function useHandleTransfer({
           )
           .map((member) => ({
             address: member.stellar_wallet,
-            amount: membersToPay[member.id].payout || 0, // Grab the payout value from membersToPay
+            amount: membersToPay[member.id].payout || 0,
+            courseIndex: member.courseIndex,
           }))
           .filter((member) => member.amount > 0);
 
@@ -70,10 +71,21 @@ function useHandleTransfer({
         const amountsToTransfer = membersToTransfer.map(
           (member) => member.amount
         );
+        const courseIndexToTransfer = membersToTransfer.map(
+          (member) => member.courseIndex[0]
+        );
 
-        console.log(addressesToTransfer, amountsToTransfer);
+        console.log(
+          addressesToTransfer,
+          amountsToTransfer,
+          courseIndexToTransfer
+        );
 
-        handleSend(addressesToTransfer, amountsToTransfer);
+        handleSend(
+          addressesToTransfer,
+          amountsToTransfer,
+          courseIndexToTransfer
+        );
 
         setTimeout(() => {
           setMembersToPay((prevState) => {

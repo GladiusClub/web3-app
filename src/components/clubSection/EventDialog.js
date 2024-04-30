@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import AttendanceTable from "../Tables/AttendanceTable";
 import { useClub } from "../contexts/clubContext";
-import useSendTransaction from "../CustomHooks/useSendTransaction";
+import useSendTransaction from "../CustomHooks/useMintGLC";
 import { useRecordAttendance } from "../CustomHooks/useRecordAttendance";
 import useMemberDetails from "../CustomHooks/useMemberDetails";
 import useAutoSave from "../CustomHooks/useAutoSave";
@@ -69,6 +69,7 @@ function EventDialog({
         )
         ?.map((group) => ({
           id: group.id,
+          courseIndex: group.courseIndex,
           name: group.name,
           members: group.member_uuids?.map((member) =>
             clubs[0].members.find((m) => m.id === member)

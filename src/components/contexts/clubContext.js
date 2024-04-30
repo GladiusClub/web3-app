@@ -40,21 +40,25 @@ export const ClubProvider = ({ children }) => {
                 const clubData = clubSnap.data();
                 clubData.id = clubId;
 
+                // Fetch members
                 const memberCollectionRef = collection(clubDocRef, "members");
                 const memberQuerySnapshot = await getDocs(memberCollectionRef);
-                const members = await Promise.all(
-                  memberQuerySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                  }))
-                );
+                clubData.members = memberQuerySnapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
 
-                clubData.members = members;
+                // Fetch groups
+                const groupCollectionRef = collection(clubDocRef, "groups");
+                const groupQuerySnapshot = await getDocs(groupCollectionRef);
+                clubData.groups = groupQuerySnapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
                 return clubData;
               })
             )
               .then((clubsData) => {
-                console.log("Clubs data loaded and set.");
                 setClubs(clubsData);
               })
               .catch((error) =>

@@ -108,27 +108,27 @@ export default function ClubStep2({ clubName, calendar }) {
           <Typography sx={{ mt: 2 }}>
             {creatingClub
               ? "Adding club to contract..."
-              : "Creating Stellar Wallets..."}
+              : "Creating Stellar Wallet..."}
           </Typography>
         </>
       )}
       {stellarWallet && (
         <Typography sx={{ mt: 2, mb: 2 }}>
           <Link
-            href={`https://testnet.stellarchain.io/accounts/${stellarWallet}`}
+            href={`https://stellar.expert/explorer/testnet/account/${stellarWallet}`}
             target="_blank"
           >
-            View Stellar Wallet
+            View your stellar wallet
           </Link>
         </Typography>
       )}
       {clubCreated && subscriptionId && (
         <Typography sx={{ mb: 2 }}>
           <Link
-            href={`https://testnet.stellarchain.io/contracts/${subscriptionId}`}
+            href={`https://stellar.expert/explorer/testnet/contract/${subscriptionId}`}
             target="_blank"
           >
-            View Contract
+            View subscription contract
           </Link>
         </Typography>
       )}

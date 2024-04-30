@@ -11,23 +11,28 @@ import CircularProgress from "@mui/material/CircularProgress";
 import getBalance from "./Apis/getBalance";
 
 const BalanceCard = ({ address }) => {
-  const [balance, setBalance] = useState(null); // Initially no balance
+  const [balances, setBalances] = useState({
+    glcBalance: null,
+    eurcBalance: null,
+  });
 
   const fetchBalance = useCallback(async () => {
     if (address) {
-      // Only fetch balance if address is provided
       try {
-        const fetchedBalance = await getBalance(address);
-        setBalance(fetchedBalance);
+        const fetchedBalances = await getBalance(address);
+        console.log(fetchedBalances);
+        setBalances({
+          glcBalance: fetchedBalances.balanceGLC,
+          eurcBalance: fetchedBalances.balanceEURC,
+        });
       } catch (error) {
         console.error("Failed to fetch balance:", error);
-        setBalance("Error");
+        setBalances({ glcBalance: "Error", eurcBalance: "Error" });
       }
     } else {
-      console.log("No address provided, skipping fetch"); // Log or handle as needed
+      console.log("No address provided, skipping fetch");
     }
   }, [address]);
-  
 
   useEffect(() => {
     fetchBalance();
@@ -38,13 +43,13 @@ const BalanceCard = ({ address }) => {
       const url = `https://stellar.expert/explorer/testnet/account/${address}`;
       window.open(url, "_blank");
     } else {
-      console.error("No address provided"); // Useful for debugging
+      console.error("No address provided");
     }
   };
 
   return (
     <Card
-      sx={{ minWidth: 275, maxWidth: "30%", margin: "10px", maxHeight: 150 }}
+      sx={{ minWidth: 275, maxWidth: "30%", margin: "10px", maxHeight: 180 }}
     >
       <Box
         sx={{
@@ -56,15 +61,28 @@ const BalanceCard = ({ address }) => {
       >
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Your Balance
+            Your Balances
           </Typography>
-          <Typography variant="h5" component="div">
-            {balance === null ? (
-              <CircularProgress /> // Show loading spinner when balance is null
-            ) : (
-              `${balance} GLC` // Show balance once loaded
-            )}
-          </Typography>
+          {balances.glcBalance === null || balances.eurcBalance === null ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <Typography variant="h5" component="div">
+                {balances.eurcBalance} EURC
+              </Typography>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "1px",
+                  backgroundColor: "#ddd",
+                  margin: "8px 0",
+                }}
+              />
+              <Typography variant="h5" component="div">
+                {balances.glcBalance} GLC
+              </Typography>
+            </>
+          )}
         </CardContent>
         <CardActions sx={{ justifyContent: "space-between" }}>
           <Button

@@ -9,7 +9,6 @@ import {
   Paper,
   tableCellClasses,
 } from "@mui/material";
-import ShowNftCardButton from "../NftCard";
 import { styled } from "@mui/system";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -110,9 +109,6 @@ function MemberRow({ member, onRoleChange }) {
       <TableCell>
         <RoleSelect member={member} onRoleChange={onRoleChange} />
       </TableCell>
-      <TableCell>
-        <ShowNftCardButton member={member} />
-      </TableCell>
     </TableRow>
   );
 }
@@ -131,7 +127,6 @@ export default function MembersTable({ members, value, onRoleChange }) {
             <StyledTableCell>Email</StyledTableCell>
             <StyledTableCell>NFTs Earned</StyledTableCell>
             <StyledTableCell>Role</StyledTableCell>
-            <StyledTableCell>Transaction</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
