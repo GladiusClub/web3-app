@@ -1,26 +1,61 @@
 import React, { useEffect, useState } from "react";
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  CircularProgress,
+  Typography,
   Grid,
   Card,
-  CardContent,
   CardMedia,
+  CardContent,
   CardActions,
-  Button,
-  Typography,
-  Box,
   Paper,
 } from "@mui/material";
 
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { useFirebase } from "../contexts/firebaseContext";
+import mintGladiusNFT from "../Apis/mintGladiusNft";
+import { useClub } from "../contexts/clubContext";
 
 export default function NftMarket() {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [open, setOpen] = useState(false);
+  const { auth } = useFirebase();
+  const [firebaseIdToken, setFirebaseIdToken] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const { clubs, refreshClubs } = useClub();
+  const [clubMembers, setClubMembers] = useState();
+
+  useEffect(() => {
+    auth.currentUser
+      .getIdToken(true)
+      .then((token) => {
+        setFirebaseIdToken(token);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch Firebase ID token:", error);
+      });
+  }, [auth.currentUser]);
+
+  useEffect(() => {
+    if (!clubs || clubs.length === 0) {
+      console.log("No clubs loaded, refreshing clubs data...");
+      refreshClubs();
+    } else {
+      setClubMembers(clubs[0].members || []);
+      console.log("Club data loaded:", clubs[0]);
+    }
+  }, [clubs, refreshClubs]);
 
   useEffect(() => {
     async function loadImages() {
@@ -100,6 +135,27 @@ export default function NftMarket() {
     setOpen(false);
   };
 
+  const handleConfirmSend = async (address) => {
+    if (!selectedImage) return;
+
+    const transaction = {
+      to_address: address,
+      img_uri: selectedImage.img_url,
+    };
+
+    setIsSending(true);
+
+    try {
+      await mintGladiusNFT(firebaseIdToken, [transaction]);
+      console.log("NFT minted successfully!");
+      setOpen(false);
+    } catch (error) {
+      console.error("Error minting NFT:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   const cardStyle = {
     maxWidth: 345,
     margin: 16,
@@ -148,14 +204,21 @@ export default function NftMarket() {
                   sx={{ fontSize: "0.8rem" }}
                   onClick={() => handleBuyClick(imageData)}
                 >
-                  Buy
+                  SEND
                 </Button>
               </CardActions>
             </Card>
           </Grid>
         ))}
       </Grid>
-      <BuyDialog open={open} onClose={handleClose} image={selectedImage} />
+      <BuyDialog
+        open={open}
+        onClose={handleClose}
+        image={selectedImage}
+        onConfirm={handleConfirmSend}
+        isSending={isSending}
+        clubMembers={clubMembers ? clubMembers : []}
+      />
     </div>
   );
 }
@@ -184,7 +247,6 @@ const NftCollection = ({ title, description, image }) => {
   return (
     <Paper style={paperStyle}>
       <img src={image.img_url} alt={title} style={imageStyle} />{" "}
-      {/* Use image.img_url */}
       <div style={textContainerStyle}>
         <Typography variant="h5" component="h2">
           {title}
@@ -197,37 +259,75 @@ const NftCollection = ({ title, description, image }) => {
   );
 };
 
-function BuyDialog({ open, onClose, image }) {
-  if (!image) return null; // Return null if image is null or undefined
+function BuyDialog({
+  open,
+  onClose,
+  image,
+  onConfirm,
+  clubMembers,
+  isSending,
+}) {
+  const [selectedAddress, setSelectedAddress] = useState("");
+  const [error, setError] = useState(false);
+
+  const handleConfirmClick = () => {
+    if (!selectedAddress) {
+      setError(true);
+      return;
+    }
+    onConfirm(selectedAddress);
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Buy NFT</DialogTitle>
+      <DialogTitle>Send NFT</DialogTitle>
       <DialogContent>
-        <DialogContent>
-          <Box display="flex">
-            <img
-              src={image.img_url}
-              alt=""
-              style={{ width: "50%", height: "auto", marginRight: "16px" }}
-            />
-            <DialogContentText>
-              {/* Placeholder metadata */}
-              Title: {image.name}
-              <br />
-              Price: $100
-            </DialogContentText>
-          </Box>
-        </DialogContent>
+        <Box display="flex" flexDirection="column" gap={2}>
+          <img
+            src={image ? image.img_url : ""}
+            alt={image ? image.name : "NFT"}
+            style={{ width: "100%", height: "auto" }}
+          />
+          <FormControl fullWidth error={error}>
+            <InputLabel id="member-select-label">Select Member</InputLabel>
+            <Select
+              labelId="member-select-label"
+              value={selectedAddress}
+              onChange={(e) => {
+                setSelectedAddress(e.target.value);
+                setError(false);
+              }}
+              label="Select Member"
+            >
+              {clubMembers.map((member) => (
+                <MenuItem key={member.id} value={member.stellar_wallet}>
+                  {member.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {error && (
+              <FormHelperText>Please select an address.</FormHelperText>
+            )}
+          </FormControl>
+          <Typography variant="body2" component="p">
+            Please confirm the recipient before sending the NFT.
+          </Typography>
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onClose}>Add to Basket</Button>
-        <Button onClick={onClose} color="secondary">
-          Buy Now
+        <Button onClick={onClose} disabled={isSending}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleConfirmClick}
+          color="secondary"
+          disabled={isSending}
+        >
+          {isSending ? <CircularProgress size={24} /> : "Confirm"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
+
 
