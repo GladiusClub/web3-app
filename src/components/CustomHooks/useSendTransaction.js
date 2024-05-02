@@ -29,7 +29,8 @@ const useSendTransaction = () => {
       setTransactionLoading(true);
       const transactions = addresses.map((addr, index) => ({
         to_address: addr,
-        amount: amounts[index], // Set amount for each address here
+        amount: amounts[index],
+        token: "GLC",
       }));
 
       const response = await fetch(

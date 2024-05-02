@@ -88,16 +88,17 @@ const BurnGlcCard = () => {
           <CircularProgress color="secondary" sx={{ alignSelf: "center" }} />
         ) : (
           <CardActions sx={{ justifyContent: "flex-end" }}>
-            {burnResult && (
+            {burnResult && !burnResult[0].error && (
               <Typography color="primary" sx={{ mr: 1 }}>
-                Transaction successful: {JSON.stringify(burnResult)}
+                Transaction successful
               </Typography>
             )}
-            {error && (
+            {(error || (burnResult && burnResult[0].error)) && (
               <Typography color="error" sx={{ mr: 1 }}>
-                Error: {error}
+                Error: {error || (burnResult && burnResult[0].error)}
               </Typography>
             )}
+
             <Button
               color="secondary"
               onClick={handleBurnClick}
